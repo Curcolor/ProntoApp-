@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/GoogleFonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AgenteIaContextoScreen extends StatefulWidget {
@@ -98,7 +98,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
                     child: Container(
                       width: 38, height: 38,
                       decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                      child: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white, size: 16),
+                      child: const FaIcon(FontAwesomeIcons.arrowLeft, color: Colors.white, size: 16),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -123,7 +123,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(FontAwesomeIcons.robot, color: Colors.white, size: 11),
+                    const FaIcon(FontAwesomeIcons.robot, color: Colors.white, size: 11),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -245,7 +245,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
                 boxShadow: const [BoxShadow(color: Color(0x5925D366), offset: Offset(0, 4), blurRadius: 14)],
               ),
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Icon(FontAwesomeIcons.floppyDisk, color: Colors.white, size: 16),
+                const FaIcon(FontAwesomeIcons.floppyDisk, color: Colors.white, size: 16),
                 const SizedBox(width: 8),
                 Text('Guardar contexto del negocio', style: GoogleFonts.inter(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
               ]),

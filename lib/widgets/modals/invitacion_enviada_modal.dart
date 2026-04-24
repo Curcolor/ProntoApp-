@@ -294,7 +294,7 @@ class InvitacionEnviadaModal extends StatelessWidget {
   }
 
   Widget _buildInfoRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required String label,
     required String value,

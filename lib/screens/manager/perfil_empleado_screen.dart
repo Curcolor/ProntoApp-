@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/GoogleFonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PerfilEmpleadoScreen extends StatefulWidget {
@@ -63,7 +63,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                 color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.arrowLeft,
                 color: Color(0xFF334155),
                 size: 16,
@@ -111,7 +111,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                 color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.ellipsisVertical,
                 color: Color(0xFF475569),
                 size: 16,
@@ -195,7 +195,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(FontAwesomeIcons.fireBurner, color: Color(0xFFB45309), size: 9),
+                          const FaIcon(FontAwesomeIcons.fireBurner, color: Color(0xFFB45309), size: 9),
                           const SizedBox(width: 4),
                           Text(
                             'Cocinera',
@@ -302,7 +302,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
   }
 
   Widget _buildContactRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required Color iconBgColor,
     required String label,
@@ -322,7 +322,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                   color: iconBgColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: iconColor, size: 14),
+                child: FaIcon(icon, color: iconColor, size: 14),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -349,7 +349,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                   ],
                 ),
               ),
-              const Icon(
+              const FaIcon(
                 FontAwesomeIcons.chevronRight,
                 color: Color(0xFF94A3B8),
                 size: 12,
@@ -451,7 +451,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
   }
 
   Widget _buildPermissionRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required Color iconBgColor,
     required String title,
@@ -474,7 +474,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                   color: iconBgColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: iconColor, size: 14),
+                child: FaIcon(icon, color: iconColor, size: 14),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -539,7 +539,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(FontAwesomeIcons.rightLeft, color: Color(0xFF334155), size: 13),
+                  const FaIcon(FontAwesomeIcons.rightLeft, color: Color(0xFF334155), size: 13),
                   const SizedBox(width: 6),
                   Text(
                     'Cambiar rol',
@@ -569,7 +569,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(FontAwesomeIcons.ban, color: Color(0xFFB91C1C), size: 13),
+                  const FaIcon(FontAwesomeIcons.ban, color: Color(0xFFB91C1C), size: 13),
                   const SizedBox(width: 6),
                   Text(
                     'Suspender acceso',

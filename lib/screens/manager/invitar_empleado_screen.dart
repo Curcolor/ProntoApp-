@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/GoogleFonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../widgets/modals/invitacion_enviada_modal.dart';
 
@@ -100,7 +100,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
             child: Container(
               width: 42, height: 42,
               decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12)),
-              child: const Icon(FontAwesomeIcons.arrowLeft, color: Color(0xFF334155), size: 16),
+              child: const FaIcon(FontAwesomeIcons.arrowLeft, color: Color(0xFF334155), size: 16),
             ),
           ),
           const SizedBox(width: 12),
@@ -142,7 +142,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
             Container(
               width: 46, height: 46,
               decoration: BoxDecoration(color: rol['bgIcono'] as Color, borderRadius: BorderRadius.circular(12)),
-              child: Icon(rol['icono'] as IconData, color: rol['colorIcono'] as Color, size: 20),
+              child: FaIcon(rol['icono'] as IconData, color: rol['colorIcono'] as Color, size: 20),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -164,7 +164,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
                 borderRadius: BorderRadius.circular(11),
                 border: Border.all(color: seleccionado ? const Color(0xFF25D366) : const Color(0xFFCBD5E1), width: 2),
               ),
-              child: seleccionado ? const Icon(FontAwesomeIcons.check, color: Colors.white, size: 11) : null,
+              child: seleccionado ? const FaIcon(FontAwesomeIcons.check, color: Colors.white, size: 11) : null,
             ),
           ],
         ),
@@ -197,7 +197,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
     );
   }
 
-  Widget _buildCampo({String? label, String? labelOpcional, required String hint, required IconData icono, Color iconoColor = const Color(0xFF94A3B8), required TextEditingController controlador, TextInputType tipo = TextInputType.text}) {
+  Widget _buildCampo({String? label, String? labelOpcional, required String hint, required FaIconData icono, Color iconoColor = const Color(0xFF94A3B8), required TextEditingController controlador, TextInputType tipo = TextInputType.text}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -213,7 +213,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFE2E8F0))),
           child: Row(children: [
-            Icon(icono, color: iconoColor, size: 16),
+            FaIcon(icono, color: iconoColor, size: 16),
             const SizedBox(width: 12),
             Expanded(child: TextField(controller: controlador, keyboardType: tipo, decoration: InputDecoration(hintText: hint, hintStyle: GoogleFonts.inter(color: const Color(0xFF757575), fontSize: 15), border: InputBorder.none, contentPadding: EdgeInsets.zero, isDense: true), style: GoogleFonts.inter(color: const Color(0xFF0F172A), fontSize: 15))),
           ]),
@@ -229,7 +229,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(FontAwesomeIcons.whatsapp, color: Color(0xFF25D366), size: 18),
+          const FaIcon(FontAwesomeIcons.whatsapp, color: Color(0xFF25D366), size: 18),
           const SizedBox(width: 10),
           Expanded(child: Text('El empleado recibira un mensaje de WhatsApp con el enlace de acceso y las instrucciones para crear su cuenta.', style: GoogleFonts.inter(color: const Color(0xFF166534), fontSize: 11, height: 1.5))),
         ],
@@ -268,7 +268,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(children: [
-              Container(width: 34, height: 34, decoration: BoxDecoration(color: p['bg'] as Color, borderRadius: BorderRadius.circular(8)), child: Icon(p['icono'] as IconData, color: p['color'] as Color, size: 14)),
+              Container(width: 34, height: 34, decoration: BoxDecoration(color: p['bg'] as Color, borderRadius: BorderRadius.circular(8)), child: FaIcon(p['icono'] as IconData, color: p['color'] as Color, size: 14)),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(p['nombre'] as String, style: GoogleFonts.inter(color: (p['activo'] as bool) ? const Color(0xFF1E293B) : const Color(0xFF94A3B8), fontSize: 13, fontWeight: FontWeight.w600)),
@@ -299,7 +299,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
         child: SafeArea(
           top: false,
           child: GestureDetector(
-            onTap: () => InvitacionEnviadaModal.mostrar(context),
+            onTap: () => InvitacionEnviadaModal.show(context),
             child: Container(
               height: 52,
               decoration: BoxDecoration(
@@ -308,7 +308,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
                 boxShadow: const [BoxShadow(color: Color(0x5925D366), offset: Offset(0, 4), blurRadius: 14)],
               ),
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Icon(FontAwesomeIcons.whatsapp, color: Colors.white, size: 16),
+                const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white, size: 16),
                 const SizedBox(width: 8),
                 Text('Enviar invitacion', style: GoogleFonts.inter(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
               ]),

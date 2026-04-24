@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/GoogleFonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AgregarEditarProductoScreen extends StatefulWidget {
@@ -128,7 +128,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                 color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.arrowLeft,
                 color: Color(0xFF334155),
                 size: 16,
@@ -177,7 +177,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              const FaIcon(
                 FontAwesomeIcons.camera,
                 color: Color(0xFF94A3B8),
                 size: 28,
@@ -210,7 +210,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
   Widget _buildInputField({
     required String label,
     required String hintText,
-    required IconData icon,
+    required FaIconData icon,
     Color iconColor = const Color(0xFF94A3B8),
   }) {
     return Column(
@@ -235,7 +235,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           ),
           child: Row(
             children: [
-              Icon(icon, color: iconColor, size: 16),
+              FaIcon(icon, color: iconColor, size: 16),
               const SizedBox(width: 14),
               Expanded(
                 child: TextField(
@@ -266,7 +266,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
   Widget _buildDropdownField({
     required String label,
     required String value,
-    required IconData icon,
+    required FaIconData icon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,7 +290,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           ),
           child: Row(
             children: [
-              Icon(icon, color: const Color(0xFF94A3B8), size: 16),
+              FaIcon(icon, color: const Color(0xFF94A3B8), size: 16),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
@@ -483,7 +483,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: const Center(
-                  child: Icon(FontAwesomeIcons.robot, color: Colors.white, size: 14),
+                  child: FaIcon(FontAwesomeIcons.robot, color: Colors.white, size: 14),
                 ),
               ),
               const SizedBox(width: 8),
@@ -546,7 +546,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 2),
-          child: Icon(FontAwesomeIcons.lightbulb, color: Color(0xFF8B5CF6), size: 11),
+          child: FaIcon(FontAwesomeIcons.lightbulb, color: Color(0xFF8B5CF6), size: 11),
         ),
         const SizedBox(width: 6),
         Expanded(
@@ -573,7 +573,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
       ),
       child: Row(
         children: [
-          const Icon(FontAwesomeIcons.robot, color: Color(0xFF8B5CF6), size: 20),
+          const FaIcon(FontAwesomeIcons.robot, color: Color(0xFF8B5CF6), size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -655,7 +655,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(FontAwesomeIcons.floppyDisk, color: Colors.white, size: 16),
+                  const FaIcon(FontAwesomeIcons.floppyDisk, color: Colors.white, size: 16),
                   const SizedBox(width: 8),
                   Text(
                     'Guardar producto',

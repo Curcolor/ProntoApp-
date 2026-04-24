@@ -259,7 +259,7 @@ class EntregaConfirmadaModal extends StatelessWidget {
   }
 
   Widget _buildInfoRow({
-    required IconData icon,
+    required FaIconData icon,
     required String label,
     required String value,
     required Color valueColor,

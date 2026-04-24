@@ -340,7 +340,7 @@ class EnRutaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMapPin({required IconData icon, required Color iconColor, required Color pinColor, required String label}) {
+  Widget _buildMapPin({required FaIconData icon, required Color iconColor, required Color pinColor, required String label}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
