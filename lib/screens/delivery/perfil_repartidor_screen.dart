@@ -493,7 +493,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
   }
 
   Widget _buildInfoRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required Color bgColor,
     required String label,

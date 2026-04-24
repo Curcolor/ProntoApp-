@@ -293,10 +293,10 @@ class ColaPedidosScreen extends StatelessWidget {
     required Color timerBgColor,
     required List<String> items,
     required String primaryActionText,
-    required IconData primaryActionIcon,
+    required FaIconData primaryActionIcon,
     required Color primaryActionBgColor,
     String? secondaryActionText,
-    IconData? secondaryActionIcon,
+    FaIconData? secondaryActionIcon,
     Color? secondaryActionBgColor,
   }) {
     return Container(
@@ -471,7 +471,7 @@ class ColaPedidosScreen extends StatelessWidget {
 
   Widget _buildActionButton({
     required String text,
-    required IconData icon,
+    required FaIconData icon,
     required Color bgColor,
   }) {
     return Container(

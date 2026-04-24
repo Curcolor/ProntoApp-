@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/GoogleFonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'agente_ia_contexto_screen.dart';
 
@@ -110,7 +110,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                     child: Container(
                       width: 38, height: 38,
                       decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                      child: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white, size: 16),
+                      child: const FaIcon(FontAwesomeIcons.arrowLeft, color: Colors.white, size: 16),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -126,7 +126,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                   Container(
                     width: 38, height: 38,
                     decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
-                    child: const Icon(FontAwesomeIcons.sliders, color: Colors.white, size: 15),
+                    child: const FaIcon(FontAwesomeIcons.sliders, color: Colors.white, size: 15),
                   ),
                 ],
               ),
@@ -331,7 +331,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
             Container(
               width: 44, height: 44,
               decoration: BoxDecoration(color: const Color(0xFF8B5CF6), borderRadius: BorderRadius.circular(12)),
-              child: const Icon(FontAwesomeIcons.robot, color: Colors.white, size: 18),
+              child: const FaIcon(FontAwesomeIcons.robot, color: Colors.white, size: 18),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -343,7 +343,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                 ],
               ),
             ),
-            const Icon(FontAwesomeIcons.chevronRight, color: Color(0xFF8B5CF6), size: 13),
+            const FaIcon(FontAwesomeIcons.chevronRight, color: Color(0xFF8B5CF6), size: 13),
           ],
         ),
       ),

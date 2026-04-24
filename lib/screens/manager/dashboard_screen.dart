@@ -247,7 +247,7 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildMetricCard({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required Color iconBg,
     required String label,

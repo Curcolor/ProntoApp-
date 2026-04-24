@@ -322,7 +322,7 @@ class PerfilCocineroScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: InkWell(
                 onTap: () async {
-                  await AuthService.logout();
+                  await AuthService().logout();
                   if (context.mounted) {
                     Navigator.pushReplacement(
                       context,
@@ -422,7 +422,7 @@ class PerfilCocineroScreen extends StatelessWidget {
   }
 
   Widget _buildInfoRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required Color iconBgColor,
     required String label,

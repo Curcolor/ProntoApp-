@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/GoogleFonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../widgets/modals/ajustar_stock_modal.dart';
 import 'agregar_editar_producto_screen.dart';
@@ -129,7 +129,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.arrowLeft,
                 color: Color(0xFF334155),
                 size: 16,
@@ -174,7 +174,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 color: const Color(0xFF25D366),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.plus,
                 color: Colors.white,
                 size: 16,
@@ -264,7 +264,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
         child: Row(
           children: [
             const SizedBox(width: 16),
-            const Icon(
+            const FaIcon(
               FontAwesomeIcons.magnifyingGlass,
               color: Color(0xFF94A3B8),
               size: 14,
@@ -298,7 +298,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 color: const Color(0xFF25D366),
                 borderRadius: BorderRadius.circular(999),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.sliders,
                 color: Colors.white,
                 size: 12,
@@ -367,7 +367,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
+          const FaIcon(
             FontAwesomeIcons.triangleExclamation,
             color: Color(0xFFF59E0B),
             size: 16,
@@ -411,7 +411,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
     required Color statusBadgeBg,
     required Color stockFillColor,
     required String aiStatusText,
-    required IconData aiStatusIcon,
+    required FaIconData aiStatusIcon,
     bool isStockLow = false,
     bool isOutOfStock = false,
   }) {
@@ -500,7 +500,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                       child: Row(
                         children: [
                           if (isStockLow) ...[
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.triangleExclamation,
                               color: statusBadgeColor,
                               size: 11,
@@ -562,7 +562,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                           ),
                           child: Row(
                             children: [
-                              Icon(
+                              FaIcon(
                                 aiStatusIcon,
                                 color: isOutOfStock ? const Color(0xFF64748B) : const Color(0xFF6D28D9),
                                 size: 9,
@@ -605,7 +605,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                     color: const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: const FaIcon(
                     FontAwesomeIcons.pen,
                     color: Color(0xFF475569),
                     size: 16,
@@ -624,7 +624,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                     color: const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: const FaIcon(
                     FontAwesomeIcons.ellipsisVertical,
                     color: Color(0xFF475569),
                     size: 16,

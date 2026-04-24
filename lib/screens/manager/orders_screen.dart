@@ -172,7 +172,7 @@ class OrdersScreen extends StatelessWidget {
     required String status,
     required List<Map<String, String>> items,
     required String total,
-    required IconData deliveryTypeIcon,
+    required FaIconData deliveryTypeIcon,
     required Color deliveryTypeColor,
     required String deliveryTypeText,
   }) {
@@ -286,7 +286,7 @@ class OrdersScreen extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                '×\${item['qty']}',
+                                '×${item['qty']}',
                                 style: GoogleFonts.inter(
                                   color: const Color(0xFF334155),
                                   fontSize: 11.95,

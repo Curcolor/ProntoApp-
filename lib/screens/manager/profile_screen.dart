@@ -274,7 +274,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBadge(Color bgColor, Color textColor, IconData icon, String text) {
+  Widget _buildBadge(Color bgColor, Color textColor, FaIconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10.87, vertical: 3.26),
       decoration: BoxDecoration(
@@ -376,7 +376,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildSettingsRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconBgColor,
     required Color iconColor,
     required String label,

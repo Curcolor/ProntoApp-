@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/GoogleFonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'perfil_empleado_screen.dart';
 import 'invitar_empleado_screen.dart';
@@ -118,7 +118,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
                 color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.arrowLeft,
                 color: Color(0xFF334155),
                 size: 16,
@@ -165,7 +165,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(FontAwesomeIcons.plus, color: Colors.white, size: 11),
+                  const FaIcon(FontAwesomeIcons.plus, color: Colors.white, size: 11),
                   const SizedBox(width: 6),
                   Text(
                     'Invitar',
@@ -272,7 +272,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
     required String name,
     required String phone,
     required String role,
-    required IconData roleIcon,
+    required FaIconData roleIcon,
     required Color roleColor,
     required Color roleBg,
     required String statusText,
@@ -363,7 +363,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
                         ),
                         child: Row(
                           children: [
-                            Icon(roleIcon, color: roleColor, size: 9),
+                            FaIcon(roleIcon, color: roleColor, size: 9),
                             const SizedBox(width: 4),
                             Text(
                               role,
@@ -405,7 +405,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
                 color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: const FaIcon(
                 FontAwesomeIcons.chevronRight,
                 color: Color(0xFF475569),
                 size: 13,
@@ -491,7 +491,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(FontAwesomeIcons.clock, color: Color(0xFF475569), size: 9),
+                          const FaIcon(FontAwesomeIcons.clock, color: Color(0xFF475569), size: 9),
                           const SizedBox(width: 4),
                           Text(
                             'Pendiente de aceptar',
@@ -514,7 +514,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
                   color: const Color(0xFFFEF3C7),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: const FaIcon(
                   FontAwesomeIcons.arrowsRotate,
                   color: Color(0xFFB45309),
                   size: 13,

@@ -110,7 +110,7 @@ class AuthModals {
 
 class _SocialAuthDialog extends StatelessWidget {
   final String title;
-  final IconData iconData;
+  final FaIconData iconData;
   final Color iconColor;
   final String accountName;
   final String accountEmail;
@@ -372,7 +372,7 @@ class _SocialAuthDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildPermRow(IconData icon, String text) {
+  Widget _buildPermRow(FaIconData icon, String text) {
     return Row(
       children: [
         FaIcon(icon, size: 14, color: const Color(0xFF1DB954)),

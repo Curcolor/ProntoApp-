@@ -308,7 +308,7 @@ class DetalleEntregaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip({required IconData icon, required Color iconColor, required Color bgColor, required String value, required String label}) {
+  Widget _buildInfoChip({required FaIconData icon, required Color iconColor, required Color bgColor, required String value, required String label}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -391,7 +391,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                 _buildItemRow('1', 'Almojábana', '\$3,500'),
                 _buildItemRow('1', 'Café tinto', '\$2,000'),
                 const SizedBox(height: 4),
-                const Divider(height: 1, color: Color(0xFFE2E8F0), style: BorderStyle.solid), // No dashed line support directly in Divider
+                const Divider(height: 1, color: Color(0xFFE2E8F0)), // No dashed line support directly in Divider
                 const SizedBox(height: 9),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

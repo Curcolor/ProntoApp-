@@ -142,7 +142,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
             Container(
               width: 46, height: 46,
               decoration: BoxDecoration(color: rol['bgIcono'] as Color, borderRadius: BorderRadius.circular(12)),
-              child: FaIcon(rol['icono'] as IconData, color: rol['colorIcono'] as Color, size: 20),
+              child: FaIcon(rol['icono'] as FaIconData, color: rol['colorIcono'] as Color, size: 20),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -268,7 +268,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(children: [
-              Container(width: 34, height: 34, decoration: BoxDecoration(color: p['bg'] as Color, borderRadius: BorderRadius.circular(8)), child: FaIcon(p['icono'] as IconData, color: p['color'] as Color, size: 14)),
+              Container(width: 34, height: 34, decoration: BoxDecoration(color: p['bg'] as Color, borderRadius: BorderRadius.circular(8)), child: FaIcon(p['icono'] as FaIconData, color: p['color'] as Color, size: 14)),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(p['nombre'] as String, style: GoogleFonts.inter(color: (p['activo'] as bool) ? const Color(0xFF1E293B) : const Color(0xFF94A3B8), fontSize: 13, fontWeight: FontWeight.w600)),

@@ -206,7 +206,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildToggleRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconBgColor,
     required Color iconColor,
     required String title,
@@ -271,7 +271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildNavigationRow({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconBgColor,
     required Color iconColor,
     required String title,

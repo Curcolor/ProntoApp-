@@ -113,16 +113,16 @@ class _BaseEditBottomSheet extends StatelessWidget {
   final String subtitle;
   final String currentLabel;
   final String currentValue;
-  final IconData currentIcon;
+  final FaIconData currentIcon;
   final String inputLabel1;
   final String inputHint1;
-  final IconData inputIcon1;
+  final FaIconData inputIcon1;
   final String inputLabel2;
   final String inputHint2;
-  final IconData inputIcon2;
+  final FaIconData inputIcon2;
   final String infoText;
   final String submitText;
-  final IconData submitIcon;
+  final FaIconData submitIcon;
   final bool obscureText;
 
   const _BaseEditBottomSheet({
@@ -338,7 +338,7 @@ class _BaseEditBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildInputGroup(String label, String hint, IconData icon) {
+  Widget _buildInputGroup(String label, String hint, FaIconData icon) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -478,7 +478,7 @@ class _WhatsAppBusinessSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
-              child: const Icon(FontAwesomeIcons.qrcode, size: 64, color: Color(0xFF334155)),
+              child: const FaIcon(FontAwesomeIcons.qrcode, size: 64, color: Color(0xFF334155)),
             ),
           ),
           const SizedBox(height: 8),
@@ -752,7 +752,7 @@ class _CambiarContrasenaSheetState extends State<_CambiarContrasenaSheet> {
   Widget _buildPasswordField({
     required TextEditingController controller,
     required String hint,
-    required IconData icono,
+    required FaIconData icono,
     required bool ocultar,
     required VoidCallback onToggle,
     void Function(String)? onChanged,
@@ -1030,7 +1030,7 @@ class _EditarNegocioSheetState extends State<_EditarNegocioSheet> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String hint,
-    required IconData icono,
+    required FaIconData icono,
   }) {
     return Container(
       height: 52,
