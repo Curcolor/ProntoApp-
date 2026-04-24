@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/auth_service.dart';
+import 'inventario_screen.dart';
+import 'equipo_screen.dart';
+import 'agentes_ia_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -168,6 +171,7 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF1DB954),
                     label: 'Equipo de Panadería El Trigo Dorado',
                     value: 'Administrar equipo',
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EquipoScreen())),
                   ),
                   _buildSettingsRow(
                     icon: FontAwesomeIcons.boxOpen,
@@ -175,6 +179,7 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFFF59E0B),
                     label: 'Inventario',
                     value: 'Administrar inventario',
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventarioScreen())),
                   ),
                   _buildSettingsRow(
                     icon: FontAwesomeIcons.robot,
@@ -183,6 +188,7 @@ class ProfileScreen extends StatelessWidget {
                     label: 'Agente de IA',
                     value: 'Administrar Agente de IA',
                     isLast: true,
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AgentesIaScreen())),
                   ),
                 ]),
                 
