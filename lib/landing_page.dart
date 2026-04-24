@@ -3,15 +3,33 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui';
 import 'dart:math' as math;
+import 'package:prontoapp/models/user_model.dart';
 import 'package:prontoapp/screens/auth/login_screen.dart';
 import 'package:prontoapp/screens/auth/register_screen.dart';
 
 class LandingPage extends StatelessWidget {
-  const LandingPage({super.key});
+  final RoleType role;
+  
+  const LandingPage({super.key, this.role = RoleType.gerente});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    
+    // Configurar textos según el rol
+    String title = 'Automatiza tus\npedidos de ';
+    String highlightedTitle = 'WhatsApp';
+    String description = 'Reduce los tiempos de respuesta de 18 a menos de 5 minutos. Sin complicaciones, sin código.';
+    
+    if (role == RoleType.cocinero) {
+      title = 'Organiza tu\n';
+      highlightedTitle = 'Cocina';
+      description = 'Visualiza todos los pedidos en un solo lugar y optimiza los tiempos de preparación.';
+    } else if (role == RoleType.repartidor) {
+      title = 'Entregas\n';
+      highlightedTitle = 'Efectivas';
+      description = 'Rutas optimizadas y confirmación de entregas con un solo toque.';
+    }
 
     return Scaffold(
       body: Container(
@@ -195,11 +213,11 @@ class LandingPage extends StatelessWidget {
                               letterSpacing: -0.5,
                               color: Colors.white,
                             ),
-                            children: const [
-                              TextSpan(text: 'Automatiza tus\npedidos de '),
+                            children: [
+                              TextSpan(text: title),
                               TextSpan(
-                                text: 'WhatsApp',
-                                style: TextStyle(color: Color(0xFFFFD15C)), // WhatsApp en amarillo
+                                text: highlightedTitle,
+                                style: const TextStyle(color: Color(0xFFFFD15C)), // WhatsApp en amarillo
                               ),
                             ],
                           ),
@@ -208,7 +226,7 @@ class LandingPage extends StatelessWidget {
                         
                         // Descripción
                         Text(
-                          'Reduce los tiempos de respuesta de 18 a menos de 5 minutos. Sin complicaciones, sin código.',
+                          description,
                           style: GoogleFonts.inter(
                             fontWeight: FontWeight.w400,
                             fontSize: 15,

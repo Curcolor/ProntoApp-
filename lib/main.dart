@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'landing_page.dart';
 
+import 'package:prontoapp/services/auth_service.dart';
+import 'package:prontoapp/models/user_model.dart';
+import 'package:prontoapp/screens/manager/manager_main_screen.dart';
+import 'package:prontoapp/screens/kitchen/kitchen_main_screen.dart';
+import 'package:prontoapp/screens/delivery/delivery_main_screen.dart';
+
 void main() {
   runApp(const ProntoApp());
 }
@@ -33,36 +39,22 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  // TODO: Cambiar esto para que lea el estado real de Firebase o SecureStorage
-  // Por defecto está en 'false' indicando que es un usuario nuevo o sin sesión
-  bool isUserLoggedIn = false;
-
   @override
   Widget build(BuildContext context) {
-    if (isUserLoggedIn) {
-      // Pantalla principal de la app para usuarios logueados
-      return const DashboardPage();
+    final user = AuthService().currentUser;
+
+    if (user != null) {
+      switch (user.role) {
+        case RoleType.gerente:
+          return const ManagerMainScreen();
+        case RoleType.cocinero:
+          return const KitchenMainScreen();
+        case RoleType.repartidor:
+          return const DeliveryMainScreen();
+      }
     } else {
-      // Pantalla inicial (Landing Page) para usuarios nuevos/deslogueados
+      // Pantalla inicial (Landing Page)
       return const LandingPage();
     }
-  }
-}
-
-// ------ Placeholder de Dashboard (Hasta que lo diseñemos) -----
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Inicio - ProntoApp')),
-      body: Center(
-        child: Text(
-          'Bienvenido de nuevo',
-          style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
   }
 }

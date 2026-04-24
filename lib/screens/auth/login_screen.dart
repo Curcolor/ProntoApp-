@@ -8,8 +8,61 @@ import 'package:prontoapp/widgets/custom_text_field.dart';
 import 'package:prontoapp/widgets/auth_popup_dialogs.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class LoginScreen extends StatelessWidget {
+import 'package:prontoapp/services/auth_service.dart';
+import 'package:prontoapp/models/user_model.dart';
+import 'package:prontoapp/screens/manager/manager_main_screen.dart';
+import 'package:prontoapp/screens/kitchen/kitchen_main_screen.dart';
+import 'package:prontoapp/screens/delivery/delivery_main_screen.dart';
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  void _handleLogin() async {
+    setState(() => _isLoading = true);
+    final user = await AuthService().login(_emailController.text.trim(), _passwordController.text);
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+
+    if (user != null) {
+      // Navegar a la pantalla correcta según el rol
+      Widget nextScreen;
+      switch (user.role) {
+        case RoleType.gerente:
+          nextScreen = const ManagerMainScreen();
+          break;
+        case RoleType.cocinero:
+          nextScreen = const KitchenMainScreen();
+          break;
+        case RoleType.repartidor:
+          nextScreen = const DeliveryMainScreen();
+          break;
+      }
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => nextScreen),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuario no encontrado. Usa gerente@prontoa.com, cocina@prontoa.com o reparto@prontoa.com')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,13 +155,15 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               // Inputs Exactos (Sin iconos prefix según figma)
-              const CustomTextField(
+              CustomTextField(
+                controller: _emailController,
                 label: 'Correo electrónico',
-                hintText: 'tu@correo.com',
+                hintText: 'gerente@prontoa.com',
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16),
-              const CustomTextField(
+              CustomTextField(
+                controller: _passwordController,
                 label: 'Contraseña',
                 hintText: '••••••••',
                 isPassword: true,
@@ -159,11 +214,7 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const ProcessingScreen()),
-                    );
-                  },
+                  onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -172,7 +223,9 @@ class LoginScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(17.38),
                     ),
                   ),
-                  child: Text(
+                  child: _isLoading 
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : Text(
                     'Iniciar Sesión',
                     style: GoogleFonts.inter(
                       fontSize: 17.38,
