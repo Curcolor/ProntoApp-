@@ -5,6 +5,7 @@ import '../../services/auth_service.dart';
 import 'inventario_screen.dart';
 import 'equipo_screen.dart';
 import 'agentes_ia_screen.dart';
+import '../../widgets/modals/editar_perfil_modals.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -202,6 +203,7 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF15803D),
                     label: 'Correo',
                     value: 'carlos.mendoza@correo.com',
+                    onTap: () => EditarPerfilModals.showEditarCorreo(context),
                   ),
                   _buildSettingsRow(
                     icon: FontAwesomeIcons.phone,
@@ -209,6 +211,7 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF1D4ED8),
                     label: 'Teléfono',
                     value: '+57 300 123 4567',
+                    onTap: () => EditarPerfilModals.showEditarTelefono(context),
                   ),
                   _buildSettingsRow(
                     icon: FontAwesomeIcons.locationDot,
@@ -216,6 +219,7 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF6D28D9),
                     label: 'Ubicación',
                     value: 'Barrio El Prado, Barranquilla',
+                    onTap: () => EditarPerfilModals.showEditarUbicacion(context),
                   ),
                   _buildSettingsRow(
                     icon: FontAwesomeIcons.shop,
@@ -224,6 +228,7 @@ class ProfileScreen extends StatelessWidget {
                     label: 'Negocio',
                     value: 'Panadería El Trigo Dorado',
                     isLast: true,
+                    onTap: () => EditarPerfilModals.showEditarNegocio(context),
                   ),
                 ]),
                 
@@ -237,6 +242,7 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF15803D),
                     label: 'WhatsApp Business',
                     value: 'Conectado ✓',
+                    onTap: () => EditarPerfilModals.showWhatsappBusiness(context),
                   ),
                   _buildSettingsRow(
                     icon: FontAwesomeIcons.lock,
@@ -244,6 +250,7 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF1D4ED8),
                     label: 'Seguridad',
                     value: 'Cambiar contraseña',
+                    onTap: () => EditarPerfilModals.showCambiarContrasena(context),
                   ),
                   _buildSettingsRow(
                     icon: FontAwesomeIcons.arrowRightFromBracket,

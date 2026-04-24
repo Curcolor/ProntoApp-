@@ -75,7 +75,68 @@ class EditarPerfilModals {
       ),
     );
   }
+
+  // Pop 03 — Editar Ubicación (nodo 2234:536)
+  static void showEditarUbicacion(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _BaseEditBottomSheet(
+        title: 'Ubicación del negocio',
+        subtitle: 'Dirección donde operas y recibes domicilios.',
+        currentLabel: 'Dirección actual',
+        currentValue: 'Barrio El Prado, Barranquilla',
+        currentIcon: FontAwesomeIcons.locationDot,
+        inputLabel1: 'Dirección',
+        inputHint1: 'Cll 72 #45-12',
+        inputIcon1: FontAwesomeIcons.locationDot,
+        inputLabel2: 'Punto de referencia',
+        inputHint2: 'Ej: Frente al Parque Bolívar',
+        inputIcon2: FontAwesomeIcons.infoCircle,
+        infoText: 'Esta dirección será visible para tus repartidores.',
+        submitText: 'Guardar ubicación',
+        submitIcon: FontAwesomeIcons.locationDot,
+      ),
+    );
+  }
+
+  // Pop 04 — Editar Negocio (nodo 2234:624)
+  static void showEditarNegocio(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _BaseEditBottomSheet(
+        title: 'Información del negocio',
+        subtitle: 'Datos que aparecen en tus mensajes de WhatsApp.',
+        currentLabel: 'Nombre del negocio',
+        currentValue: 'Panadería El Trigo Dorado',
+        currentIcon: FontAwesomeIcons.shop,
+        inputLabel1: 'Nombre del negocio',
+        inputHint1: 'Mi negocio',
+        inputIcon1: FontAwesomeIcons.shop,
+        inputLabel2: 'Descripción corta (para respuestas IA)',
+        inputHint2: 'Panadería artesanal con...',
+        inputIcon2: FontAwesomeIcons.robot,
+        infoText: 'La descripción la usa la IA para responder preguntas sobre tu negocio.',
+        submitText: 'Guardar',
+        submitIcon: FontAwesomeIcons.solidFloppyDisk,
+      ),
+    );
+  }
+
+  // Pop 05 — WhatsApp Business (nodo 2234:703)
+  static void showWhatsappBusiness(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _WhatsAppBusinessSheet(),
+    );
+  }
 }
+
 
 class _BaseEditBottomSheet extends StatelessWidget {
   final String title;
@@ -351,6 +412,152 @@ class _BaseEditBottomSheet extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Pop 05 — WhatsApp Business sheet (nodo Figma: 2234:703)
+class _WhatsAppBusinessSheet extends StatelessWidget {
+  const _WhatsAppBusinessSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+        left: 24,
+        right: 24,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Drag handle
+          Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 12, bottom: 24),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE2E8F0),
+                borderRadius: BorderRadius.circular(999),
+              ),
+            ),
+          ),
+
+          Text(
+            'WhatsApp Business',
+            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w800, color: const Color(0xFF0F172A), letterSpacing: -0.3),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Gestiona la conexión de tu número empresarial.',
+            style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF94A3B8)),
+          ),
+          const SizedBox(height: 20),
+
+          // Estado de conexión
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0FDF4),
+              border: Border.all(color: const Color(0xFFBBF7D0)),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 10, height: 10,
+                  decoration: const BoxDecoration(color: Color(0xFF25D366), shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Conectado y activo',
+                        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF128C7E)),
+                      ),
+                      Text(
+                        '+57 300 123 4567 · 3 sesiones activas',
+                        style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B)),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // QR Code placeholder
+          Center(
+            child: Container(
+              width: 120, height: 120,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: const Icon(FontAwesomeIcons.qrcode, size: 64, color: Color(0xFF334155)),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              'Escanea para reconectar desde otro dispositivo',
+              style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF94A3B8)),
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Botones
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFF25D366)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: TextButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const FaIcon(FontAwesomeIcons.rotate, size: 14, color: Color(0xFF25D366)),
+                    label: Text('Reconectar', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF25D366))),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEE2E2),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: TextButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const FaIcon(FontAwesomeIcons.linkSlash, size: 14, color: Color(0xFFB91C1C)),
+                    label: Text('Desconectar', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFFB91C1C))),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
