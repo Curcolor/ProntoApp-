@@ -23,6 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _contrasenaController = TextEditingController();
 
   bool _contrasenaVisible = false;
+  bool _botonPresionado = false;
 
   @override
   void dispose() {
@@ -115,18 +116,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           // Botón atrás estilo Figma: fondo gris claro, ícono oscuro
           GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              width: 43.46,
-              height: 43.46,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(13.04),
-              ),
-              child: const Icon(
-                Icons.arrow_back,
-                color: Color(0xFF334155),
-                size: 18,
+            onTapDown: (_) => setState(() => _botonPresionado = true),
+            onTapUp: (_) {
+              setState(() => _botonPresionado = false);
+              Navigator.of(context).pop();
+            },
+            onTapCancel: () => setState(() => _botonPresionado = false),
+            child: AnimatedScale(
+              scale: _botonPresionado ? 0.88 : 1.0,
+              duration: const Duration(milliseconds: 120),
+              curve: Curves.easeOut,
+              child: Container(
+                width: 43.46,
+                height: 43.46,
+                decoration: BoxDecoration(
+                  color: _botonPresionado
+                      ? const Color(0xFFCBD5E1) // gris más oscuro al presionar
+                      : const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(13.04),
+                ),
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Color(0xFF334155),
+                  size: 18,
+                ),
               ),
             ),
           ),
@@ -307,7 +320,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildInputConIcono({
     required TextEditingController controlador,
     required String hintText,
-    required IconData icono,
+    required FaIconData icono,
     required Color iconoColor,
     TextInputType tipoTeclado = TextInputType.text,
     Color fillColor = Colors.white,
