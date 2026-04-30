@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
+import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 import 'agente_ia_contexto_screen.dart';
 
 class AgentesIaScreen extends StatefulWidget {
@@ -89,85 +91,107 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
 
   Widget _buildHero(BuildContext context) {
     final modeloActivo = _modelos[_modeloSeleccionado];
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.aiGradientStart, AppColors.aiGradientEnd],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+    return Consumer<OrderProvider>(
+      builder: (context, orderProvider, child) {
+        final bool conectada = orderProvider.estaConectado;
+        final int interacciones = orderProvider.pedidos.length;
+
+        return Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.aiGradientStart, AppColors.aiGradientEnd],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 38, height: 38,
-                      decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
-                      child: const Center(child: FaIcon(FontAwesomeIcons.arrowLeft, color: AppColors.surface, size: 16)),
-                    ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          width: 38, height: 38,
+                          decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
+                          child: const Center(child: FaIcon(FontAwesomeIcons.arrowLeft, color: AppColors.surface, size: 16)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Agente IA', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
+                            Text('Plantilla, modelo y contexto del negocio', 
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.7), fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 38, height: 38,
+                        decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
+                        child: const Center(child: FaIcon(FontAwesomeIcons.sliders, color: AppColors.surface, size: 15)),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.surface.withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
                       children: [
-                        Text('Agente IA', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
-                        Text('Plantilla, modelo y contexto del negocio', style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.7), fontSize: 11)),
+                        Container(
+                          width: 38, height: 38,
+                          decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+                          child: Center(child: Text(modeloActivo['emoji']!, style: const TextStyle(fontSize: 18))),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Tomador de Pedidos', 
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(color: AppColors.surface, fontSize: 13, fontWeight: FontWeight.bold)),
+                              Text('${modeloActivo['nombre']} · $interacciones interacciones hoy', 
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.65), fontSize: 9)),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: conectada ? AppColors.primary : AppColors.warningBg, 
+                            borderRadius: BorderRadius.circular(999)
+                          ),
+                          child: Text(conectada ? 'ACTIVO' : 'SIN CONEXIÓN', 
+                              style: GoogleFonts.inter(
+                                color: conectada ? AppColors.surface : AppColors.warningText, 
+                                fontSize: 9, 
+                                fontWeight: FontWeight.w800
+                              )),
+                        ),
                       ],
                     ),
                   ),
-                  Container(
-                    width: 38, height: 38,
-                    decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
-                    child: const Center(child: FaIcon(FontAwesomeIcons.sliders, color: AppColors.surface, size: 15)),
-                  ),
                 ],
               ),
-              const SizedBox(height: 14),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
-                decoration: BoxDecoration(
-                  color: AppColors.surface.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.surface.withValues(alpha: 0.2)),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 38, height: 38,
-                      decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
-                      child: Center(child: Text(modeloActivo['emoji']!, style: const TextStyle(fontSize: 18))),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Tomador de Pedidos', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 13, fontWeight: FontWeight.bold)),
-                          Text('${modeloActivo['nombre']} · 1,203 interacciones hoy', style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.65), fontSize: 9)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(999)),
-                      child: Text('ACTIVO', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 9, fontWeight: FontWeight.w800)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 
 class AgenteIaContextoScreen extends StatefulWidget {
@@ -14,18 +15,39 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
   final _controladores = List.generate(5, (_) => TextEditingController());
 
   final List<Map<String, String>> _pasos = [
-    {'titulo': 'Descripción general del negocio', 'desc': 'Tipo de negocio, especialidad, antigüedad, zona.', 'valor': 'Somos una panadería artesanal con 8 años en el mercado, ubicada en el norte de Barranquilla. Nos especializamos en pan de masa madre, pastelería francesa y bebidas de café de origen.'},
-    {'titulo': 'Horario y datos de contacto', 'desc': 'Horario real, días de cierre, número de contacto.', 'valor': 'Abrimos lunes a sábado de 6:30 am a 8:00 pm y domingos de 7:00 am a 1:00 pm. No laboramos festivos. Pedidos al 300-111-2233.'},
-    {'titulo': 'Políticas de pedido y entrega', 'desc': 'Pedido mínimo, zonas de cobertura, tiempos, pagos.', 'valor': 'Pedido mínimo \$15,000 para domicilio. Entregamos en un radio de 5 km aprox. 30-45 min. Aceptamos efectivo, Nequi y transferencia bancaria. No manejamos tarjetas de crédito.'},
-    {'titulo': 'Promociones y ofertas frecuentes', 'desc': 'Descuentos, combos, días especiales.', 'valor': 'Martes: bebidas al 20%. Viernes: combo desayuno \$11,000. Tarjeta de fidelidad: 10 compras = 1 gratis.', 'ejemplo': 'Ejemplo: "Los martes todas las bebidas tienen 20% de descuento. Los viernes hay combo desayuno (café + croissant) por \$11,000."'},
-    {'titulo': 'Restricciones y respuestas especiales', 'desc': 'Qué NO puede ofrecer o responder la IA.', 'valor': 'La IA no debe confirmar disponibilidad de tortas especiales (pedido previo 24h). No dar descuentos adicionales a los establecidos. Siempre disculparse si un producto se agota.'},
+    {'titulo': 'Descripción general del negocio', 'desc': 'Tipo de negocio, especialidad, antigüedad, zona.', 'valor': ''},
+    {'titulo': 'Horario y datos de contacto', 'desc': 'Horario real, días de cierre, número de contacto.', 'valor': ''},
+    {'titulo': 'Políticas de pedido y entrega', 'desc': 'Pedido mínimo, zonas de cobertura, tiempos, pagos.', 'valor': ''},
+    {'titulo': 'Promociones y ofertas frecuentes', 'desc': 'Descuentos, combos, días especiales.', 'valor': '', 'ejemplo': 'Ejemplo: "Los martes todas las bebidas tienen 20% de descuento."'},
+    {'titulo': 'Restricciones y respuestas especiales', 'desc': 'Qué NO puede ofrecer o responder la IA.', 'valor': ''},
   ];
 
   @override
   void initState() {
     super.initState();
+    _cargarContexto();
+  }
+
+  Future<void> _cargarContexto() async {
+    final prefs = await SharedPreferences.getInstance();
     for (int i = 0; i < _pasos.length; i++) {
-      _controladores[i].text = _pasos[i]['valor'] ?? '';
+      final guardado = prefs.getString('ia_context_$i');
+      if (guardado != null) {
+        _controladores[i].text = guardado;
+      }
+    }
+  }
+
+  Future<void> _guardarContexto() async {
+    final prefs = await SharedPreferences.getInstance();
+    for (int i = 0; i < _pasos.length; i++) {
+      await prefs.setString('ia_context_$i', _controladores[i].text);
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Contexto guardado exitosamente')),
+      );
+      Navigator.pop(context);
     }
   }
 
@@ -237,7 +259,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
         child: SafeArea(
           top: false,
           child: GestureDetector(
-            onTap: () => Navigator.pop(context),
+            onTap: _guardarContexto,
             child: Container(
               height: 52,
               decoration: BoxDecoration(
@@ -248,7 +270,9 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 const FaIcon(FontAwesomeIcons.floppyDisk, color: AppColors.surface, size: 16),
                 const SizedBox(width: 8),
-                Text('Guardar contexto del negocio', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 16, fontWeight: FontWeight.w600)),
+                Flexible(
+                  child: Text('Guardar contexto', overflow: TextOverflow.ellipsis, maxLines: 1, style: GoogleFonts.inter(color: AppColors.surface, fontSize: 16, fontWeight: FontWeight.w600)),
+                ),
               ]),
             ),
           ),
