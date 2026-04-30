@@ -18,7 +18,26 @@ class InventoryProvider extends ChangeNotifier {
   Future<void> Function({
     required List<Map<String, dynamic>> categorias,
     required List<Map<String, dynamic>> productos,
-  })? onInventarioActualizado;
+  })? _onInventarioActualizado;
+
+  set onInventarioActualizado(
+    Future<void> Function({
+      required List<Map<String, dynamic>> categorias,
+      required List<Map<String, dynamic>> productos,
+    })? callback,
+  ) {
+    final eraNulo = _onInventarioActualizado == null;
+    _onInventarioActualizado = callback;
+    if (eraNulo && callback != null) {
+      // Sincronizar inmediatamente al conectar el webhook
+      _sincronizarConApi();
+    }
+  }
+
+  Future<void> Function({
+    required List<Map<String, dynamic>> categorias,
+    required List<Map<String, dynamic>> productos,
+  })? get onInventarioActualizado => _onInventarioActualizado;
 
   InventoryProvider(this._repository) {
     _loadData();
