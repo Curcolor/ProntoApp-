@@ -105,7 +105,8 @@ def _obtener_menu_texto() -> str:
             precio = producto.get("price", 0)
             nombre = producto.get("name", "")
             emoji = producto.get("emoji", "•")
-            lineas.append(f"  {emoji} {nombre} — ${precio:,.0f}")
+            stock = producto.get("stock", 0)
+            lineas.append(f"  {emoji} {nombre} — ${precio:,.0f} (Stock: {stock} disponibles)")
 
         return "\n".join(lineas)
 
@@ -138,7 +139,8 @@ Tu misión:
 
 Reglas importantes:
 - Solo incluye productos que están en el menú.
-- Si un producto no está disponible, discúlpate y sugiere una alternativa.
+- NUNCA permitas pedir más cantidad de la que hay disponible en el (Stock: X).
+- Si un producto no está disponible o el cliente pide más del stock, discúlpate y sugiere una alternativa.
 - No inventes precios; usa los del menú exactamente.
 - Antes de enviar el JSON, confirma el pedido con el cliente y espera su "sí" o confirmación.
 - Responde siempre en español, de forma cálida y profesional.

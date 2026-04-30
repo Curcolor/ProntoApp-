@@ -142,8 +142,32 @@ def crear_pedido(
         "estado": "recibido",
         "creado_en": datetime.now().isoformat(),
     }
+    
+    # Guardar pedido
     pedidos.append(nuevo)
     _guardar_pedidos(pedidos)
+
+    # Descontar del inventario
+    inventario = _leer_inventario()
+    cambios_inventario = False
+    for item in pedido.items:
+        for p in inventario.get("productos", []):
+            # Compara ignorando mayúsculas/minúsculas para mayor tolerancia
+            if p.get("name", "").lower() == item.nombre.lower():
+                stock_actual = p.get("stock", 0)
+                # No descontar más allá de 0
+                nuevo_stock = max(0, stock_actual - item.cantidad)
+                if stock_actual != nuevo_stock:
+                    p["stock"] = nuevo_stock
+                    cambios_inventario = True
+                break
+
+    if cambios_inventario:
+        ARCHIVO_INVENTARIO.write_text(
+            json.dumps(inventario, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
     return nuevo
 
 
@@ -212,3 +236,8 @@ def actualizar_inventario(
         encoding="utf-8",
     )
     return {"ok": True}
+
+if __name__ == "__main__":
+    import uvicorn
+    # Se corre en el puerto 5050 según el .env
+    uvicorn.run("api_pedidos:app", host="0.0.0.0", port=5050, reload=True)

@@ -33,7 +33,11 @@ void main() async {
       providers: [
         ChangeNotifierProvider.value(value: AuthService()),
         ChangeNotifierProvider(
-          create: (_) => InventoryProvider(inventoryRepo),
+          create: (_) => InventoryProvider(
+            inventoryRepo,
+            baseUrl: 'http://localhost:5050',
+            secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
+          ),
         ),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProxyProvider<NotificationProvider, OrderProvider>(
@@ -46,15 +50,6 @@ void main() async {
             orderProvider!.onNewNotification = notifProvider.addNotification;
             return orderProvider;
           },
-        ),
-        // Conecta el sync de inventario al OrderProvider tras ambos crearse
-        ProxyProvider<OrderProvider, InventoryProvider>(
-          update: (_, orderProvider, previous) {
-            final inv = previous ?? InventoryProvider(inventoryRepo);
-            inv.onInventarioActualizado = orderProvider.sincronizarInventario;
-            return inv;
-          },
-        ),
       ],
       child: const ProntoApp(),
     ),

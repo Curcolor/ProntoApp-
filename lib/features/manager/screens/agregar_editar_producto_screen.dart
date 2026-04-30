@@ -8,16 +8,54 @@ import '../data/models/category_model.dart';
 import '../data/models/product_model.dart';
 
 class AgregarEditarProductoScreen extends StatefulWidget {
-  const AgregarEditarProductoScreen({super.key});
+  final Product? productToEdit;
+
+  const AgregarEditarProductoScreen({super.key, this.productToEdit});
 
   @override
   State<AgregarEditarProductoScreen> createState() => _AgregarEditarProductoScreenState();
 }
 
 class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScreen> {
+  late TextEditingController _nameController;
+  late TextEditingController _priceController;
+  late TextEditingController _stockController;
+  late TextEditingController _minStockController;
+  late TextEditingController _prepTimeController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _aiContextController;
+
   bool _isAvailable = true;
   bool _aiActive = true;
   String? _selectedCategoryId;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.productToEdit?.name ?? '');
+    _priceController = TextEditingController(text: widget.productToEdit?.price.toString() ?? '');
+    _stockController = TextEditingController(text: widget.productToEdit?.stock.toString() ?? '');
+    _minStockController = TextEditingController(text: widget.productToEdit?.minStock.toString() ?? '');
+    _prepTimeController = TextEditingController(text: widget.productToEdit?.prepTimeMinutes.toString() ?? '');
+    _descriptionController = TextEditingController(text: widget.productToEdit?.description ?? '');
+    _aiContextController = TextEditingController(text: widget.productToEdit?.aiContext ?? '');
+    
+    _isAvailable = widget.productToEdit?.isAvailable ?? true;
+    _aiActive = widget.productToEdit?.aiActive ?? true;
+    _selectedCategoryId = widget.productToEdit?.categoryId;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _priceController.dispose();
+    _stockController.dispose();
+    _minStockController.dispose();
+    _prepTimeController.dispose();
+    _descriptionController.dispose();
+    _aiContextController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +77,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                         label: 'Nombre del producto *',
                         hintText: 'Ej: Croissant de jamón y queso',
                         icon: FontAwesomeIcons.tag,
+                        controller: _nameController,
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -60,6 +99,8 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                               label: 'Stock inicial',
                               hintText: '0',
                               icon: FontAwesomeIcons.boxesStacked,
+                              controller: _stockController,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -69,6 +110,8 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                               hintText: 'Ej: 5',
                               icon: FontAwesomeIcons.triangleExclamation,
                               iconColor: AppColors.warningIcon,
+                              controller: _minStockController,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ],
@@ -78,9 +121,11 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                         children: [
                           Expanded(
                             child: _buildInputField(
-                              label: 'Tiempo preparación',
-                              hintText: 'Ej: 10 min',
+                              label: 'Tiempo preparación (min)',
+                              hintText: 'Ej: 10',
                               icon: FontAwesomeIcons.clock,
+                              controller: _prepTimeController,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -97,7 +142,8 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                       const SizedBox(height: 16),
                       _buildTextAreaField(
                         label: 'Descripción del producto',
-                        text: 'Delicioso croissant hecho de hojaldre con relleno de jamón ibérico y queso gouda. Servido tibio.',
+                        hintText: 'Ej: Delicioso croissant hecho de hojaldre...',
+                        controller: _descriptionController,
                       ),
                       const SizedBox(height: 24),
                       _buildAiContextSection(),
@@ -141,7 +187,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           ),
           const SizedBox(width: 12),
           Text(
-            'Nuevo producto',
+            widget.productToEdit == null ? 'Nuevo producto' : 'Editar producto',
             style: GoogleFonts.inter(
               color: AppColors.textPrimary,
               fontSize: 22,
@@ -216,6 +262,8 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
     required String hintText,
     required FaIconData icon,
     Color iconColor = AppColors.textMuted,
+    TextEditingController? controller,
+    TextInputType? keyboardType,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,6 +291,8 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               const SizedBox(width: 14),
               Expanded(
                 child: TextField(
+                  controller: controller,
+                  keyboardType: keyboardType,
                   decoration: InputDecoration(
                     hintText: hintText,
                     hintStyle: GoogleFonts.inter(
@@ -451,6 +501,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
+                  controller: _priceController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: '0',
@@ -531,7 +582,8 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
 
   Widget _buildTextAreaField({
     required String label,
-    required String text,
+    required String hintText,
+    TextEditingController? controller,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -553,8 +605,16 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.borderLight),
           ),
-          child: Text(
-            text,
+          child: TextField(
+            controller: controller,
+            maxLines: null,
+            decoration: InputDecoration.collapsed(
+              hintText: hintText,
+              hintStyle: GoogleFonts.inter(
+                color: AppColors.textMuted,
+                fontSize: 13,
+              ),
+            ),
             style: GoogleFonts.inter(
               color: AppColors.textPrimary,
               fontSize: 13,
@@ -626,10 +686,18 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFC4B5FD)), // AppColors.aiGradientStart.withValues(alpha: 0.3)
+              border: Border.all(color: const Color(0xFFC4B5FD)),
             ),
-            child: Text(
-              'Producto estrella de la tienda. Es apto para personas con intolerancia leve a la lactosa si se pide sin queso. Va bien con el café latte especial. Los lunes trae descuento. Disponible solo hasta las 12 pm porque se hornea temprano en la mañana.',
+            child: TextField(
+              controller: _aiContextController,
+              maxLines: null,
+              decoration: InputDecoration.collapsed(
+                hintText: 'Ej: Producto estrella de la tienda. Es apto para personas con intolerancia leve a la lactosa si se pide sin queso...',
+                hintStyle: GoogleFonts.inter(
+                  color: AppColors.textTertiary,
+                  fontSize: 13,
+                ),
+              ),
               style: GoogleFonts.inter(
                 color: AppColors.textPrimary,
                 fontSize: 13,
@@ -740,8 +808,43 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
         child: SafeArea(
           top: false,
           child: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
+            onTap: () async {
+              if (_nameController.text.trim().isEmpty || _priceController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('El nombre y el precio son obligatorios')),
+                );
+                return;
+              }
+
+              final provider = Provider.of<InventoryProvider>(context, listen: false);
+
+              // Evitar fallo si aún no cargaron categorías
+              final catId = _selectedCategoryId ?? (provider.categories.isNotEmpty ? provider.categories.first.id : 'unknown');
+
+              final product = Product(
+                id: widget.productToEdit?.id ?? 'prod_${DateTime.now().millisecondsSinceEpoch}',
+                name: _nameController.text.trim(),
+                categoryId: catId,
+                price: int.tryParse(_priceController.text) ?? 0,
+                stock: int.tryParse(_stockController.text) ?? 0,
+                minStock: int.tryParse(_minStockController.text) ?? 0,
+                prepTimeMinutes: int.tryParse(_prepTimeController.text) ?? 0,
+                isAvailable: _isAvailable,
+                description: _descriptionController.text.trim(),
+                aiContext: _aiContextController.text.trim(),
+                aiActive: _aiActive,
+                emoji: widget.productToEdit?.emoji ?? '📦', // Se puede expandir luego
+              );
+
+              if (widget.productToEdit == null) {
+                await provider.addProduct(product);
+              } else {
+                await provider.updateProduct(product);
+              }
+
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
             },
             child: Container(
               height: 52,

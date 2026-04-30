@@ -1,0 +1,86 @@
+{
+  "categorias": [
+    {
+      "id": "cat_1",
+      "name": "Panadería",
+      "emoji": "🍞"
+    },
+    {
+      "id": "cat_2",
+      "name": "Bebidas",
+      "emoji": "☕"
+    },
+    {
+      "id": "cat_3",
+      "name": "Repostería",
+      "emoji": "🍰"
+    },
+    {
+      "id": "cat_4",
+      "name": "Ensaladas",
+      "emoji": "🥗"
+    }
+  ],
+  "productos": [
+    {
+      "id": "prod_1",
+      "name": "Croissant de jamón y queso",
+      "categoryId": "cat_1",
+      "price": 8500,
+      "stock": 40,
+      "minStock": 10,
+      "prepTimeMinutes": 5,
+      "isAvailable": true,
+      "description": "Delicioso croissant hecho de hojaldre con relleno de jamón ibérico y queso gouda. Servido tibio.",
+      "aiContext": "Menciona alergenos, ingredientes alternativos o restricciones dietéticas.",
+      "aiActive": true,
+      "imageUrl": null,
+      "emoji": "🥐"
+    },
+    {
+      "id": "prod_2",
+      "name": "Café latte especial",
+      "categoryId": "cat_2",
+      "price": 5000,
+      "stock": 5,
+      "minStock": 10,
+      "prepTimeMinutes": 3,
+      "isAvailable": true,
+      "description": "Café de origen con leche espumada.",
+      "aiContext": "Indica horarios especiales o promociones.",
+      "aiActive": true,
+      "imageUrl": null,
+      "emoji": "☕"
+    },
+    {
+      "id": "prod_3",
+      "name": "Torta de tres leches",
+      "categoryId": "cat_3",
+      "price": 12000,
+      "stock": 0,
+      "minStock": 2,
+      "prepTimeMinutes": 10,
+      "isAvailable": true,
+      "description": "Torta húmeda de tres leches.",
+      "aiContext": "Menciona que es ideal para cumpleaños.",
+      "aiActive": false,
+      "imageUrl": null,
+      "emoji": "🍰"
+    },
+    {
+      "id": "prod_4",
+      "name": "Pan de bono x6",
+      "categoryId": "cat_1",
+      "price": 9000,
+      "stock": 32,
+      "minStock": 5,
+      "prepTimeMinutes": 5,
+      "isAvailable": true,
+      "description": "Pan de bono tradicional calientito.",
+      "aiContext": "Agrega maridajes o productos recomendados.",
+      "aiActive": true,
+      "imageUrl": null,
+      "emoji": "🧀"
+    }
+  ]
+}

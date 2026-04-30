@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import '../models/product_model.dart';
 import '../models/category_model.dart';
 import '../repositories/inventory_repository.dart';
@@ -13,34 +18,74 @@ class InventoryProvider extends ChangeNotifier {
   List<Category> _categories = [];
   List<Product> _products = [];
 
-  /// Callback para sincronizar con el FastAPI (inyectado desde main).
-  /// Se invoca cada vez que el inventario cambia.
-  Future<void> Function({
-    required List<Map<String, dynamic>> categorias,
-    required List<Map<String, dynamic>> productos,
-  })? _onInventarioActualizado;
+  // Se eliminó el callback obsoleto
 
-  set onInventarioActualizado(
-    Future<void> Function({
-      required List<Map<String, dynamic>> categorias,
-      required List<Map<String, dynamic>> productos,
-    })? callback,
-  ) {
-    final eraNulo = _onInventarioActualizado == null;
-    _onInventarioActualizado = callback;
-    if (eraNulo && callback != null) {
-      // Sincronizar inmediatamente al conectar el webhook
-      _sincronizarConApi();
+  final String _baseUrl;
+  final String _secreto;
+  Timer? _timer;
+
+  InventoryProvider(
+    this._repository, {
+    String baseUrl = 'http://localhost:5050',
+    String secreto = '',
+  })  : _baseUrl = baseUrl,
+        _secreto = secreto {
+    _loadData();
+    _iniciarPolling();
+  }
+
+  void _iniciarPolling() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) => _fetchDelServidor());
+    // Primera carga inmediata
+    _fetchDelServidor();
+  }
+
+  Future<void> _fetchDelServidor() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/inventario'),
+        headers: {'x-secret': _secreto},
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        
+        final List<dynamic> catList = data['categorias'] ?? [];
+        final List<dynamic> prodList = data['productos'] ?? [];
+
+        final newCategories = catList.map((e) => Category.fromJson(e)).toList();
+        final newProducts = prodList.map((e) => Product.fromJson(e)).toList();
+
+        // Para evitar refrescos constantes si no hay cambios, comparamos cantidad
+        // (idealmente deberíamos comparar hashes o timestamps, esto es una aproximación simple)
+        bool hasChanges = _categories.length != newCategories.length || 
+                          _products.length != newProducts.length;
+        
+        if (!hasChanges) {
+          for (int i = 0; i < newProducts.length; i++) {
+            if (_products[i].stock != newProducts[i].stock || _products[i].isAvailable != newProducts[i].isAvailable) {
+              hasChanges = true;
+              break;
+            }
+          }
+        }
+
+        if (hasChanges && newCategories.isNotEmpty) {
+          _categories = newCategories;
+          _products = newProducts;
+          // Guardar en cache local
+          await _repository.saveAllData(newCategories, newProducts);
+          notifyListeners();
+        }
+      }
+    } catch (_) {
+      // Si falla, seguimos con cache
     }
   }
 
-  Future<void> Function({
-    required List<Map<String, dynamic>> categorias,
-    required List<Map<String, dynamic>> productos,
-  })? get onInventarioActualizado => _onInventarioActualizado;
-
-  InventoryProvider(this._repository) {
-    _loadData();
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   List<Category> get categories => _categories;
@@ -52,15 +97,19 @@ class InventoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Notifica al FastAPI sobre el cambio en el inventario.
   Future<void> _sincronizarConApi() async {
-    final callback = onInventarioActualizado;
-    if (callback == null) return;
-
     try {
-      await callback(
-        categorias: _categories.map((c) => c.toJson()).toList(),
-        productos: _products.map((p) => p.toJson()).toList(),
+      final body = {
+        'categorias': _categories.map((c) => c.toJson()).toList(),
+        'productos': _products.map((p) => p.toJson()).toList(),
+      };
+      await http.put(
+        Uri.parse('$_baseUrl/inventario'),
+        headers: {
+          'x-secret': _secreto,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
       );
     } catch (_) {
       // Falla silenciosa: el inventario local ya está actualizado

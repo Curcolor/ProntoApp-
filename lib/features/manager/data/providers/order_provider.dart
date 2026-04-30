@@ -269,25 +269,6 @@ class OrderProvider extends ChangeNotifier {
     return true;
   }
 
-  /// Sincroniza el inventario con el FastAPI para que el bot lo use.
-  Future<void> sincronizarInventario({
-    required List<Map<String, dynamic>> categorias,
-    required List<Map<String, dynamic>> productos,
-  }) async {
-    try {
-      await http
-          .put(
-            Uri.parse('$_baseUrl/inventario'),
-            headers: {..._cabeceras(), 'Content-Type': 'application/json'},
-            body: jsonEncode({'categorias': categorias, 'productos': productos}),
-          )
-          .timeout(const Duration(seconds: 5));
-    } catch (_) {
-      // Falla silenciosa — el inventario en FastAPI puede desactualizarse
-      // pero no es crítico para el funcionamiento de la app
-    }
-  }
-
   // ─── Utilidades ────────────────────────────────────────────────────────────
 
   List<OrderModel> _filtrarPor(EstadoPedido estado) =>
