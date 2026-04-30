@@ -365,45 +365,51 @@ class ColaPedidosScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: statusBg,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        pedido.inicialCliente,
-                        style: GoogleFonts.inter(
-                            color: statusText,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800),
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: statusBg,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          pedido.inicialCliente,
+                          style: GoogleFonts.inter(
+                              color: statusText,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        pedido.id,
-                        style: GoogleFonts.inter(
-                            color: AppColors.textPrimary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            pedido.id,
+                            style: GoogleFonts.inter(
+                                color: AppColors.textPrimary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            pedido.cliente,
+                            style: GoogleFonts.inter(
+                                color: AppColors.textMuted,
+                                fontSize: 11),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      Text(
-                        pedido.cliente,
-                        style: GoogleFonts.inter(
-                            color: AppColors.textMuted,
-                            fontSize: 11),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
