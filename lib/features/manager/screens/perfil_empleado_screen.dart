@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/data/models/user_model.dart';
 
 class PerfilEmpleadoScreen extends StatefulWidget {
-  const PerfilEmpleadoScreen({super.key});
+  final UserModel usuario;
+  final Map<String, dynamic> meta;
+
+  const PerfilEmpleadoScreen({
+    super.key,
+    required this.usuario,
+    required this.meta,
+  });
 
   @override
   State<PerfilEmpleadoScreen> createState() => _PerfilEmpleadoScreenState();
@@ -77,7 +85,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sofia Herrera',
+                    widget.usuario.name,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF0F172A),
                       fontSize: 22,
@@ -88,7 +96,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Cocinera · activa desde Mar 2025',
+                    '${widget.meta['role']} · Activo/a',
                     style: GoogleFonts.inter(
                       color: const Color(0xFF64748B),
                       fontSize: 11,
@@ -127,8 +135,8 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFEF3C7), Color(0xFFFDE68A)],
+        gradient: LinearGradient(
+          colors: widget.meta['gradientColors'] ?? [const Color(0xFFFEF3C7), const Color(0xFFFDE68A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -152,9 +160,9 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
             ),
             child: Center(
               child: Text(
-                'S',
+                widget.meta['initial'] ?? 'U',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFB45309),
+                  color: widget.meta['initialColor'] ?? const Color(0xFFB45309),
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                 ),
@@ -167,7 +175,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Sofia Herrera',
+                  widget.usuario.name,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF78350F),
                     fontSize: 18,
@@ -177,7 +185,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  '+57 316 456 7890',
+                  widget.usuario.email,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF92400E),
                     fontSize: 11,
@@ -189,18 +197,18 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFEF3C7),
+                        color: widget.meta['roleBg'] ?? const Color(0xFFFEF3C7),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const FaIcon(FontAwesomeIcons.fireBurner, color: Color(0xFFB45309), size: 9),
+                          FaIcon(widget.meta['roleIcon'] ?? FontAwesomeIcons.fireBurner, color: widget.meta['roleColor'] ?? const Color(0xFFB45309), size: 9),
                           const SizedBox(width: 4),
                           Text(
-                            'Cocinera',
+                            widget.meta['role'] ?? 'Cocinera',
                             style: GoogleFonts.inter(
-                              color: const Color(0xFFB45309),
+                              color: widget.meta['roleColor'] ?? const Color(0xFFB45309),
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -222,13 +230,13 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF25D366),
+                              color: widget.meta['statusDotColor'] ?? const Color(0xFF25D366),
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Activa',
+                            widget.meta['statusText'] ?? 'Activa',
                             style: GoogleFonts.inter(
                               color: const Color(0xFF15803D),
                               fontSize: 11,
@@ -276,8 +284,8 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
             icon: FontAwesomeIcons.whatsapp,
             iconColor: const Color(0xFF15803D),
             iconBgColor: const Color(0xFFDCFCE7),
-            label: 'WhatsApp',
-            value: '+57 316 456 7890',
+            label: 'ID de usuario',
+            value: widget.usuario.id,
             showDivider: true,
           ),
           _buildContactRow(
@@ -285,7 +293,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
             iconColor: const Color(0xFF1D4ED8),
             iconBgColor: const Color(0xFFDBEAFE),
             label: 'Correo',
-            value: 'sofia.h@gmail.com',
+            value: widget.usuario.email,
             showDivider: true,
           ),
           _buildContactRow(
@@ -293,7 +301,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
             iconColor: const Color(0xFFB45309),
             iconBgColor: const Color(0xFFFEF3C7),
             label: 'Rol',
-            value: 'Cocinera',
+            value: widget.meta['role'] ?? 'Cocinera',
             showDivider: false,
           ),
         ],

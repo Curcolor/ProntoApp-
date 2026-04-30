@@ -300,7 +300,10 @@ class _EquipoScreenState extends State<EquipoScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PerfilEmpleadoScreen(),
+            builder: (context) => PerfilEmpleadoScreen(
+              usuario: usuario,
+              meta: meta,
+            ),
           ),
         );
       },
