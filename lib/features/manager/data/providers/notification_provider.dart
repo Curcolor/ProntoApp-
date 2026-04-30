@@ -67,46 +67,7 @@ class NotificationProvider extends ChangeNotifier {
   }
 
   void _initializeDefaultData() {
-    final now = DateTime.now();
-    _notifications.addAll([
-      NotificationModel(
-        id: '1',
-        title: 'Nuevo pedido recibido',
-        description: 'María García · 2× Pan de bono, 1× Almojábana\n· \$18,500',
-        timestamp: now.subtract(const Duration(minutes: 2)),
-        type: NotificationType.pedido,
-      ),
-      NotificationModel(
-        id: '2',
-        title: 'IA procesó pedido #P-0040',
-        description: 'El agente confirmó automáticamente el pedido\nde Juan Rodríguez',
-        timestamp: now.subtract(const Duration(minutes: 7)),
-        type: NotificationType.ia,
-      ),
-      NotificationModel(
-        id: '3',
-        title: 'Pedido #P-0038 lleva 6 min sin confirmar',
-        description: 'Ana Martínez espera respuesta. Revisa el\npedido pronto.',
-        timestamp: now.subtract(const Duration(minutes: 6)),
-        type: NotificationType.sistema,
-      ),
-      NotificationModel(
-        id: '4',
-        title: 'Pedido #P-0037 entregado',
-        description: 'Luis Pérez recibió su pedido. Pago confirmado:\n\$24,000',
-        timestamp: now.subtract(const Duration(minutes: 35)),
-        type: NotificationType.pedido,
-        isRead: true, // Example of read notification
-      ),
-      NotificationModel(
-        id: '5',
-        title: 'Conexión WhatsApp inestable',
-        description: 'Se detectó una interrupción breve. La IA está\nnuevamente activa.',
-        timestamp: now.subtract(const Duration(hours: 24, minutes: 30)),
-        type: NotificationType.sistema,
-        isRead: true,
-      ),
-    ]);
+    // Inicialmente vacío, se llena dinámicamente con eventos reales.
   }
 
   void addNotification(NotificationModel notification) {

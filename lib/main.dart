@@ -35,14 +35,18 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => InventoryProvider(inventoryRepo),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProxyProvider<NotificationProvider, OrderProvider>(
           create: (_) => OrderProvider(
             repositorio: orderRepo,
             baseUrl: 'http://localhost:5050',
             secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
           ),
+          update: (_, notifProvider, orderProvider) {
+            orderProvider!.onNewNotification = notifProvider.addNotification;
+            return orderProvider;
+          },
         ),
-        ChangeNotifierProvider(create: (_) => NotificationProvider()),
         // Conecta el sync de inventario al OrderProvider tras ambos crearse
         ProxyProvider<OrderProvider, InventoryProvider>(
           update: (_, orderProvider, previous) {

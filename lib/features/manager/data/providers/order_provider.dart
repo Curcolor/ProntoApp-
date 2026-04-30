@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/order_model.dart';
 import '../repositories/order_repository.dart';
+import 'notification_provider.dart';
 
 /// Provider de pedidos: fuente única de verdad para todos los módulos.
 ///
@@ -26,6 +27,9 @@ class OrderProvider extends ChangeNotifier {
   bool _estaConectado = false;
   bool _cargando = false;
   Timer? _timer;
+
+  /// Callback para inyectar notificaciones sin crear dependencia circular
+  void Function(NotificationModel)? onNewNotification;
 
   static const Duration _intervaloPoll = Duration(seconds: 5);
 
@@ -155,9 +159,29 @@ class OrderProvider extends ChangeNotifier {
 
       if (respuesta.statusCode == 200) {
         final lista = jsonDecode(respuesta.body) as List<dynamic>;
-        _pedidos = lista
+        final nuevosPedidos = lista
             .map((e) => OrderModel.fromJson(e as Map<String, dynamic>))
             .toList();
+
+        // Detectar nuevos pedidos para notificaciones reales
+        if (_pedidos.isNotEmpty) {
+          final idsViejos = _pedidos.map((p) => p.id).toSet();
+          for (var p in nuevosPedidos) {
+            if (!idsViejos.contains(p.id) && p.estado == EstadoPedido.recibido) {
+              onNewNotification?.call(
+                NotificationModel(
+                  id: DateTime.now().millisecondsSinceEpoch.toString() + p.id,
+                  title: 'Nuevo pedido recibido',
+                  description: '${p.cliente} · \$${p.total}',
+                  timestamp: DateTime.now(),
+                  type: NotificationType.pedido,
+                ),
+              );
+            }
+          }
+        }
+
+        _pedidos = nuevosPedidos;
 
         // Ordenar: más recientes primero
         _pedidos.sort((a, b) => b.creadoEn.compareTo(a.creadoEn));
@@ -174,6 +198,16 @@ class OrderProvider extends ChangeNotifier {
       if (_estaConectado) {
         _estaConectado = false;
         _pedidos = _repositorio.obtenerCache();
+        
+        onNewNotification?.call(
+          NotificationModel(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            title: 'Conexión con el servidor perdida',
+            description: 'No se pueden recibir nuevos pedidos.',
+            timestamp: DateTime.now(),
+            type: NotificationType.sistema,
+          ),
+        );
       }
     }
 
