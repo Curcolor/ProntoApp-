@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/app/routes.dart';
+import 'package:prontoapp/data/services/auth_service.dart';
 
-void main() {
-  runApp(const ProntoApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AuthService().initialize();
+  
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: AuthService()),
+      ],
+      child: const ProntoApp(),
+    ),
+  );
 }
 
 class ProntoApp extends StatelessWidget {
@@ -11,16 +23,20 @@ class ProntoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ProntoApp!',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF25D366)),
-        useMaterial3: true,
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
-      ),
-      routes: AppRoutes.getRoutes(),
-      home: AppRoutes.getInitialScreen(),
+    return Consumer<AuthService>(
+      builder: (context, auth, _) {
+        return MaterialApp(
+          title: 'ProntoApp!',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF25D366)),
+            useMaterial3: true,
+            textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+          ),
+          routes: AppRoutes.getRoutes(),
+          home: AppRoutes.getInitialScreen(),
+        );
+      }
     );
   }
 }

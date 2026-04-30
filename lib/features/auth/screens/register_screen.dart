@@ -24,6 +24,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _contrasenaVisible = false;
   bool _botonPresionado = false;
+  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -210,9 +212,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   /// Todos los campos del formulario + botón "Continuar"
   Widget _buildFormulario() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         // Nombre del negocio
         _buildCampoLabel('Nombre del negocio'),
         const SizedBox(height: 6.52),
@@ -221,6 +225,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           hintText: 'Ej: Panadería El Buen Pan',
           icono: FontAwesomeIcons.store,
           iconoColor: const Color(0xFF94A3B8),
+          validator: (val) => val == null || val.isEmpty ? 'Requerido' : null,
         ),
 
         const SizedBox(height: 17.38),
@@ -239,6 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'Carlos',
                     icono: FontAwesomeIcons.user,
                     iconoColor: const Color(0xFF94A3B8),
+                    validator: (val) => val == null || val.isEmpty ? 'Requerido' : null,
                   ),
                 ],
               ),
@@ -255,6 +261,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'Mendoza',
                     icono: FontAwesomeIcons.user,
                     iconoColor: const Color(0xFF94A3B8),
+                    validator: (val) => val == null || val.isEmpty ? 'Requerido' : null,
                   ),
                 ],
               ),
@@ -273,6 +280,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           icono: FontAwesomeIcons.whatsapp,
           iconoColor: const Color(0xFF25D366),
           tipoTeclado: TextInputType.phone,
+          validator: (val) => val == null || val.isEmpty ? 'Requerido' : null,
         ),
 
         const SizedBox(height: 17.38),
@@ -287,6 +295,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           iconoColor: const Color(0xFF94A3B8),
           tipoTeclado: TextInputType.emailAddress,
           fillColor: const Color(0xFFF8FAFC),
+          validator: (val) {
+            if (val == null || val.isEmpty) return 'Requerido';
+            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val)) return 'Correo inválido';
+            return null;
+          },
         ),
 
         const SizedBox(height: 17.38),
@@ -301,6 +314,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Botón "Continuar →"
         _buildBotonContinuar(),
       ],
+    ),
     );
   }
 
@@ -316,7 +330,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  /// Campo de texto genérico con ícono a la izquierda
   Widget _buildInputConIcono({
     required TextEditingController controlador,
     required String hintText,
@@ -324,42 +337,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required Color iconoColor,
     TextInputType tipoTeclado = TextInputType.text,
     Color fillColor = Colors.white,
+    String? Function(String?)? validator,
   }) {
-    return SizedBox(
-      height: 56.5,
-      child: TextFormField(
-        controller: controlador,
-        keyboardType: tipoTeclado,
-        style: GoogleFonts.inter(
+    return TextFormField(
+      controller: controlador,
+      keyboardType: tipoTeclado,
+      validator: validator,
+      style: GoogleFonts.inter(
+        fontSize: 16.3,
+        color: const Color(0xFF1E293B),
+      ),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: GoogleFonts.inter(
           fontSize: 16.3,
-          color: const Color(0xFF1E293B),
+          color: const Color(0xFF757575),
         ),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: GoogleFonts.inter(
-            fontSize: 16.3,
-            color: const Color(0xFF757575),
-          ),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 15.21, right: 12),
-            child: FaIcon(icono, color: iconoColor, size: 17.38),
-          ),
-          prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-          filled: true,
-          fillColor: fillColor,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 18.47, vertical: 17.93),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(13.04),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(13.04),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(13.04),
-            borderSide: const BorderSide(color: Color(0xFF25D366), width: 1.5),
-          ),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 15.21, right: 12),
+          child: FaIcon(icono, color: iconoColor, size: 17.38),
+        ),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        filled: true,
+        fillColor: fillColor,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18.47, vertical: 17.93),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(13.04),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(13.04),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(13.04),
+          borderSide: const BorderSide(color: Color(0xFF25D366), width: 1.5),
         ),
       ),
     );
@@ -367,59 +379,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   /// Campo de contraseña con ícono de candado y botón de visibilidad
   Widget _buildInputContrasena() {
-    return SizedBox(
-      height: 58,
-      child: TextFormField(
-        controller: _contrasenaController,
-        obscureText: !_contrasenaVisible,
-        style: GoogleFonts.inter(
+    return TextFormField(
+      controller: _contrasenaController,
+      obscureText: !_contrasenaVisible,
+      validator: (val) {
+        if (val == null || val.isEmpty) return 'Requerido';
+        if (val.length < 6) return 'Mínimo 6 caracteres';
+        return null;
+      },
+      style: GoogleFonts.inter(
+        fontSize: 16.3,
+        color: const Color(0xFF1E293B),
+      ),
+      decoration: InputDecoration(
+        hintText: '••••••••',
+        hintStyle: GoogleFonts.inter(
           fontSize: 16.3,
-          color: const Color(0xFF1E293B),
+          color: const Color(0xFF757575),
         ),
-        decoration: InputDecoration(
-          hintText: '••••••••',
-          hintStyle: GoogleFonts.inter(
-            fontSize: 16.3,
-            color: const Color(0xFF757575),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 15.21, right: 12),
+          child: FaIcon(
+            FontAwesomeIcons.lock,
+            color: const Color(0xFF94A3B8),
+            size: 17.38,
           ),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 15.21, right: 12),
-            child: FaIcon(
-              FontAwesomeIcons.lock,
-              color: const Color(0xFF94A3B8),
-              size: 17.38,
-            ),
+        ),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        suffixIcon: IconButton(
+          icon: FaIcon(
+            _contrasenaVisible
+                ? FontAwesomeIcons.eyeSlash
+                : FontAwesomeIcons.eye,
+            color: const Color(0xFF94A3B8),
+            size: 17.38,
           ),
-          prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-          suffixIcon: IconButton(
-            icon: FaIcon(
-              _contrasenaVisible
-                  ? FontAwesomeIcons.eyeSlash
-                  : FontAwesomeIcons.eye,
-              color: const Color(0xFF94A3B8),
-              size: 17.38,
-            ),
-            onPressed: () {
-              setState(() {
-                _contrasenaVisible = !_contrasenaVisible;
-              });
-            },
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 18.47, vertical: 17.93),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFF25D366), width: 1.5),
-          ),
+          onPressed: () {
+            setState(() {
+              _contrasenaVisible = !_contrasenaVisible;
+            });
+          },
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18.47, vertical: 17.93),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFF25D366), width: 1.5),
         ),
       ),
     );
@@ -445,8 +459,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ],
       ),
       child: ElevatedButton(
-        onPressed: () {
-          AuthPopupDialogs.showConfirmCodeDialog(context);
+        onPressed: _isLoading ? null : () async {
+          if (!_formKey.currentState!.validate()) return;
+          setState(() => _isLoading = true);
+          
+          final success = await AuthService().register(
+            name: _nombreController.text.trim(),
+            lastName: _apellidoController.text.trim(),
+            businessName: _nombreNegocioController.text.trim(),
+            email: _correoController.text.trim(),
+            password: _contrasenaController.text,
+          );
+
+          setState(() => _isLoading = false);
+
+          if (!mounted) return;
+
+          if (success) {
+            // Ir al dialog de confirmación y luego al Dashboard
+            AuthPopupDialogs.showConfirmCodeDialog(context);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('El correo ya está en uso.')),
+            );
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -456,21 +492,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
             borderRadius: BorderRadius.circular(17.38),
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Continuar',
-              style: GoogleFonts.inter(
-                fontSize: 17.38,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+        child: _isLoading 
+          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Continuar',
+                  style: GoogleFonts.inter(
+                    fontSize: 17.38,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 8.69),
+                const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+              ],
             ),
-            const SizedBox(width: 8.69),
-            const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
-          ],
-        ),
       ),
     );
   }

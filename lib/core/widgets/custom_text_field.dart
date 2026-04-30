@@ -7,6 +7,7 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     super.key,
@@ -15,6 +16,7 @@ class CustomTextField extends StatefulWidget {
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.controller,
+    this.validator,
   });
 
   @override
@@ -44,55 +46,53 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         ),
         const SizedBox(height: 6.5),
-        SizedBox(
-          height: 56.5,
-          child: TextFormField(
-            controller: widget.controller,
-            obscureText: _obscureText,
-            keyboardType: widget.keyboardType,
-            style: GoogleFonts.inter(
+        TextFormField(
+          controller: widget.controller,
+          obscureText: _obscureText,
+          keyboardType: widget.keyboardType,
+          validator: widget.validator,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            color: const Color(0xFF757575), // fill_HUKIH1
+          ),
+          decoration: InputDecoration(
+            hintText: widget.hintText,
+            hintStyle: GoogleFonts.inter(
               fontSize: 16,
-              color: const Color(0xFF757575), // fill_HUKIH1
+              color: const Color(0xFF94A3B8), // fill_UG401K
             ),
-            decoration: InputDecoration(
-              hintText: widget.hintText,
-              hintStyle: GoogleFonts.inter(
-                fontSize: 16,
-                color: const Color(0xFF94A3B8), // fill_UG401K
-              ),
-              filled: true,
-              fillColor: Colors.white, // fill_E5T5YJ
-              suffixIcon: widget.isPassword
-                  ? IconButton(
-                      icon: Icon(
-                        _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                        color: const Color(0xFF94A3B8),
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    )
-                  : null,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 17.5, vertical: 18),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.0), 
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFF25D366), width: 1.5), 
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Colors.redAccent, width: 1.0),
-              ),
+            filled: true,
+            fillColor: Colors.white, // fill_E5T5YJ
+            suffixIcon: widget.isPassword
+                ? IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      color: const Color(0xFF94A3B8),
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                : null,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 17.5, vertical: 18),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.0), 
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFF25D366), width: 1.5), 
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Colors.redAccent, width: 1.0),
             ),
           ),
         ),
