@@ -191,9 +191,11 @@ class ProfileScreen extends StatelessWidget {
                 Consumer<OrderProvider>(
                   builder: (context, orderProvider, child) {
                     final int entrantes = orderProvider.recibidos.length;
-                    final String aiStatusText = entrantes > 0 
-                        ? 'IA Activa · $entrantes pedidos entrantes'
-                        : 'IA Activa · Sin pedidos nuevos';
+                    final String aiStatusText = !orderProvider.estaConectado 
+                        ? 'IA No Activa · Sin conexión'
+                        : entrantes > 0 
+                            ? 'IA Activa · $entrantes pedidos entrantes'
+                            : 'IA Activa · Sin pedidos nuevos';
 
                     return Container(
                       decoration: BoxDecoration(

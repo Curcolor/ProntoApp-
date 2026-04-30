@@ -30,7 +30,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
         return {
           'initial': usuario.name.isNotEmpty ? usuario.name[0].toUpperCase() : 'G',
           'gradientColors': [AppColors.primary, AppColors.primaryDark],
-          'initialColor': AppColors.surface,
+          'initialColor': AppColors.successText,
           'role': 'Gerente',
           'roleIcon': FontAwesomeIcons.crown,
           'roleColor': AppColors.successText,
