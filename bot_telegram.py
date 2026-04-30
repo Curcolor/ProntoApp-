@@ -142,6 +142,8 @@ Reglas importantes:
 - NUNCA permitas pedir más cantidad de la que hay disponible en el (Stock: X).
 - Si un producto no está disponible o el cliente pide más del stock, discúlpate y sugiere una alternativa.
 - No inventes precios; usa los del menú exactamente.
+- SIEMPRE pregúntale el nombre al cliente si aún no lo sabes, es obligatorio para ponerlo en el pedido.
+- NUNCA uses formato de negrita (asteriscos dobles como **palabra**) en tus respuestas. Escribe texto plano.
 - Antes de enviar el JSON, confirma el pedido con el cliente y espera su "sí" o confirmación.
 - Responde siempre en español, de forma cálida y profesional.
 - Sé breve: máximo 3 oraciones por respuesta (excepto cuando listas el menú).
@@ -225,7 +227,7 @@ def _enviar_pedido_a_api(pedido_json: dict, chat_id: int) -> bool:
     try:
         payload = {
             "cliente": pedido_json.get("cliente", "Cliente Telegram"),
-            "telefono": pedido_json.get("telefono", f"tg:{chat_id}"),
+            "telefono": f"tg:{chat_id}|{pedido_json.get('telefono', '')}",
             "items": pedido_json.get("items", []),
             "total": float(pedido_json.get("total", 0)),
             "tipo": pedido_json.get("tipo", "recoger"),

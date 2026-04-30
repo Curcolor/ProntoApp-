@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+import httpx
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException, status
@@ -22,6 +23,7 @@ load_dotenv()
 # ─── Configuración ────────────────────────────────────────────────────────────
 
 SECRETO = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 ARCHIVO_PEDIDOS = Path("pedidos.json")
 ARCHIVO_INVENTARIO = Path("inventario.json")
 
@@ -74,6 +76,28 @@ def _verificar_secreto(x_secret: Optional[str]) -> None:
             detail="Acceso denegado: secreto inválido",
         )
 
+def _notificar_cambio_estado_telegram(chat_id: str, pedido_id: str, estado: str) -> None:
+    """Envía un mensaje al usuario de Telegram avisando del cambio de estado."""
+    estados_amigables = {
+        "recibido": "📋 Recibido y en cola",
+        "en_preparacion": "👨‍🍳 En preparación (¡Ya casi!)",
+        "listo": "🛍️ Listo para recoger/enviar",
+        "en_camino": "🛵 En camino a tu dirección",
+        "entregado": "✅ Entregado. ¡Que lo disfrutes!"
+    }
+    estado_texto = estados_amigables.get(estado, estado)
+    mensaje = f"🔔 Tu pedido *{pedido_id}* ha cambiado de estado:\n\n👉 {estado_texto}"
+
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        httpx.post(
+            url,
+            json={"chat_id": chat_id, "text": mensaje, "parse_mode": "Markdown"},
+            timeout=5
+        )
+    except Exception as e:
+        print(f"Error enviando notificación a Telegram: {e}")
+
 
 # ─── Modelos Pydantic ─────────────────────────────────────────────────────────
 
@@ -119,7 +143,16 @@ def health_check():
 def obtener_pedidos(x_secret: Optional[str] = Header(default=None)):
     """Flutter lee la lista completa de pedidos."""
     _verificar_secreto(x_secret)
-    return _leer_pedidos()
+    pedidos = _leer_pedidos()
+    
+    # Limpiar el campo teléfono para no mostrar tg:chat_id| en Flutter
+    for pedido in pedidos:
+        telefono = pedido.get("telefono", "")
+        if telefono.startswith("tg:"):
+            partes = telefono.split("|", 1)
+            pedido["telefono"] = partes[1] if len(partes) > 1 else ""
+            
+    return pedidos
 
 
 @app.post("/pedidos", status_code=status.HTTP_201_CREATED)
@@ -183,8 +216,19 @@ def actualizar_estado(
     pedidos = _leer_pedidos()
     for pedido in pedidos:
         if pedido["id"] == pedido_id:
-            pedido["estado"] = body.estado
-            _guardar_pedidos(pedidos)
+            estado_anterior = pedido.get("estado")
+            if estado_anterior != body.estado:
+                pedido["estado"] = body.estado
+                _guardar_pedidos(pedidos)
+                
+                # Enviar notificación por Telegram si está asociado a un chat_id
+                telefono = pedido.get("telefono", "")
+                if TELEGRAM_BOT_TOKEN and telefono.startswith("tg:"):
+                    # Extraer chat_id del formato tg:12345|telefono_real
+                    chat_id_str = telefono.split("|")[0]
+                    chat_id = chat_id_str.replace("tg:", "")
+                    _notificar_cambio_estado_telegram(chat_id, pedido["id"], body.estado)
+
             return pedido
 
     raise HTTPException(
