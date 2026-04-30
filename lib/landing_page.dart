@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui';
 import 'dart:math' as math;
-import 'package:prontoapp/models/user_model.dart';
-import 'package:prontoapp/screens/auth/login_screen.dart';
-import 'package:prontoapp/screens/auth/register_screen.dart';
+import 'package:prontoapp/data/models/user_model.dart';
+import 'package:prontoapp/features/auth/screens/login_screen.dart';
+import 'package:prontoapp/features/auth/screens/register_screen.dart';
 
 class LandingPage extends StatelessWidget {
   final RoleType role;

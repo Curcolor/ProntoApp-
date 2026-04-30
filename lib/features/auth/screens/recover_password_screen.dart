@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:prontoapp/widgets/auth_popup_dialogs.dart';
+import 'package:prontoapp/features/auth/widgets/auth_popup_dialogs.dart';
 
 class RecoverPasswordScreen extends StatelessWidget {
   const RecoverPasswordScreen({super.key});

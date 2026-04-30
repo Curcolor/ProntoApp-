@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:prontoapp/screens/manager/manager_main_screen.dart'; // Solo para propósitos de UI (navegación falsa)
+import 'package:prontoapp/features/manager/screens/manager_main_screen.dart'; // Solo para propósitos de UI (navegación falsa)
 
 class AuthModals {
   static void showLoginGoogle(BuildContext context) {

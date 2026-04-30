@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:prontoapp/screens/auth/register_screen.dart';
-import 'package:prontoapp/screens/auth/recover_password_screen.dart';
-import 'package:prontoapp/screens/auth/processing_screen.dart';
-import 'package:prontoapp/widgets/custom_text_field.dart';
-import 'package:prontoapp/widgets/auth_popup_dialogs.dart';
+import 'package:prontoapp/features/auth/screens/register_screen.dart';
+import 'package:prontoapp/features/auth/screens/recover_password_screen.dart';
+import 'package:prontoapp/features/auth/screens/processing_screen.dart';
+import 'package:prontoapp/core/widgets/custom_text_field.dart';
+import 'package:prontoapp/features/auth/widgets/auth_popup_dialogs.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:prontoapp/services/auth_service.dart';
-import 'package:prontoapp/models/user_model.dart';
-import 'package:prontoapp/screens/manager/manager_main_screen.dart';
-import 'package:prontoapp/screens/kitchen/kitchen_main_screen.dart';
-import 'package:prontoapp/screens/delivery/delivery_main_screen.dart';
+import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/data/models/user_model.dart';
+import 'package:prontoapp/features/manager/screens/manager_main_screen.dart';
+import 'package:prontoapp/features/kitchen/screens/kitchen_main_screen.dart';
+import 'package:prontoapp/features/delivery/screens/delivery_main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

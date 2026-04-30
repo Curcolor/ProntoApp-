@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:prontoapp/screens/auth/login_screen.dart';
-import 'package:prontoapp/widgets/auth_popup_dialogs.dart';
+import 'package:prontoapp/features/auth/screens/login_screen.dart';
+import 'package:prontoapp/features/auth/widgets/auth_popup_dialogs.dart';
 
 /// Pantalla de registro rediseñada según Figma node 237:258.
 /// Estructura: Header inline + barra de progreso + formulario por pasos.

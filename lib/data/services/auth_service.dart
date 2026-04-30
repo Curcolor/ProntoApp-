@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../models/user_model.dart';
+import 'package:prontoapp/data/models/user_model.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();

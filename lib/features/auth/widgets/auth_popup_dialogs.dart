@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:prontoapp/screens/auth/processing_screen.dart';
+import 'package:prontoapp/features/auth/screens/processing_screen.dart';
 
 class AuthPopupDialogs {
   // Reusable Floating Icon Dialog Base

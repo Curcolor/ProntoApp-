@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:prontoapp/widgets/modals/entrega_confirmada_modal.dart';
+import 'package:prontoapp/features/delivery/widgets/entrega_confirmada_modal.dart';
 
 class EnRutaScreen extends StatelessWidget {
   const EnRutaScreen({super.key});
