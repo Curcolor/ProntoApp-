@@ -825,7 +825,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                 id: widget.productToEdit?.id ?? 'prod_${DateTime.now().millisecondsSinceEpoch}',
                 name: _nameController.text.trim(),
                 categoryId: catId,
-                price: int.tryParse(_priceController.text) ?? 0,
+                price: double.tryParse(_priceController.text) ?? 0.0,
                 stock: int.tryParse(_stockController.text) ?? 0,
                 minStock: int.tryParse(_minStockController.text) ?? 0,
                 prepTimeMinutes: int.tryParse(_prepTimeController.text) ?? 0,

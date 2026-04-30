@@ -50,6 +50,7 @@ void main() async {
             orderProvider!.onNewNotification = notifProvider.addNotification;
             return orderProvider;
           },
+        ),
       ],
       child: const ProntoApp(),
     ),
