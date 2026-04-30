@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/data/models/user_model.dart';
 import 'inventario_screen.dart';
 import 'equipo_screen.dart';
 import 'agentes_ia_screen.dart';
@@ -12,6 +14,12 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final usuario = context.watch<AuthService>().currentUser;
+    final nombre = usuario?.name ?? 'Usuario';
+    final email = usuario?.email ?? '';
+    final inicial = nombre.isNotEmpty ? nombre[0].toUpperCase() : 'U';
+    final esGerente = usuario?.role == RoleType.gerente;
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -72,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          'C',
+                          inicial,
                           style: GoogleFonts.inter(
                             color: const Color(0xFF128C7E),
                             fontSize: 34.77,
@@ -111,7 +119,7 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Carlos Mendoza',
+                  nombre,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF0F172A),
                     fontSize: 23.90,
@@ -121,7 +129,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Propietario · Panadería El Trigo Dorado',
+                  esGerente ? 'Propietario · Mi negocio' : 'Empleado · Mi negocio',
                   style: GoogleFonts.inter(
                     color: const Color(0xFF64748B),
                     fontSize: 14.12,
@@ -165,33 +173,52 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 _buildSectionTitle('NEGOCIO'),
                 const SizedBox(height: 8),
-                _buildSettingsList([
-                  _buildSettingsRow(
-                    icon: FontAwesomeIcons.users,
-                    iconBgColor: const Color(0xFFDCFCE7),
-                    iconColor: const Color(0xFF1DB954),
-                    label: 'Equipo de Panadería El Trigo Dorado',
-                    value: 'Administrar equipo',
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EquipoScreen())),
+                // Sección NEGOCIO: filas con fondo de color sólido y texto blanco (Figma node 2256:5009)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(17.38),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 2.17,
+                        offset: const Offset(0, 1.09),
+                      ),
+                    ],
                   ),
-                  _buildSettingsRow(
-                    icon: FontAwesomeIcons.boxOpen,
-                    iconBgColor: const Color(0xFFFEF3C7),
-                    iconColor: const Color(0xFFF59E0B),
-                    label: 'Inventario',
-                    value: 'Administrar inventario',
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventarioScreen())),
+                  child: Column(
+                    children: [
+                      _buildBusinessRow(
+                        bgColor: const Color(0xFF1DB954),
+                        icon: FontAwesomeIcons.users,
+                        iconBgColor: const Color(0xFFDCFCE7),
+                        iconColor: const Color(0xFF1DB954),
+                        label: 'Equipo de trabajo',
+                        value: 'Administrar equipo',
+                        isFirst: true,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EquipoScreen())),
+                      ),
+                      _buildBusinessRow(
+                        bgColor: const Color(0xFFF59E0B),
+                        icon: FontAwesomeIcons.boxOpen,
+                        iconBgColor: const Color(0xFFFEF3C7),
+                        iconColor: const Color(0xFFF59E0B),
+                        label: 'Inventario',
+                        value: 'Administrar inventario',
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventarioScreen())),
+                      ),
+                      _buildBusinessRow(
+                        bgColor: const Color(0xFF6D28D9),
+                        icon: FontAwesomeIcons.robot,
+                        iconBgColor: const Color(0xFFEDE9FE),
+                        iconColor: const Color(0xFF6D28D9),
+                        label: 'Agente de IA',
+                        value: 'Administrar Agente de IA',
+                        isLast: true,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AgentesIaScreen())),
+                      ),
+                    ],
                   ),
-                  _buildSettingsRow(
-                    icon: FontAwesomeIcons.robot,
-                    iconBgColor: const Color(0xFFEDE9FE),
-                    iconColor: const Color(0xFF6D28D9),
-                    label: 'Agente de IA',
-                    value: 'Administrar Agente de IA',
-                    isLast: true,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AgentesIaScreen())),
-                  ),
-                ]),
+                ),
                 
                 const SizedBox(height: 24),
                 _buildSectionTitle('INFORMACIÓN'),
@@ -202,7 +229,7 @@ class ProfileScreen extends StatelessWidget {
                     iconBgColor: const Color(0xFFDCFCE7),
                     iconColor: const Color(0xFF15803D),
                     label: 'Correo',
-                    value: 'carlos.mendoza@correo.com',
+                    value: email.isNotEmpty ? email : 'Sin correo registrado',
                     onTap: () => EditarPerfilModals.showEditarCorreo(context),
                   ),
                   _buildSettingsRow(
@@ -270,6 +297,84 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Fila de navegación de la sección NEGOCIO con fondo sólido de color (según Figma).
+  Widget _buildBusinessRow({
+    required Color bgColor,
+    required FaIconData icon,
+    required Color iconBgColor,
+    required Color iconColor,
+    required String label,
+    required String value,
+    bool isFirst = false,
+    bool isLast = false,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap ?? () {},
+      borderRadius: BorderRadius.only(
+        topLeft: isFirst ? const Radius.circular(17.38) : Radius.zero,
+        topRight: isFirst ? const Radius.circular(17.38) : Radius.zero,
+        bottomLeft: isLast ? const Radius.circular(17.38) : Radius.zero,
+        bottomRight: isLast ? const Radius.circular(17.38) : Radius.zero,
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 17.38, vertical: 15.21),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.only(
+            topLeft: isFirst ? const Radius.circular(17.38) : Radius.zero,
+            topRight: isFirst ? const Radius.circular(17.38) : Radius.zero,
+            bottomLeft: isLast ? const Radius.circular(17.38) : Radius.zero,
+            bottomRight: isLast ? const Radius.circular(17.38) : Radius.zero,
+          ),
+          border: isLast ? null : const Border(
+            bottom: BorderSide(color: Color(0x33FFFFFF), width: 1),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36.94,
+              height: 36.94,
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(8.69),
+              ),
+              child: Center(
+                child: FaIcon(icon, color: iconColor, size: 15.21),
+              ),
+            ),
+            const SizedBox(width: 13.04),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: GoogleFonts.inter(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      fontSize: 11.95,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 14.12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const FaIcon(FontAwesomeIcons.chevronRight, color: Colors.white, size: 13.04),
+          ],
+        ),
       ),
     );
   }

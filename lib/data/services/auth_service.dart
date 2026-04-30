@@ -75,6 +75,9 @@ class AuthService extends ChangeNotifier {
     return jsonList.map((json) => UserModel.fromJson(json)).toList();
   }
 
+  /// Retorna todos los usuarios registrados (para la pantalla de equipo).
+  Future<List<UserModel>> obtenerTodosLosUsuarios() => _getUsers();
+
   Future<UserModel?> login(String email, String password) async {
     await Future.delayed(const Duration(seconds: 1)); // Simular red
 
