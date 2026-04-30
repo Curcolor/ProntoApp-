@@ -582,7 +582,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AgregarEditarProductoScreen(),
+                      builder: (context) => AgregarEditarProductoScreen(productToEdit: product),
                     ),
                   );
                 },
@@ -605,7 +605,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
               const SizedBox(height: 6),
               GestureDetector(
                 onTap: () {
-                  AjustarStockModal.show(context);
+                  AjustarStockModal.show(context, product);
                 },
                 child: Container(
                   width: 42,

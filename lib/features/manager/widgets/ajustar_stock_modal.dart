@@ -3,15 +3,20 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 
-class AjustarStockModal extends StatefulWidget {
-  const AjustarStockModal({super.key});
+import '../data/models/product_model.dart';
+import '../data/providers/inventory_provider.dart';
+import 'package:provider/provider.dart';
 
-  static void show(BuildContext context) {
+class AjustarStockModal extends StatefulWidget {
+  final Product product;
+  const AjustarStockModal({super.key, required this.product});
+
+  static void show(BuildContext context, Product product) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const AjustarStockModal(),
+      builder: (context) => AjustarStockModal(product: product),
     );
   }
 
@@ -20,8 +25,14 @@ class AjustarStockModal extends StatefulWidget {
 }
 
 class _AjustarStockModalState extends State<AjustarStockModal> {
-  int _currentStock = 25;
+  late int _currentStock;
   String _selectedReason = 'Nuevo lote';
+
+  @override
+  void initState() {
+    super.initState();
+    _currentStock = widget.product.stock;
+  }
 
   void _updateStock(int amount) {
     setState(() {
@@ -75,13 +86,13 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                   ),
                   child: Row(
                     children: [
-                      Text('☕', style: GoogleFonts.inter(fontSize: 32)),
+                      Text(widget.product.emoji, style: GoogleFonts.inter(fontSize: 32)),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Café latte especial',
+                            widget.product.name,
                             style: GoogleFonts.inter(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
@@ -89,32 +100,41 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: AppColors.warningBg,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const FaIcon(FontAwesomeIcons.triangleExclamation, size: 11, color: AppColors.warningDarker),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Stock bajo · 5 uds',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.warningDarker,
-                                  ),
+                            if (_currentStock <= widget.product.minStock)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: AppColors.warningBg,
+                                  borderRadius: BorderRadius.circular(999),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const FaIcon(FontAwesomeIcons.triangleExclamation, size: 11, color: AppColors.warningDarker),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Stock bajo · $_currentStock uds',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.warningDarker,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else
+                              Text(
+                                'Stock actual: $_currentStock',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
                 ),
                 
                 const SizedBox(height: 24),
@@ -253,6 +273,26 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
+                            final provider = Provider.of<InventoryProvider>(context, listen: false);
+                            
+                            // Creamos una copia del producto con el nuevo stock
+                            final updatedProduct = Product(
+                              id: widget.product.id,
+                              name: widget.product.name,
+                              categoryId: widget.product.categoryId,
+                              price: widget.product.price,
+                              stock: _currentStock,
+                              minStock: widget.product.minStock,
+                              prepTimeMinutes: widget.product.prepTimeMinutes,
+                              isAvailable: widget.product.isAvailable,
+                              description: widget.product.description,
+                              aiContext: widget.product.aiContext,
+                              aiActive: widget.product.aiActive,
+                              imageUrl: widget.product.imageUrl,
+                              emoji: widget.product.emoji,
+                            );
+
+                            provider.updateProduct(updatedProduct);
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
