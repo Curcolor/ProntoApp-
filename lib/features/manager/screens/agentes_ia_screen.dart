@@ -17,10 +17,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
   int _modeloSeleccionado = 0;
 
   final List<Map<String, String>> _modelos = [
-    {'emoji': '⚡', 'nombre': 'GPT-4o Mini', 'desc': 'Rápido · Barato'},
-    {'emoji': '🧠', 'nombre': 'GPT-4o', 'desc': 'Avanzado'},
-    {'emoji': '🤖', 'nombre': 'Claude Haiku', 'desc': '3.5'},
-    {'emoji': '✨', 'nombre': 'Gemini Flash', 'desc': '1.5'},
+    {'emoji': '🐋', 'nombre': 'DeepSeek', 'desc': 'Bot de Telegram'},
   ];
 
   final List<Map<String, dynamic>> _plantillas = [
@@ -201,7 +198,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
 
   Widget _buildModelSelector() {
     return SizedBox(
-      height: 45,
+      height: 52,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _modelos.length,
