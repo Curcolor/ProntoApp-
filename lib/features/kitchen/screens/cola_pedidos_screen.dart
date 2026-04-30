@@ -7,6 +7,8 @@ import 'package:prontoapp/data/services/auth_service.dart';
 import 'package:prontoapp/features/manager/data/models/order_model.dart';
 import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 
+/// Pantalla principal de cocina: muestra la cola de pedidos activos
+/// (recibidos + en preparación) con datos en tiempo real del OrderProvider.
 class ColaPedidosScreen extends StatelessWidget {
   const ColaPedidosScreen({super.key});
 
@@ -14,13 +16,12 @@ class ColaPedidosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<OrderProvider>(
       builder: (context, provider, _) {
-        // Cocina ve: recibidos + en preparación
         final colaCocina = [...provider.recibidos, ...provider.enPreparacion];
         final nombreCocinero =
             context.watch<AuthService>().currentUser?.name ?? 'Cocinero';
 
         return Scaffold(
-          backgroundColor: AppColors.surface,
+          backgroundColor: AppColors.background,
           appBar: _buildAppBar(nombreCocinero, provider),
           body: colaCocina.isEmpty
               ? _buildColaVacia()
@@ -30,9 +31,8 @@ class ColaPedidosScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Métricas del turno
+                      // ── Métricas del turno ───────────────────────────
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildShiftMetric(
                             '${provider.recibidos.length}',
@@ -53,7 +53,7 @@ class ColaPedidosScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      // Tabs urgencia
+                      // ── Tabs urgencia ─────────────────────────────────
                       Row(
                         children: [
                           _buildUrgencyTab(
@@ -83,7 +83,7 @@ class ColaPedidosScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
 
-                      // Título sección
+                      // ── Título sección ────────────────────────────────
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -107,18 +107,12 @@ class ColaPedidosScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      // Lista de pedidos
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: colaCocina.length,
-                        itemBuilder: (context, index) {
-                          final pedido = colaCocina[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: _buildOrderCard(context, pedido, provider),
-                          );
-                        },
+                      // ── Lista de tarjetas ─────────────────────────────
+                      ...colaCocina.map(
+                        (pedido) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildOrderCard(context, pedido, provider),
+                        ),
                       ),
                     ],
                   ),
@@ -135,6 +129,7 @@ class ColaPedidosScreen extends StatelessWidget {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
+      automaticallyImplyLeading: false,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -146,7 +141,6 @@ class ColaPedidosScreen extends StatelessWidget {
                 style: GoogleFonts.inter(
                   color: AppColors.textTertiary,
                   fontSize: 13,
-                  fontWeight: FontWeight.normal,
                 ),
               ),
               Text(
@@ -161,13 +155,13 @@ class ColaPedidosScreen extends StatelessWidget {
             ],
           ),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
               color: AppColors.warningBg,
               borderRadius: BorderRadius.circular(999),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: 6,
@@ -180,16 +174,13 @@ class ColaPedidosScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 6),
-                FaIcon(
-                  FontAwesomeIcons.fireBurner,
-                  color: AppColors.warningDarker,
-                  size: 11,
-                ),
+                const FaIcon(FontAwesomeIcons.fireBurner,
+                    color: Color(0xFF92400E), size: 11),
                 const SizedBox(width: 6),
                 Text(
                   'Cocina',
                   style: GoogleFonts.inter(
-                    color: AppColors.warningDarker,
+                    color: const Color(0xFF92400E),
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
@@ -199,7 +190,6 @@ class ColaPedidosScreen extends StatelessWidget {
           ),
         ],
       ),
-      automaticallyImplyLeading: false,
     );
   }
 
@@ -232,188 +222,116 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
-  // ─── Widgets auxiliares ────────────────────────────────────────────────────
-
-  Widget _buildShiftMetric(
-      String value, String label, Color valueColor) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 13),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderLight, width: 1.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 3,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: GoogleFonts.inter(
-                color: valueColor,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                color: AppColors.textTertiary,
-                fontSize: 9,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUrgencyTab(String value, String label, Color bgColor,
-      Color borderColor, Color textColor) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 9),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: GoogleFonts.inter(
-                  color: textColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                  color: textColor,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // ─── Tarjeta de pedido ────────────────────────────────────────────────────
 
   Widget _buildOrderCard(
       BuildContext context, OrderModel pedido, OrderProvider provider) {
     final esUrgente = pedido.minutosTranscurridos > 10;
     final estaPreparando = pedido.estado == EstadoPedido.enPreparacion;
 
-    final borderColor = esUrgente
+    final Color borderColor = esUrgente
         ? AppColors.dangerIcon
         : estaPreparando
             ? AppColors.warningIcon
             : AppColors.primary;
 
-    final statusLabel = esUrgente
-        ? '¡Urgente!'
-        : estaPreparando
-            ? 'Preparando'
-            : 'Nuevo';
-
-    final statusBg = esUrgente
+    final Color statusBg = esUrgente
         ? AppColors.dangerBg
         : estaPreparando
             ? AppColors.warningBg
             : AppColors.successBg;
 
-    final statusText = esUrgente
+    final Color statusText = esUrgente
         ? AppColors.dangerText
         : estaPreparando
             ? AppColors.warningText
             : AppColors.successText;
 
+    final String statusLabel = esUrgente
+        ? '¡Urgente!'
+        : estaPreparando
+            ? 'Preparando'
+            : 'Nuevo';
+
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 15, 17, 15),
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border(
           left: BorderSide(color: borderColor, width: 4),
-          top: const BorderSide(color: AppColors.borderLight, width: 1),
-          right: const BorderSide(color: AppColors.borderLight, width: 1),
-          bottom: const BorderSide(color: AppColors.borderLight, width: 1),
+          top: const BorderSide(color: Color(0xFFF1F5F9)),
+          right: const BorderSide(color: Color(0xFFF1F5F9)),
+          bottom: const BorderSide(color: Color(0xFFF1F5F9)),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 3,
-            offset: const Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // ── Header ──────────────────────────────────────────────────
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: statusBg,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Text(
-                          pedido.inicialCliente,
-                          style: GoogleFonts.inter(
-                              color: statusText,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800),
-                        ),
-                      ),
+              // Avatar
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: statusBg,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    pedido.inicialCliente,
+                    style: GoogleFonts.inter(
+                      color: statusText,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            pedido.id,
-                            style: GoogleFonts.inter(
-                                color: AppColors.textPrimary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            pedido.cliente,
-                            style: GoogleFonts.inter(
-                                color: AppColors.textMuted,
-                                fontSize: 11),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              // ID y nombre (con Expanded para que no colapse)
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      pedido.id,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF0F172A),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      pedido.cliente,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF64748B),
+                        fontSize: 11,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
+              // Badge estado
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 3),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: statusBg,
                   borderRadius: BorderRadius.circular(999),
@@ -421,61 +339,71 @@ class ColaPedidosScreen extends StatelessWidget {
                 child: Text(
                   statusLabel,
                   style: GoogleFonts.inter(
-                      color: statusText,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600),
+                    color: statusText,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
           ),
+
+          const SizedBox(height: 10),
+          const Divider(height: 1, color: Color(0xFFF1F5F9)),
           const SizedBox(height: 10),
 
-          // Ítems
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: pedido.items.map((item) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 5,
-                      height: 5,
-                      margin: const EdgeInsets.only(right: 6),
-                      decoration: const BoxDecoration(
-                        color: AppColors.textMuted,
-                        shape: BoxShape.circle,
+          // ── Ítems ───────────────────────────────────────────────────
+          ...pedido.items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Row(
+                children: [
+                  Container(
+                    width: 5,
+                    height: 5,
+                    margin: const EdgeInsets.only(right: 8, top: 1),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF94A3B8),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      '${item.cantidad}× ${item.nombre}',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF334155),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        '${item.cantidad}× ${item.nombre}',
-                        style: GoogleFonts.inter(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500),
-                      ),
+                  ),
+                  Text(
+                    '\$${(item.precio * item.cantidad).toStringAsFixed(0)}',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF94A3B8),
+                      fontSize: 11,
                     ),
-                  ],
-                ),
-              );
-            }).toList(),
+                  ),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
 
-          // Acciones + timer
+          const SizedBox(height: 10),
+
+          // ── Footer: tiempo + botón ───────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Timer
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: esUrgente ? AppColors.dangerBg : AppColors.successBg,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     FaIcon(
                       FontAwesomeIcons.clock,
@@ -498,8 +426,6 @@ class ColaPedidosScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Botón de avance
               if (pedido.estado.siguiente != null)
                 GestureDetector(
                   onTap: () => provider.avanzarEstado(pedido.id),
@@ -513,21 +439,23 @@ class ColaPedidosScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         FaIcon(
                           estaPreparando
                               ? FontAwesomeIcons.check
                               : FontAwesomeIcons.fire,
-                          color: AppColors.surface,
+                          color: Colors.white,
                           size: 10,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           estaPreparando ? 'Marcar listo' : 'Empezar',
                           style: GoogleFonts.inter(
-                              color: AppColors.surface,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -536,6 +464,88 @@ class ColaPedidosScreen extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  // ─── Widgets auxiliares ────────────────────────────────────────────────────
+
+  Widget _buildShiftMetric(String value, String label, Color valueColor) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFF1F5F9)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              value,
+              style: GoogleFonts.inter(
+                color: valueColor,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                color: AppColors.textTertiary,
+                fontSize: 9,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUrgencyTab(String value, String label, Color bgColor,
+      Color borderColor, Color textColor) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 9),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: borderColor),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              value,
+              style: GoogleFonts.inter(
+                color: textColor,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                color: textColor,
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
