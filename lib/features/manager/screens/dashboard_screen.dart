@@ -6,6 +6,8 @@ import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
 import '../data/models/order_model.dart';
 import '../data/providers/order_provider.dart';
+import '../data/providers/notification_provider.dart';
+import 'notificaciones_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -76,35 +78,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           Stack(
                             children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: AppColors.surface,
-                                  borderRadius: BorderRadius.circular(13),
-                                  border: Border.all(
-                                      color: AppColors.border, width: 1),
-                                ),
-                                child: const Center(
-                                  child: FaIcon(FontAwesomeIcons.bell,
-                                      color: AppColors.textSecondary, size: 18),
-                                ),
-                              ),
-                              if (orderProvider.recibidos.isNotEmpty)
-                                Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: Container(
-                                    width: 9,
-                                    height: 9,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.dangerIcon,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: AppColors.background, width: 2),
-                                    ),
+                              GestureDetector(
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificacionesScreen())),
+                                child: Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.surface,
+                                    borderRadius: BorderRadius.circular(13),
+                                    border: Border.all(
+                                        color: AppColors.border, width: 1),
+                                  ),
+                                  child: const Center(
+                                    child: FaIcon(FontAwesomeIcons.bell,
+                                        color: AppColors.textSecondary, size: 18),
                                   ),
                                 ),
+                              ),
+                              Consumer<NotificationProvider>(
+                                builder: (context, notifProvider, _) {
+                                  if (notifProvider.unreadCount > 0) {
+                                    return Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: Container(
+                                        width: 9,
+                                        height: 9,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.dangerIcon,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: AppColors.background, width: 2),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
                             ],
                           ),
                         ],

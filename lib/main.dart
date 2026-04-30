@@ -9,6 +9,7 @@ import 'package:prontoapp/features/manager/data/repositories/inventory_repositor
 import 'package:prontoapp/features/manager/data/providers/inventory_provider.dart';
 import 'package:prontoapp/features/manager/data/repositories/order_repository.dart';
 import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
+import 'package:prontoapp/features/manager/data/providers/notification_provider.dart';
 
 class AppScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -41,6 +42,7 @@ void main() async {
             secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
           ),
         ),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
         // Conecta el sync de inventario al OrderProvider tras ambos crearse
         ProxyProvider<OrderProvider, InventoryProvider>(
           update: (_, orderProvider, previous) {

@@ -121,7 +121,9 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
                     child: Container(
                       width: 38, height: 38,
                       decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
-                      child: const FaIcon(FontAwesomeIcons.arrowLeft, color: AppColors.surface, size: 16),
+                      child: Center(
+                        child: FaIcon(FontAwesomeIcons.arrowLeft, color: AppColors.surface, size: 16),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
