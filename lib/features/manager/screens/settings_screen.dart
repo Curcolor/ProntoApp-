@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
+import 'package:prontoapp/features/manager/widgets/configurar_agente_modal.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -109,6 +110,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: 'Configuración básica',
                   subtitle: 'Comportamiento básico y mensajes',
                   isLast: true,
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => const ConfigurarAgenteModal(),
+                    );
+                  },
                 ),
               ]);
             },
@@ -288,9 +297,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required String title,
     required String subtitle,
     bool isLast = false,
+    VoidCallback? onTap,
   }) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap ?? () {},
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
