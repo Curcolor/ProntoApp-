@@ -142,7 +142,17 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     _buildBadge(const Color(0xFFDCFCE7), const Color(0xFF15803D), FontAwesomeIcons.shop, 'Panadería'),
                     const SizedBox(width: 8.69),
-                    _buildBadge(const Color(0xFFDBEAFE), const Color(0xFF1D4ED8), FontAwesomeIcons.robot, 'IA Activa'),
+                    Consumer<OrderProvider>(
+                      builder: (context, orderProvider, child) {
+                        final bool conectada = orderProvider.estaConectado;
+                        return _buildBadge(
+                          conectada ? const Color(0xFFDBEAFE) : const Color(0xFFFEF3C7), // warningBg
+                          conectada ? const Color(0xFF1D4ED8) : const Color(0xFFB45309), // warningText
+                          FontAwesomeIcons.robot,
+                          conectada ? 'IA Activa' : 'IA No Activa',
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],
