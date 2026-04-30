@@ -237,7 +237,7 @@ class _KpisScreenState extends State<KpisScreen> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          height: 108.65,
+                          height: 140.0,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.end,
