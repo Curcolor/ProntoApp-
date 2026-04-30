@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:prontoapp/features/manager/data/models/order_model.dart';
+import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 import 'package:prontoapp/features/delivery/widgets/entrega_confirmada_modal.dart';
 
 class EnRutaScreen extends StatelessWidget {
-  const EnRutaScreen({super.key});
+  final OrderModel pedido;
+
+  const EnRutaScreen({
+    super.key,
+    required this.pedido,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +52,7 @@ class EnRutaScreen extends StatelessWidget {
               icon: FontAwesomeIcons.store,
               iconColor: Colors.white,
               pinColor: const Color(0xFF25D366),
-              label: 'Panadería',
+              label: 'Restaurante',
             ),
           ),
           Positioned(
@@ -59,7 +67,7 @@ class EnRutaScreen extends StatelessWidget {
               icon: FontAwesomeIcons.house,
               iconColor: Colors.white,
               pinColor: const Color(0xFFEF4444),
-              label: 'María G.',
+              label: pedido.cliente,
             ),
           ),
           
@@ -84,7 +92,7 @@ class EnRutaScreen extends StatelessWidget {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        '6',
+                        '${(pedido.minutosTranscurridos / 2).floor() + 3}', // Simulación de ETA
                         style: GoogleFonts.inter(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
@@ -153,7 +161,7 @@ class EnRutaScreen extends StatelessWidget {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          'M',
+                          pedido.inicialCliente,
                           style: GoogleFonts.inter(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -167,7 +175,7 @@ class EnRutaScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'María García',
+                              pedido.cliente,
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
@@ -175,7 +183,9 @@ class EnRutaScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Cll 72 #45-12, El Prado',
+                              pedido.direccion ?? 'Sin dirección definida',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
@@ -189,7 +199,7 @@ class EnRutaScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '\$18,500',
+                            '\$${pedido.total.toStringAsFixed(0)}',
                             style: GoogleFonts.inter(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
@@ -197,7 +207,7 @@ class EnRutaScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'En efectivo',
+                            'Por cobrar',
                             style: GoogleFonts.inter(
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
@@ -251,7 +261,7 @@ class EnRutaScreen extends StatelessWidget {
                               const FaIcon(FontAwesomeIcons.whatsapp, size: 13, color: Colors.white),
                               const SizedBox(width: 6),
                               Text(
-                                'Avisar',
+                                'WhatsApp',
                                 style: GoogleFonts.inter(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
@@ -278,44 +288,58 @@ class EnRutaScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   
                   // Confirm Button
-                  Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: const LinearGradient(colors: [Color(0xFF25D366), Color(0xFF128C7E)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x5925D366),
-                          offset: Offset(0, 4),
-                          blurRadius: 14,
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        EntregaConfirmadaModal.show(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const FaIcon(FontAwesomeIcons.circleCheck, size: 16, color: Colors.white),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Confirmar entrega',
-                            style: GoogleFonts.inter(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                  Consumer<OrderProvider>(
+                    builder: (context, provider, _) {
+                      return Container(
+                        height: 56,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: const LinearGradient(colors: [Color(0xFF25D366), Color(0xFF128C7E)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x5925D366),
+                              offset: Offset(0, 4),
+                              blurRadius: 14,
                             ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            await provider.avanzarEstado(pedido.id); // De enCamino a entregado
+                            if (context.mounted) {
+                              EntregaConfirmadaModal.show(context);
+                              // Después de un tiempo o al cerrar el modal, volver a la pantalla principal
+                              Future.delayed(const Duration(seconds: 2), () {
+                                if (context.mounted) {
+                                  Navigator.of(context).popUntil((route) => route.isFirst);
+                                }
+                              });
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           ),
-                        ],
-                      ),
-                    ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const FaIcon(FontAwesomeIcons.circleCheck, size: 16, color: Colors.white),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Confirmar entrega',
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
                   ),
                 ],
               ),
@@ -336,7 +360,6 @@ class EnRutaScreen extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
       ),
-      // Here you could add an image of a map, or a Google Maps widget.
     );
   }
 

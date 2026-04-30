@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:prontoapp/features/manager/data/models/order_model.dart';
+import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 import 'en_ruta_screen.dart';
 
 class DetalleEntregaScreen extends StatelessWidget {
-  const DetalleEntregaScreen({super.key});
+  final OrderModel pedido;
+
+  const DetalleEntregaScreen({
+    super.key,
+    required this.pedido,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +35,10 @@ class DetalleEntregaScreen extends StatelessWidget {
                         _buildAddressCard(),
                         const SizedBox(height: 12),
                         _buildItemsCard(),
-                        const SizedBox(height: 12),
-                        _buildNoteCard(),
+                        if (pedido.direccion != null && pedido.direccion!.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          _buildNoteCard(),
+                        ],
                       ],
                     ),
                   ),
@@ -66,16 +76,16 @@ class DetalleEntregaScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Pedido #P-0041',
+                  'Pedido #${pedido.id}',
                   style: GoogleFonts.inter(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w800,
                     color: const Color(0xFF0F172A),
                     letterSpacing: -0.3,
                   ),
                 ),
                 Text(
-                  'Recoge en: Panadería El Trigo Dorado',
+                  'Recoge en: Central de Cocina',
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -118,7 +128,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  'M',
+                  pedido.inicialCliente,
                   style: GoogleFonts.inter(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
@@ -132,7 +142,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'María García',
+                      pedido.cliente,
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -140,7 +150,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '+57 300 111 2233',
+                      pedido.telefono,
                       style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w400,
@@ -157,7 +167,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
-                  'Listo en cocina',
+                  pedido.estado.etiqueta,
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -260,7 +270,7 @@ class DetalleEntregaScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Cll 72 #45-12, El Prado',
+            pedido.direccion ?? 'Recoger en tienda',
             style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -268,7 +278,7 @@ class DetalleEntregaScreen extends StatelessWidget {
             ),
           ),
           Text(
-            'Barranquilla, Colombia · Frente al parque infantil',
+            pedido.tipo == TipoPedido.domicilio ? 'Entrega a domicilio' : 'El cliente recoge',
             style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w400,
@@ -279,27 +289,19 @@ class DetalleEntregaScreen extends StatelessWidget {
           Row(
             children: [
               _buildInfoChip(
-                icon: FontAwesomeIcons.route,
-                iconColor: const Color(0xFF1D4ED8),
-                bgColor: const Color(0xFFDBEAFE),
-                value: '2.3 km',
-                label: 'Distancia',
-              ),
-              const SizedBox(width: 8),
-              _buildInfoChip(
                 icon: FontAwesomeIcons.clock,
                 iconColor: const Color(0xFF15803D),
                 bgColor: const Color(0xFFDCFCE7),
-                value: '~8 min',
-                label: 'ETA',
+                value: '${pedido.minutosTranscurridos} min',
+                label: 'Espera',
               ),
               const SizedBox(width: 8),
               _buildInfoChip(
                 icon: FontAwesomeIcons.handHoldingDollar,
                 iconColor: const Color(0xFFB45309),
                 bgColor: const Color(0xFFFEF3C7),
-                value: '\$18.5K',
-                label: 'Cobrar',
+                value: '\$${pedido.total.toStringAsFixed(0)}',
+                label: 'Cobro',
               ),
             ],
           ),
@@ -387,11 +389,9 @@ class DetalleEntregaScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 11.0),
             child: Column(
               children: [
-                _buildItemRow('2', 'Pan de bono', '\$6,000'),
-                _buildItemRow('1', 'Almojábana', '\$3,500'),
-                _buildItemRow('1', 'Café tinto', '\$2,000'),
+                ...pedido.items.map((i) => _buildItemRow(i.cantidad.toString(), i.nombre, '\$${(i.precio * i.cantidad).toStringAsFixed(0)}')),
                 const SizedBox(height: 4),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)), // No dashed line support directly in Divider
+                const Divider(height: 1, color: Color(0xFFE2E8F0)),
                 const SizedBox(height: 9),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -405,7 +405,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$18,500 en efectivo',
+                      '\$${pedido.total.toStringAsFixed(0)}',
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -439,7 +439,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  '×$qty',
+                  'x$qty',
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -489,7 +489,7 @@ class DetalleEntregaScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Nota del cliente',
+                  'Instrucciones de entrega',
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -498,7 +498,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Tocar el timbre dos veces, estoy en el piso 2',
+                  pedido.direccion ?? 'Sin instrucciones adicionales.',
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -519,47 +519,64 @@ class DetalleEntregaScreen extends StatelessWidget {
       bottom: 20,
       left: 20,
       right: 20,
-      child: Container(
-        height: 54,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x593B82F6), // rgba(59,130,246,0.35)
-              offset: Offset(0, 4),
-              blurRadius: 14,
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const EnRutaScreen()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const FaIcon(FontAwesomeIcons.motorcycle, size: 15, color: Colors.white),
-              const SizedBox(width: 8),
-              Text(
-                'Salir a entregar',
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+      child: Consumer<OrderProvider>(
+        builder: (context, provider, _) {
+          final bool yaEnCamino = pedido.estado == EstadoPedido.enCamino;
+
+          return Container(
+            height: 54,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-        ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x593B82F6),
+                  offset: Offset(0, 4),
+                  blurRadius: 14,
+                ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: () async {
+                // Si el pedido está 'listo', avanzamos a 'en_camino'
+                if (pedido.estado == EstadoPedido.listo) {
+                  await provider.avanzarEstado(pedido.id);
+                }
+                
+                if (context.mounted) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => EnRutaScreen(pedido: pedido)),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const FaIcon(FontAwesomeIcons.motorcycle, size: 15, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text(
+                    yaEnCamino ? 'Ver mapa de entrega' : 'Salir a entregar',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

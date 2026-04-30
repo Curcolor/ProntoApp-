@@ -255,7 +255,7 @@ class PedidosParaEntregarScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const DetalleEntregaScreen()),
+              builder: (context) => DetalleEntregaScreen(pedido: pedido)),
         );
       },
       child: Container(

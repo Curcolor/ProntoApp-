@@ -1,30 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
+import 'package:prontoapp/features/manager/data/models/order_model.dart';
 
 class PerfilRepartidorScreen extends StatelessWidget {
   const PerfilRepartidorScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthService>().currentUser;
+    final provider = context.watch<OrderProvider>();
+    
+    final nombre = user?.name ?? 'Repartidor';
+    final inicial = nombre.isNotEmpty ? nombre[0].toUpperCase() : 'R';
+    final entregadosHoy = provider.entregados.length;
+    final historialReciente = provider.entregados.take(5).toList();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeroSection(context),
+            _buildHeroSection(context, inicial),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
                   const SizedBox(height: 52), // Offset for avatar
-                  _buildIdentity(),
+                  _buildIdentity(nombre),
                   const SizedBox(height: 24),
-                  _buildSummaryCard(),
+                  _buildSummaryCard(entregadosHoy),
                   const SizedBox(height: 24),
-                  _buildDeliveryHistory(),
-                  const SizedBox(height: 24),
-                  _buildPersonalInfo(),
+                  if (historialReciente.isNotEmpty) ...[
+                    _buildDeliveryHistory(historialReciente),
+                    const SizedBox(height: 24),
+                  ],
+                  _buildPersonalInfo(user?.email ?? ''),
                   const SizedBox(height: 40),
                 ],
               ),
@@ -35,7 +49,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection(BuildContext context) {
+  Widget _buildHeroSection(BuildContext context, String inicial) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
@@ -78,7 +92,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
               children: [
                 Center(
                   child: Text(
-                    'D',
+                    inicial,
                     style: GoogleFonts.inter(
                       fontSize: 32,
                       fontWeight: FontWeight.w800,
@@ -109,11 +123,11 @@ class PerfilRepartidorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIdentity() {
+  Widget _buildIdentity(String nombre) {
     return Column(
       children: [
         Text(
-          'Diego Castillo',
+          nombre,
           style: GoogleFonts.inter(
             fontSize: 22,
             fontWeight: FontWeight.w800,
@@ -123,7 +137,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Repartidor · Panadería El Trigo Dorado',
+          'Repartidor Oficial · ProntoApp',
           style: GoogleFonts.inter(
             fontSize: 13,
             fontWeight: FontWeight.w400,
@@ -164,7 +178,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const FaIcon(FontAwesomeIcons.circle, size: 6, color: Color(0xFF15803D)),
+                  const Icon(Icons.circle, size: 6, color: Color(0xFF15803D)),
                   const SizedBox(width: 4),
                   Text(
                     'En turno',
@@ -183,7 +197,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard() {
+  Widget _buildSummaryCard(int entregadosHoy) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -203,7 +217,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '7',
+            '$entregadosHoy',
             style: GoogleFonts.inter(
               fontSize: 40,
               fontWeight: FontWeight.w800,
@@ -213,7 +227,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'turno 7:00 am – 3:00 pm · En progreso',
+            '¡Gran trabajo! Sigue así.',
             style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w400,
@@ -231,9 +245,9 @@ class PerfilRepartidorScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildStatItem('24 km', 'Recorridos'),
+                  _buildStatItem('--- km', 'Recorridos'),
                   VerticalDivider(color: Colors.white.withOpacity(0.15), width: 1),
-                  _buildStatItem('8.2m', 'Prom. entrega'),
+                  _buildStatItem('~12m', 'Prom. entrega'),
                   VerticalDivider(color: Colors.white.withOpacity(0.15), width: 1),
                   _buildStatItem('100%', 'Efectividad'),
                 ],
@@ -269,7 +283,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDeliveryHistory() {
+  Widget _buildDeliveryHistory(List<OrderModel> historial) {
     return Column(
       children: [
         Row(
@@ -294,35 +308,16 @@ class PerfilRepartidorScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        _buildHistoryCard(
-          id: '#P-0041',
-          name: 'María García',
-          address: 'Cll 72 #45-12',
-          dist: '2.3 km',
-          timeSpan: '7 min',
-          amount: '\$18,500',
-          timeAgo: 'Hace 20 min',
-        ),
-        const SizedBox(height: 12),
-        _buildHistoryCard(
-          id: '#P-0038',
-          name: 'Juan Rodríguez',
-          address: 'Cra 43 #68-30',
-          dist: '3.8 km',
-          timeSpan: '11 min',
-          amount: '\$32,000',
-          timeAgo: 'Hace 48 min',
-        ),
-        const SizedBox(height: 12),
-        _buildHistoryCard(
-          id: '#P-0035',
-          name: 'Ana Torres',
-          address: 'Vía 40 #54-12',
-          dist: '5.1 km',
-          timeSpan: '18 min',
-          amount: '\$45,000',
-          timeAgo: 'Hace 1h 20m',
-        ),
+        ...historial.map((p) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildHistoryCard(
+            id: '#${p.id}',
+            name: p.cliente,
+            address: p.direccion ?? 'Entrega local',
+            amount: '\$${p.total.toStringAsFixed(0)}',
+            timeAgo: 'Finalizado',
+          ),
+        )),
       ],
     );
   }
@@ -331,8 +326,6 @@ class PerfilRepartidorScreen extends StatelessWidget {
     required String id,
     required String name,
     required String address,
-    required String dist,
-    required String timeSpan,
     required String amount,
     required String timeAgo,
   }) {
@@ -373,7 +366,9 @@ class PerfilRepartidorScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '$address · $dist · $timeSpan',
+                  address,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -410,7 +405,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPersonalInfo() {
+  Widget _buildPersonalInfo(String email) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -433,27 +428,19 @@ class PerfilRepartidorScreen extends StatelessWidget {
           child: Column(
             children: [
               _buildInfoRow(
-                icon: FontAwesomeIcons.motorcycle,
+                icon: FontAwesomeIcons.envelope,
                 iconColor: const Color(0xFF1D4ED8),
                 bgColor: const Color(0xFFDBEAFE),
-                label: 'Vehículo',
-                value: 'Moto · Honda CBF125 · ABC-123',
+                label: 'Email',
+                value: email,
                 showDivider: true,
               ),
               _buildInfoRow(
-                icon: FontAwesomeIcons.clock,
+                icon: FontAwesomeIcons.motorcycle,
                 iconColor: const Color(0xFF15803D),
                 bgColor: const Color(0xFFDCFCE7),
-                label: 'Turno actual',
-                value: '7:00 am – 3:00 pm',
-                showDivider: true,
-              ),
-              _buildInfoRow(
-                icon: FontAwesomeIcons.phone,
-                iconColor: const Color(0xFF6D28D9),
-                bgColor: const Color(0xFFEDE9FE),
-                label: 'Teléfono',
-                value: '+57 316 234 5678',
+                label: 'Vehículo',
+                value: 'Moto · Registrada',
                 showDivider: true,
               ),
               Padding(
@@ -473,7 +460,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Finalizar turno',
+                        'Cerrar sesión',
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
