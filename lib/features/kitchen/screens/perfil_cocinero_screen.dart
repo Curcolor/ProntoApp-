@@ -310,11 +310,7 @@ class PerfilCocineroScreen extends StatelessWidget {
                     onTap: () async {
                       await AuthService().logout();
                       if (context.mounted) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                        );
+                        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
                       }
                     },
                     child: Container(

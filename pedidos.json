@@ -1,0 +1,70 @@
+[
+  {
+    "id": "P-022980CA",
+    "cliente": "Cliente",
+    "telefono": "tg:chat_id",
+    "items": [
+      {
+        "nombre": "Tinto",
+        "cantidad": 2,
+        "precio": 5000.0
+      }
+    ],
+    "total": 10000.0,
+    "tipo": "domicilio",
+    "direccion": "Cr 7m #130-51",
+    "estado": "entregado",
+    "creado_en": "2026-04-30T04:27:28.721668"
+  },
+  {
+    "id": "P-9F3B1B81",
+    "cliente": "Jairo",
+    "telefono": "tg:7917654460|tg:chat_id",
+    "items": [
+      {
+        "nombre": "Tinto",
+        "cantidad": 2,
+        "precio": 5000.0
+      }
+    ],
+    "total": 10000.0,
+    "tipo": "recoger",
+    "direccion": null,
+    "estado": "entregado",
+    "creado_en": "2026-04-30T04:42:27.799193"
+  },
+  {
+    "id": "P-FD73F1A1",
+    "cliente": "Carla",
+    "telefono": "tg:7917654460|tg:chat_id",
+    "items": [
+      {
+        "nombre": "Tinto",
+        "cantidad": 2,
+        "precio": 5000.0
+      }
+    ],
+    "total": 10000.0,
+    "tipo": "domicilio",
+    "direccion": "Cr 7m #130-51",
+    "estado": "en_preparacion",
+    "creado_en": "2026-04-30T05:19:29.539751"
+  },
+  {
+    "id": "P-81D0D36A",
+    "cliente": "Juan",
+    "telefono": "tg:7917654460|",
+    "items": [
+      {
+        "nombre": "Tinto",
+        "cantidad": 1,
+        "precio": 5000.0
+      }
+    ],
+    "total": 5000.0,
+    "tipo": "recoger",
+    "direccion": null,
+    "estado": "en_camino",
+    "creado_en": "2026-04-30T05:31:29.749817"
+  }
+]

@@ -81,6 +81,21 @@
       "aiActive": true,
       "imageUrl": null,
       "emoji": "🧀"
+    },
+    {
+      "id": "prod_1777540926219",
+      "name": "Tinto",
+      "categoryId": "cat_2",
+      "price": 5000,
+      "stock": 4,
+      "minStock": 2,
+      "prepTimeMinutes": 10,
+      "isAvailable": true,
+      "description": "",
+      "aiContext": "un producto para el desayuno y para quitar el sueño ese es el tinto",
+      "aiActive": true,
+      "imageUrl": null,
+      "emoji": "📦"
     }
   ]
 }

@@ -322,8 +322,11 @@ class ProfileScreen extends StatelessWidget {
                     value: '',
                     valueColor: const Color(0xFFB91C1C),
                     isLast: true,
-                    onTap: () {
-                      AuthService().logout();
+                    onTap: () async {
+                      await AuthService().logout();
+                      if (context.mounted) {
+                        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                      }
                     },
                   ),
                 ]),

@@ -478,7 +478,9 @@ class _WhatsAppBusinessSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
-              child: const FaIcon(FontAwesomeIcons.qrcode, size: 64, color: Color(0xFF334155)),
+              child: Center(
+                child: FaIcon(FontAwesomeIcons.qrcode, size: 64, color: Color(0xFF334155)),
+              ),
             ),
           ),
           const SizedBox(height: 8),

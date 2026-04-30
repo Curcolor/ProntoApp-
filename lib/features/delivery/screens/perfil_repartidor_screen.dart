@@ -443,33 +443,41 @@ class PerfilRepartidorScreen extends StatelessWidget {
                 value: 'Moto · Registrada',
                 showDivider: true,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFEE2E2),
-                        borderRadius: BorderRadius.circular(8),
+              GestureDetector(
+                onTap: () async {
+                  await AuthService().logout();
+                  if (context.mounted) {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEE2E2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        alignment: Alignment.center,
+                        child: const FaIcon(FontAwesomeIcons.powerOff, size: 14, color: Color(0xFFB91C1C)),
                       ),
-                      alignment: Alignment.center,
-                      child: const FaIcon(FontAwesomeIcons.powerOff, size: 14, color: Color(0xFFB91C1C)),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Cerrar sesión',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFFB91C1C),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Cerrar sesión',
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFFB91C1C),
+                          ),
                         ),
                       ),
-                    ),
-                    const FaIcon(FontAwesomeIcons.chevronRight, size: 12, color: Color(0xFF94A3B8)),
-                  ],
+                      const FaIcon(FontAwesomeIcons.chevronRight, size: 12, color: Color(0xFF94A3B8)),
+                    ],
+                  ),
                 ),
               ),
             ],
