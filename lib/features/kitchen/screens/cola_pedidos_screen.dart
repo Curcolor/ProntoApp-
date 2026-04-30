@@ -7,8 +7,6 @@ import 'package:prontoapp/data/services/auth_service.dart';
 import 'package:prontoapp/features/manager/data/models/order_model.dart';
 import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 
-/// Pantalla principal de cocina: muestra la cola de pedidos activos
-/// (recibidos + en preparación) con datos en tiempo real del OrderProvider.
 class ColaPedidosScreen extends StatelessWidget {
   const ColaPedidosScreen({super.key});
 
@@ -26,94 +24,48 @@ class ColaPedidosScreen extends StatelessWidget {
           body: colaCocina.isEmpty
               ? _buildColaVacia()
               : SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 20),
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Métricas del turno ───────────────────────────
+                      // Métricas simplificadas
                       Row(
                         children: [
                           _buildShiftMetric(
                             '${provider.recibidos.length}',
-                            '🔴 Urgentes',
+                            'Urgentes',
                             AppColors.dangerDark,
                           ),
                           _buildShiftMetric(
                             '${provider.enPreparacion.length}',
-                            '🟡 En cola',
+                            'En cola',
                             AppColors.warningText,
                           ),
                           _buildShiftMetric(
                             '${provider.listos.length}',
-                            '✅ Listos',
-                            AppColors.primaryDark,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // ── Tabs urgencia ─────────────────────────────────
-                      Row(
-                        children: [
-                          _buildUrgencyTab(
-                            '${provider.recibidos.length}',
-                            'Urgente',
-                            const Color(0xFFFEF2F2),
-                            AppColors.dangerIcon,
-                            AppColors.dangerDark,
-                          ),
-                          const SizedBox(width: 8),
-                          _buildUrgencyTab(
-                            '${provider.enPreparacion.length}',
-                            'Preparando',
-                            const Color(0xFFFFFBEB),
-                            AppColors.warningIcon,
-                            AppColors.warningDark,
-                          ),
-                          const SizedBox(width: 8),
-                          _buildUrgencyTab(
-                            '${provider.listos.length}',
                             'Listos',
-                            const Color(0xFFF0FDF4),
-                            AppColors.primary,
                             AppColors.primaryDark,
                           ),
                         ],
                       ),
                       const SizedBox(height: 24),
 
-                      // ── Título sección ────────────────────────────────
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '📋 Cola activa',
-                            style: GoogleFonts.inter(
-                              color: AppColors.textPrimary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${colaCocina.length} pedido${colaCocina.length != 1 ? 's' : ''}',
-                            style: GoogleFonts.inter(
-                              color: AppColors.primary,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        '📋 Cola activa (${colaCocina.length})',
+                        style: GoogleFonts.inter(
+                          color: AppColors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
 
-                      // ── Lista de tarjetas ─────────────────────────────
-                      ...colaCocina.map(
-                        (pedido) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _buildOrderCard(context, pedido, provider),
-                        ),
-                      ),
+                      // Lista de tarjetas
+                      ...colaCocina.map((pedido) => _buildOrderCard(context, pedido, provider)),
+                      
+                      // Espacio extra al final para scroll
+                      const SizedBox(height: 80),
                     ],
                   ),
                 ),
@@ -122,10 +74,7 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
-  // ─── AppBar ───────────────────────────────────────────────────────────────
-
-  PreferredSizeWidget _buildAppBar(
-      String nombreCocinero, OrderProvider provider) {
+  PreferredSizeWidget _buildAppBar(String nombreCocinero, OrderProvider provider) {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
@@ -133,55 +82,29 @@ class ColaPedidosScreen extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Buenos días 👋',
-                style: GoogleFonts.inter(
-                  color: AppColors.textTertiary,
-                  fontSize: 13,
-                ),
-              ),
-              Text(
-                nombreCocinero.split(' ').first,
-                style: GoogleFonts.inter(
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.3,
-                ),
-              ),
-            ],
+          Text(
+            'Hola, ${nombreCocinero.split(' ').first}',
+            style: GoogleFonts.inter(
+              color: AppColors.textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: AppColors.warningBg,
-              borderRadius: BorderRadius.circular(999),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: provider.estaConectado
-                        ? AppColors.warningIcon
-                        : AppColors.dangerIcon,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const FaIcon(FontAwesomeIcons.fireBurner,
-                    color: Color(0xFF92400E), size: 11),
+                const FaIcon(FontAwesomeIcons.fire, color: Color(0xFF92400E), size: 12),
                 const SizedBox(width: 6),
                 Text(
-                  'Cocina',
+                  'COCINA',
                   style: GoogleFonts.inter(
                     color: const Color(0xFF92400E),
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -193,274 +116,117 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
-  // ─── Estado vacío ─────────────────────────────────────────────────────────
-
   Widget _buildColaVacia() {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('🎉', style: TextStyle(fontSize: 56)),
+          const Icon(Icons.check_circle_outline, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
-            '¡Sin pedidos en cola!',
-            style: GoogleFonts.inter(
-              color: AppColors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Los pedidos del bot de Telegram\naparecerán aquí automáticamente.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-                color: AppColors.textTertiary, fontSize: 14),
+            '¡Todo al día!',
+            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  // ─── Tarjeta de pedido ────────────────────────────────────────────────────
-
-  Widget _buildOrderCard(
-      BuildContext context, OrderModel pedido, OrderProvider provider) {
-    final esUrgente = pedido.minutosTranscurridos > 10;
+  Widget _buildOrderCard(BuildContext context, OrderModel pedido, OrderProvider provider) {
     final estaPreparando = pedido.estado == EstadoPedido.enPreparacion;
-
-    final Color borderColor = esUrgente
-        ? AppColors.dangerIcon
-        : estaPreparando
-            ? AppColors.warningIcon
-            : AppColors.primary;
-
-    final Color statusBg = esUrgente
-        ? AppColors.dangerBg
-        : estaPreparando
-            ? AppColors.warningBg
-            : AppColors.successBg;
-
-    final Color statusText = esUrgente
-        ? AppColors.dangerText
-        : estaPreparando
-            ? AppColors.warningText
-            : AppColors.successText;
-
-    final String statusLabel = esUrgente
-        ? '¡Urgente!'
-        : estaPreparando
-            ? 'Preparando'
-            : 'Nuevo';
+    final color = estaPreparando ? AppColors.warningIcon : AppColors.primary;
+    final bg = estaPreparando ? AppColors.warningBg : AppColors.successBg;
+    final text = estaPreparando ? AppColors.warningText : AppColors.successText;
 
     return Container(
       width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border(
-          left: BorderSide(color: borderColor, width: 4),
-          top: const BorderSide(color: Color(0xFFF1F5F9)),
-          right: const BorderSide(color: Color(0xFFF1F5F9)),
-          bottom: const BorderSide(color: Color(0xFFF1F5F9)),
-        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header ──────────────────────────────────────────────────
+          // Header: ID y Estado
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Avatar
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: statusBg,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    pedido.inicialCliente,
-                    style: GoogleFonts.inter(
-                      color: statusText,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+              Text(
+                pedido.id,
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
                 ),
               ),
-              const SizedBox(width: 10),
-              // ID y nombre (con Expanded para que no colapse)
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      pedido.id,
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF0F172A),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      pedido.cliente,
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF64748B),
-                        fontSize: 11,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Badge estado
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusBg,
-                  borderRadius: BorderRadius.circular(999),
+                  color: bg,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  statusLabel,
+                  estaPreparando ? 'PREPARANDO' : 'NUEVO',
                   style: GoogleFonts.inter(
-                    color: statusText,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                    color: text,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 10),
-          const Divider(height: 1, color: Color(0xFFF1F5F9)),
-          const SizedBox(height: 10),
-
-          // ── Ítems ───────────────────────────────────────────────────
-          ...pedido.items.map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 5),
-              child: Row(
-                children: [
-                  Container(
-                    width: 5,
-                    height: 5,
-                    margin: const EdgeInsets.only(right: 8, top: 1),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF94A3B8),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '${item.cantidad}× ${item.nombre}',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF334155),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '\$${(item.precio * item.cantidad).toStringAsFixed(0)}',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF94A3B8),
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
+          const SizedBox(height: 4),
+          Text(
+            pedido.cliente,
+            style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13),
+          ),
+          const Divider(height: 24),
+          
+          // Items
+          ...pedido.items.map((item) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(
+              '• ${item.cantidad}x ${item.nombre}',
+              style: GoogleFonts.inter(
+                fontSize: 13, 
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // ── Footer: tiempo + botón ───────────────────────────────────
+          )),
+          
+          const SizedBox(height: 16),
+          
+          // Acciones
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: esUrgente ? AppColors.dangerBg : AppColors.successBg,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.clock,
-                      color: esUrgente
-                          ? AppColors.dangerDark
-                          : AppColors.primaryDark,
-                      size: 9,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${pedido.minutosTranscurridos} min',
-                      style: GoogleFonts.inter(
-                        color: esUrgente
-                            ? AppColors.dangerDark
-                            : AppColors.primaryDark,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+              Text(
+                'Hace ${pedido.minutosTranscurridos} min',
+                style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11),
+              ),
+              ElevatedButton.icon(
+                onPressed: () => provider.avanzarEstado(pedido.id),
+                icon: FaIcon(estaPreparando ? FontAwesomeIcons.check : FontAwesomeIcons.play, size: 12),
+                label: Text(estaPreparando ? 'LISTO' : 'EMPEZAR'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
-              if (pedido.estado.siguiente != null)
-                GestureDetector(
-                  onTap: () => provider.avanzarEstado(pedido.id),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: estaPreparando
-                          ? AppColors.primaryDark
-                          : AppColors.primary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FaIcon(
-                          estaPreparando
-                              ? FontAwesomeIcons.check
-                              : FontAwesomeIcons.fire,
-                          color: Colors.white,
-                          size: 10,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          estaPreparando ? 'Marcar listo' : 'Empezar',
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
             ],
           ),
         ],
@@ -468,81 +234,25 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
-  // ─── Widgets auxiliares ────────────────────────────────────────────────────
-
-  Widget _buildShiftMetric(String value, String label, Color valueColor) {
+  Widget _buildShiftMetric(String value, String label, Color color) {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFF1F5F9)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 3,
-              offset: const Offset(0, 1),
-            ),
-          ],
+          border: Border.all(color: AppColors.borderLight),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               value,
-              style: GoogleFonts.inter(
-                color: valueColor,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
+              style: GoogleFonts.inter(color: color, fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 3),
             Text(
               label,
-              style: GoogleFonts.inter(
-                color: AppColors.textTertiary,
-                fontSize: 9,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUrgencyTab(String value, String label, Color bgColor,
-      Color borderColor, Color textColor) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 9),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              value,
-              style: GoogleFonts.inter(
-                color: textColor,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                color: textColor,
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-              ),
+              style: GoogleFonts.inter(color: AppColors.textTertiary, fontSize: 10),
             ),
           ],
         ),
