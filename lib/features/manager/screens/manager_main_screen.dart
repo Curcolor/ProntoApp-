@@ -36,11 +36,13 @@ class _ManagerMainScreenState extends State<ManagerMainScreen> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: const Border(top: BorderSide(color: Color(0xFFE2E8F0), width: 1.0)),
+          border: const Border(
+            top: BorderSide(color: Color(0xFFE2E8F0), width: 1.09),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha((0.06 * 255).toInt()),
-              blurRadius: 17.38,
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8.69,
               offset: const Offset(0, -4.35),
             ),
           ],
@@ -53,29 +55,44 @@ class _ManagerMainScreenState extends State<ManagerMainScreen> {
           type: BottomNavigationBarType.fixed,
           selectedItemColor: const Color(0xFF1DB954),
           unselectedItemColor: const Color(0xFF94A3B8),
-          selectedFontSize: 10.86,
-          unselectedFontSize: 10.86,
+          selectedFontSize: 10.87,
+          unselectedFontSize: 10.87,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Inter'),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Inter'),
           items: const [
             BottomNavigationBarItem(
-              icon: Padding(padding: EdgeInsets.only(bottom: 4), child: FaIcon(FontAwesomeIcons.house, size: 20)),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: FaIcon(FontAwesomeIcons.house, size: 21.73),
+              ),
               label: 'Inicio',
             ),
             BottomNavigationBarItem(
-              icon: Padding(padding: EdgeInsets.only(bottom: 4), child: FaIcon(FontAwesomeIcons.listCheck, size: 20)),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: FaIcon(FontAwesomeIcons.listUl, size: 21.73),
+              ),
               label: 'Pedidos',
             ),
             BottomNavigationBarItem(
-              icon: Padding(padding: EdgeInsets.only(bottom: 4), child: FaIcon(FontAwesomeIcons.chartSimple, size: 20)),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: FaIcon(FontAwesomeIcons.chartSimple, size: 21.73),
+              ),
               label: 'KPIs',
             ),
             BottomNavigationBarItem(
-              icon: Padding(padding: EdgeInsets.only(bottom: 4), child: FaIcon(FontAwesomeIcons.solidUser, size: 20)),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: FaIcon(FontAwesomeIcons.user, size: 21.73),
+              ),
               label: 'Perfil',
             ),
             BottomNavigationBarItem(
-              icon: Padding(padding: EdgeInsets.only(bottom: 4), child: FaIcon(FontAwesomeIcons.gear, size: 20)),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: FaIcon(FontAwesomeIcons.gear, size: 21.73),
+              ),
               label: 'Config.',
             ),
           ],

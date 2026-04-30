@@ -1,9 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  int _activeTabIndex = 0;
+
+  final List<Map<String, dynamic>> _tabs = [
+    {'label': 'Recibidos', 'count': '5'},
+    {'label': 'Preparando', 'count': '8'},
+    {'label': 'Listos', 'count': '3'},
+    {'label': 'En camino', 'count': '4'},
+    {'label': 'Pagados', 'count': '4'},
+  ];
+
+  final List<Map<String, dynamic>> _activeOrders = [
+    {
+      'avatarLetter': 'M',
+      'avatarGradient': [AppColors.successBg, const Color(0xFFA7F3D0)],
+      'avatarColor': AppColors.primaryDark,
+      'name': 'María García',
+      'idText': '#P-0041 · vía WhatsApp',
+      'isNew': true,
+      'items': '2× Pan de bono · 1× Almojábana · 1× Café tinto',
+      'price': '\$18,500',
+      'timeAgo': 'Hace 2 min',
+    },
+    {
+      'avatarLetter': 'J',
+      'avatarGradient': [AppColors.aiBg, const Color(0xFFDDD6FE)],
+      'avatarColor': AppColors.aiText,
+      'name': 'Juan Rodríguez',
+      'idText': '#P-0040 · vía WhatsApp',
+      'isNew': false,
+      'items': '3× Croissant de jamón · 2× Jugo naranja',
+      'price': '\$32,000',
+      'timeAgo': 'Hace 5 min',
+    },
+    {
+      'avatarLetter': 'S',
+      'avatarGradient': [AppColors.dangerBg, const Color(0xFFFED6D7)],
+      'avatarColor': const Color(0xFFD9282B),
+      'name': 'Sara Sierra',
+      'idText': '#P-0038 · vía WhatsApp',
+      'isNew': false,
+      'items': '1× Croissant de jamón',
+      'price': '\$10,000',
+      'timeAgo': 'Hace 10 min',
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +64,7 @@ class DashboardScreen extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(left: 21.73, right: 21.73, top: 20.0, bottom: 16.0),
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -26,18 +78,18 @@ class DashboardScreen extends StatelessWidget {
                           Text(
                             'Buenos días, Carlos 👋',
                             style: GoogleFonts.inter(
-                              color: const Color(0xFF64748B),
-                              fontSize: 14.12,
+                              color: AppColors.textTertiary,
+                              fontSize: 14,
                               fontWeight: FontWeight.normal,
                             ),
                           ),
                           Text(
                             'Mi Panadería',
                             style: GoogleFonts.inter(
-                              color: const Color(0xFF0F172A),
-                              fontSize: 19.56,
+                              color: AppColors.textPrimary,
+                              fontSize: 20,
                               fontWeight: FontWeight.w800,
-                              letterSpacing: -0.33,
+                              letterSpacing: -0.3,
                             ),
                           ),
                         ],
@@ -45,27 +97,37 @@ class DashboardScreen extends StatelessWidget {
                       Stack(
                         children: [
                           Container(
-                            width: 43.46,
-                            height: 43.46,
+                            width: 44,
+                            height: 44,
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(13.04),
-                              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.09),
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(13),
+                              border: Border.all(
+                                color: AppColors.border,
+                                width: 1,
+                              ),
                             ),
                             child: const Center(
-                              child: FaIcon(FontAwesomeIcons.bell, color: Color(0xFF475569), size: 18.47),
+                              child: FaIcon(
+                                FontAwesomeIcons.bell,
+                                color: AppColors.textSecondary,
+                                size: 18,
+                              ),
                             ),
                           ),
                           Positioned(
                             top: 8,
                             right: 8,
                             child: Container(
-                              width: 8.69,
-                              height: 8.69,
+                              width: 9,
+                              height: 9,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEF4444),
+                                color: AppColors.dangerIcon,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: const Color(0xFFF8FAFC), width: 2.17),
+                                border: Border.all(
+                                  color: AppColors.background,
+                                  width: 2,
+                                ),
                               ),
                             ),
                           ),
@@ -76,28 +138,28 @@ class DashboardScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   // IA Activa Pill
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.87, vertical: 4.35),
+                    padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFDCFCE7),
-                      borderRadius: BorderRadius.circular(1085.41),
+                      color: AppColors.successBg,
+                      borderRadius: BorderRadius.circular(999),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 6.52,
-                          height: 6.52,
+                          width: 6,
+                          height: 6,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF22C55E),
-                            borderRadius: BorderRadius.circular(3.26),
+                            color: AppColors.successIcon,
+                            borderRadius: BorderRadius.circular(3),
                           ),
                         ),
-                        const SizedBox(width: 5.43),
+                        const SizedBox(width: 5),
                         Text(
                           'IA Activa · 3 pedidos entrantes',
                           style: GoogleFonts.inter(
-                            color: const Color(0xFF15803D),
-                            fontSize: 11.95,
+                            color: AppColors.successText,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -111,48 +173,48 @@ class DashboardScreen extends StatelessWidget {
           
           // Metrics Grid
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 21.73),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             sliver: SliverGrid.count(
               crossAxisCount: 2,
               crossAxisSpacing: 16.0,
               mainAxisSpacing: 16.0,
-              childAspectRatio: 1.35, // Adjust based on Figma
+              childAspectRatio: 1.35,
               children: [
                 _buildMetricCard(
                   icon: FontAwesomeIcons.bagShopping,
-                  iconColor: const Color(0xFF15803D),
-                  iconBg: const Color(0xFFDCFCE7),
+                  iconColor: AppColors.successText,
+                  iconBg: AppColors.successBg,
                   label: 'Pedidos hoy',
                   value: '24',
                   subText: '↑ +6 vs ayer',
-                  subColor: const Color(0xFF15803D),
+                  subColor: AppColors.successText,
                 ),
                 _buildMetricCard(
                   icon: FontAwesomeIcons.clock,
-                  iconColor: const Color(0xFF1D4ED8),
-                  iconBg: const Color(0xFFDBEAFE),
+                  iconColor: AppColors.infoText,
+                  iconBg: AppColors.infoBg,
                   label: 'Tiempo prom.',
                   value: '4.2 min',
                   subText: '↓ -1.3 min',
-                  subColor: const Color(0xFF1D4ED8),
+                  subColor: AppColors.infoText,
                 ),
                 _buildMetricCard(
                   icon: FontAwesomeIcons.dollarSign,
-                  iconColor: const Color(0xFF6D28D9),
-                  iconBg: const Color(0xFFEDE9FE),
+                  iconColor: AppColors.aiText,
+                  iconBg: AppColors.aiBg,
                   label: 'Ventas del día',
                   value: '\$284K',
                   subText: '↑ +18%',
-                  subColor: const Color(0xFF6D28D9),
+                  subColor: AppColors.aiText,
                 ),
                 _buildMetricCard(
                   icon: FontAwesomeIcons.solidStar,
-                  iconColor: const Color(0xFFB45309),
-                  iconBg: const Color(0xFFFEF3C7),
+                  iconColor: AppColors.warningText,
+                  iconBg: AppColors.warningBg,
                   label: 'Satisfacción',
                   value: '96%',
                   subText: '↑ +2%',
-                  subColor: const Color(0xFFB45309),
+                  subColor: AppColors.warningText,
                 ),
               ],
             ),
@@ -166,32 +228,38 @@ class DashboardScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 21.73),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Text(
                       'Pedidos activos',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF1E293B),
-                        fontSize: 17.38,
+                        color: AppColors.textPrimary, // Changed to match theme
+                        fontSize: 17,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 21.73),
-                    child: Row(
-                      children: [
-                        _buildTabChip('Recibidos', '5', isActive: true),
-                        const SizedBox(width: 8),
-                        _buildTabChip('Preparando', '8'),
-                        const SizedBox(width: 8),
-                        _buildTabChip('Listos', '3'),
-                        const SizedBox(width: 8),
-                        _buildTabChip('En camino', '4'),
-                        const SizedBox(width: 8),
-                        _buildTabChip('Pagados', '4'),
-                      ],
+                  SizedBox(
+                    height: 38,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      itemCount: _tabs.length,
+                      separatorBuilder: (context, index) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _activeTabIndex = index;
+                            });
+                          },
+                          child: _buildTabChip(
+                            _tabs[index]['label'] as String,
+                            _tabs[index]['count'] as String,
+                            isActive: index == _activeTabIndex,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -201,43 +269,26 @@ class DashboardScreen extends StatelessWidget {
           
           // Order Cards
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 21.73, vertical: 8.0),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildOrderCard(
-                  avatarLetter: 'M',
-                  avatarGradient: const [Color(0xFFDCFCE7), Color(0xFFA7F3D0)],
-                  avatarColor: const Color(0xFF128C7E),
-                  name: 'María García',
-                  idText: '#P-0041 · vía WhatsApp',
-                  isNew: true,
-                  items: '2× Pan de bono · 1× Almojábana · 1× Café tinto',
-                  price: '\$18,500',
-                  timeAgo: 'Hace 2 min',
-                ),
-                const SizedBox(height: 12),
-                _buildOrderCard(
-                  avatarLetter: 'J',
-                  avatarGradient: const [Color(0xFFEDE9FE), Color(0xFFDDD6FE)],
-                  avatarColor: const Color(0xFF6D28D9),
-                  name: 'Juan Rodríguez',
-                  idText: '#P-0040 · vía WhatsApp',
-                  items: '3× Croissant de jamón · 2× Jugo naranja',
-                  price: '\$32,000',
-                  timeAgo: 'Hace 5 min',
-                ),
-                 const SizedBox(height: 12),
-                _buildOrderCard(
-                  avatarLetter: 'S',
-                  avatarGradient: const [Color(0xFFFEE9E9), Color(0xFFFED6D7)],
-                  avatarColor: const Color(0xFFD9282B),
-                  name: 'Sara Sierra',
-                  idText: '#P-0038 · vía WhatsApp',
-                  items: '1× Croissant de jamón',
-                  price: '\$10,000',
-                  timeAgo: 'Hace 10 min',
-                ),
-              ]),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            sliver: SliverList.builder(
+              itemCount: _activeOrders.length,
+              itemBuilder: (context, index) {
+                final order = _activeOrders[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: _buildOrderCard(
+                    avatarLetter: order['avatarLetter'] as String,
+                    avatarGradient: order['avatarGradient'] as List<Color>,
+                    avatarColor: order['avatarColor'] as Color,
+                    name: order['name'] as String,
+                    idText: order['idText'] as String,
+                    isNew: order['isNew'] as bool,
+                    items: order['items'] as String,
+                    price: order['price'] as String,
+                    timeAgo: order['timeAgo'] as String,
+                  ),
+                );
+              },
             ),
           ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
@@ -257,38 +308,38 @@ class DashboardScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(17.38),
-        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.09),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(17),
+        border: Border.all(color: AppColors.borderLight, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha((0.08 * 255).toInt()),
-            blurRadius: 3.26,
-            offset: const Offset(0, 1.09),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(17.38),
+      padding: const EdgeInsets.all(17),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 30.42,
-            height: 30.42,
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
               color: iconBg,
-              borderRadius: BorderRadius.circular(8.69),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: FaIcon(icon, color: iconColor, size: 14.12),
+              child: FaIcon(icon, color: iconColor, size: 14),
             ),
           ),
           const Spacer(),
           Text(
             label,
             style: GoogleFonts.inter(
-              color: const Color(0xFF64748B),
-              fontSize: 11.95,
+              color: AppColors.textTertiary,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -296,8 +347,8 @@ class DashboardScreen extends StatelessWidget {
           Text(
             value,
             style: GoogleFonts.inter(
-              color: const Color(0xFF1E293B),
-              fontSize: 23.90,
+              color: AppColors.textPrimary,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -306,7 +357,7 @@ class DashboardScreen extends StatelessWidget {
             subText,
             style: GoogleFonts.inter(
               color: subColor,
-              fontSize: 11.95,
+              fontSize: 12,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -317,13 +368,13 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildTabChip(String label, String count, {bool isActive = false}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.30, vertical: 8.69),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF25D366) : Colors.white,
-        borderRadius: BorderRadius.circular(1085.41),
+        color: isActive ? AppColors.primary : AppColors.surface,
+        borderRadius: BorderRadius.circular(999),
         border: Border.all(
-          color: isActive ? const Color(0xFF25D366) : const Color(0xFFE2E8F0),
-          width: 1.09,
+          color: isActive ? AppColors.primary : AppColors.border,
+          width: 1,
         ),
       ),
       child: Row(
@@ -332,25 +383,27 @@ class DashboardScreen extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.inter(
-              color: isActive ? Colors.white : const Color(0xFF475569),
-              fontSize: 11.95,
+              color: isActive ? AppColors.surface : AppColors.textSecondary,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(width: 6.52),
+          const SizedBox(width: 6),
           Container(
-            width: 19.56,
-            height: 19.56,
+            width: 20,
+            height: 20,
             decoration: BoxDecoration(
-              color: isActive ? Colors.white.withAlpha(64) : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(9.78),
+              color: isActive
+                  ? AppColors.surface.withValues(alpha: 0.25)
+                  : AppColors.borderLight,
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
               child: Text(
                 count,
                 style: GoogleFonts.inter(
-                  color: isActive ? Colors.white : const Color(0xFF475569),
-                  fontSize: 9.78,
+                  color: isActive ? AppColors.surface : AppColors.textSecondary,
+                  fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -373,16 +426,16 @@ class DashboardScreen extends StatelessWidget {
     required String timeAgo,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18.47, vertical: 16.30),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(17.38),
-        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.09),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(17),
+        border: Border.all(color: AppColors.borderLight, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha((0.08 * 255).toInt()),
-            blurRadius: 3.26,
-            offset: const Offset(0, 1.09),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -394,10 +447,10 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 41.29,
-                height: 41.29,
+                width: 41,
+                height: 41,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(13.04),
+                  borderRadius: BorderRadius.circular(13),
                   gradient: LinearGradient(
                     colors: avatarGradient,
                     begin: Alignment.topLeft,
@@ -409,13 +462,13 @@ class DashboardScreen extends StatelessWidget {
                     avatarLetter,
                     style: GoogleFonts.inter(
                       color: avatarColor,
-                      fontSize: 17.38,
+                      fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 10.87),
+              const SizedBox(width: 11),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,17 +476,17 @@ class DashboardScreen extends StatelessWidget {
                     Text(
                       name,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF0F172A),
-                        fontSize: 14.12,
+                        color: AppColors.textPrimary,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 2.17),
+                    const SizedBox(height: 2),
                     Text(
                       idText,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF94A3B8),
-                        fontSize: 11.95,
+                        color: AppColors.textMuted,
+                        fontSize: 12,
                         fontWeight: FontWeight.normal,
                       ),
                     ),
@@ -441,16 +494,16 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10.87, vertical: 3.26),
+                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEF3C7),
-                  borderRadius: BorderRadius.circular(1085.41),
+                  color: AppColors.warningBg,
+                  borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   'Esperando',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFFB45309),
-                    fontSize: 11.95,
+                    color: AppColors.warningText,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -458,16 +511,16 @@ class DashboardScreen extends StatelessWidget {
               if (isNew) ...[
                 const SizedBox(width: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.87, vertical: 3.26),
+                  padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDCFCE7),
-                    borderRadius: BorderRadius.circular(1085.41),
+                    color: AppColors.successBg,
+                    borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     'Nuevo',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF15803D),
-                      fontSize: 11.95,
+                      color: AppColors.successText,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -480,8 +533,8 @@ class DashboardScreen extends StatelessWidget {
           Text(
             items,
             style: GoogleFonts.inter(
-              color: const Color(0xFF475569),
-              fontSize: 11.95,
+              color: AppColors.textSecondary,
+              fontSize: 12,
               height: 1.5,
             ),
           ),
@@ -496,21 +549,21 @@ class DashboardScreen extends StatelessWidget {
                   Text(
                     price,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF0F172A),
-                      fontSize: 17.38,
+                      color: AppColors.textPrimary,
+                      fontSize: 17,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Row(
                     children: [
-                      const FaIcon(FontAwesomeIcons.clock, color: Color(0xFF94A3B8), size: 10.87),
+                      const FaIcon(FontAwesomeIcons.clock, color: AppColors.textMuted, size: 11),
                       const SizedBox(width: 4),
                       Text(
                         timeAgo,
                         style: GoogleFonts.inter(
-                          color: const Color(0xFF94A3B8),
-                          fontSize: 11.95,
+                          color: AppColors.textMuted,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -520,19 +573,19 @@ class DashboardScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF25D366),
+                  backgroundColor: AppColors.primary,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 13.04),
-                  minimumSize: const Size(0, 32.60),
+                  padding: const EdgeInsets.symmetric(horizontal: 13),
+                  minimumSize: const Size(0, 33),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1085.41),
+                    borderRadius: BorderRadius.circular(999),
                   ),
                 ),
                 child: Text(
                   'Aceptar →',
                   style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 11.73,
+                    color: AppColors.surface,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

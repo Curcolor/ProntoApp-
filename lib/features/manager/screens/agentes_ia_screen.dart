@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 import 'agente_ia_contexto_screen.dart';
 
 class AgentesIaScreen extends StatefulWidget {
@@ -58,7 +59,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       body: Column(
         children: [
           _buildHero(context),
@@ -91,7 +92,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF6D28D9), Color(0xFF8B5CF6)],
+          colors: [AppColors.aiGradientStart, AppColors.aiGradientEnd],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -109,8 +110,8 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                     onTap: () => Navigator.pop(context),
                     child: Container(
                       width: 38, height: 38,
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                      child: const FaIcon(FontAwesomeIcons.arrowLeft, color: Colors.white, size: 16),
+                      decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
+                      child: const Center(child: FaIcon(FontAwesomeIcons.arrowLeft, color: AppColors.surface, size: 16)),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -118,15 +119,15 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Agente IA', style: GoogleFonts.inter(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
-                        Text('Plantilla, modelo y contexto del negocio', style: GoogleFonts.inter(color: Colors.white.withOpacity(0.7), fontSize: 11)),
+                        Text('Agente IA', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
+                        Text('Plantilla, modelo y contexto del negocio', style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.7), fontSize: 11)),
                       ],
                     ),
                   ),
                   Container(
                     width: 38, height: 38,
-                    decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
-                    child: const FaIcon(FontAwesomeIcons.sliders, color: Colors.white, size: 15),
+                    decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
+                    child: const Center(child: FaIcon(FontAwesomeIcons.sliders, color: AppColors.surface, size: 15)),
                   ),
                 ],
               ),
@@ -134,15 +135,15 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: AppColors.surface.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  border: Border.all(color: AppColors.surface.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   children: [
                     Container(
                       width: 38, height: 38,
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                      decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
                       child: Center(child: Text(modeloActivo['emoji']!, style: const TextStyle(fontSize: 18))),
                     ),
                     const SizedBox(width: 10),
@@ -150,15 +151,15 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Tomador de Pedidos', style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
-                          Text('${modeloActivo['nombre']} · 1,203 interacciones hoy', style: GoogleFonts.inter(color: Colors.white.withOpacity(0.65), fontSize: 9)),
+                          Text('Tomador de Pedidos', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 13, fontWeight: FontWeight.bold)),
+                          Text('${modeloActivo['nombre']} · 1,203 interacciones hoy', style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.65), fontSize: 9)),
                         ],
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(color: const Color(0xFF25D366), borderRadius: BorderRadius.circular(999)),
-                      child: Text('ACTIVO', style: GoogleFonts.inter(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800)),
+                      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(999)),
+                      child: Text('ACTIVO', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 9, fontWeight: FontWeight.w800)),
                     ),
                   ],
                 ),
@@ -171,7 +172,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
   }
 
   Widget _buildSectionTitle(String titulo) {
-    return Text(titulo.toUpperCase(), style: GoogleFonts.inter(color: const Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8));
+    return Text(titulo.toUpperCase(), style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8));
   }
 
   Widget _buildModelSelector() {
@@ -190,10 +191,10 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
               decoration: BoxDecoration(
-                color: seleccionado ? const Color(0xFFFAF7FF) : Colors.white,
+                color: seleccionado ? AppColors.aiHighlight : AppColors.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: seleccionado ? const Color(0xFF8B5CF6) : const Color(0xFFE2E8F0)),
-                boxShadow: const [BoxShadow(color: Color(0x0A000000), offset: Offset(0, 1), blurRadius: 3)],
+                border: Border.all(color: seleccionado ? AppColors.aiGradientEnd : AppColors.border),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), offset: const Offset(0, 1), blurRadius: 3)],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -204,8 +205,8 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(modelo['nombre']!, style: GoogleFonts.inter(color: seleccionado ? const Color(0xFF8B5CF6) : const Color(0xFF334155), fontSize: 10, fontWeight: FontWeight.bold)),
-                      Text(modelo['desc']!, style: GoogleFonts.inter(color: seleccionado ? const Color(0xFF8B5CF6) : const Color(0xFF94A3B8), fontSize: 9)),
+                      Text(modelo['nombre']!, style: GoogleFonts.inter(color: seleccionado ? AppColors.aiGradientEnd : AppColors.textPrimary, fontSize: 10, fontWeight: FontWeight.bold)),
+                      Text(modelo['desc']!, style: GoogleFonts.inter(color: seleccionado ? AppColors.aiGradientEnd : AppColors.textMuted, fontSize: 9)),
                     ],
                   ),
                 ],
@@ -224,10 +225,10 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: activo ? const Color(0xFFFAF7FF) : Colors.white,
+          color: activo ? AppColors.aiHighlight : AppColors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: activo ? const Color(0xFF8B5CF6) : const Color(0xFFE2E8F0), width: activo ? 2 : 1),
-          boxShadow: const [BoxShadow(color: Color(0x0A000000), offset: Offset(0, 1), blurRadius: 3)],
+          border: Border.all(color: activo ? AppColors.aiGradientEnd : AppColors.border, width: activo ? 2 : 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), offset: const Offset(0, 1), blurRadius: 3)],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +238,7 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
               children: [
                 Container(
                   width: 44, height: 44,
-                  decoration: BoxDecoration(color: const Color(0xFFEDE9FE), borderRadius: BorderRadius.circular(12)),
+                  decoration: BoxDecoration(color: AppColors.aiBg, borderRadius: BorderRadius.circular(12)),
                   child: Center(child: Text(plantilla['emoji'] as String, style: const TextStyle(fontSize: 20))),
                 ),
                 const SizedBox(width: 12),
@@ -247,17 +248,17 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                     children: [
                       Row(
                         children: [
-                          Expanded(child: Text(plantilla['titulo'] as String, style: GoogleFonts.inter(color: const Color(0xFF0F172A), fontSize: 13, fontWeight: FontWeight.bold))),
+                          Expanded(child: Text(plantilla['titulo'] as String, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold))),
                           if (activo)
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                              decoration: BoxDecoration(color: const Color(0xFFEDE9FE), borderRadius: BorderRadius.circular(999)),
-                              child: Text('ACTIVO', style: GoogleFonts.inter(color: const Color(0xFF6D28D9), fontSize: 9, fontWeight: FontWeight.w600)),
+                              decoration: BoxDecoration(color: AppColors.aiBg, borderRadius: BorderRadius.circular(999)),
+                              child: Text('ACTIVO', style: GoogleFonts.inter(color: AppColors.aiText, fontSize: 9, fontWeight: FontWeight.w600)),
                             ),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(plantilla['desc'] as String, style: GoogleFonts.inter(color: const Color(0xFF64748B), fontSize: 11, height: 1.5)),
+                      Text(plantilla['desc'] as String, style: GoogleFonts.inter(color: AppColors.textTertiary, fontSize: 11, height: 1.5)),
                     ],
                   ),
                 ),
@@ -269,10 +270,10 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
               children: (plantilla['tags'] as List<String>).map((tag) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: activo ? const Color(0xFFEDE9FE) : const Color(0xFFF1F5F9),
+                  color: activo ? AppColors.aiBg : AppColors.borderLight,
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: Text(tag, style: GoogleFonts.inter(color: activo ? const Color(0xFF6D28D9) : const Color(0xFF64748B), fontSize: 9, fontWeight: FontWeight.w600)),
+                child: Text(tag, style: GoogleFonts.inter(color: activo ? AppColors.aiText : AppColors.textTertiary, fontSize: 9, fontWeight: FontWeight.w600)),
               )).toList(),
             ),
             const SizedBox(height: 12),
@@ -293,14 +294,14 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
                     child: Container(
                       height: 36,
                       decoration: BoxDecoration(
-                        gradient: activo ? const LinearGradient(colors: [Color(0xFF8B5CF6), Color(0xFF6D28D9)]) : null,
-                        color: activo ? null : const Color(0xFFF1F5F9),
+                        gradient: activo ? const LinearGradient(colors: [AppColors.aiGradientEnd, AppColors.aiGradientStart]) : null,
+                        color: activo ? null : AppColors.borderLight,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
                         child: Text(
                           activo ? 'Plantilla activa' : 'Activar plantilla',
-                          style: GoogleFonts.inter(color: activo ? Colors.white : const Color(0xFF334155), fontSize: 12, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.inter(color: activo ? AppColors.surface : AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -322,28 +323,28 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [Color(0xFFF5F0FF), Color(0xFFEDE9FE)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+          gradient: const LinearGradient(colors: [AppColors.aiBg, AppColors.surface], begin: Alignment.topLeft, end: Alignment.bottomRight),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFC4B5FD)),
+          border: Border.all(color: AppColors.aiGradientStart.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
             Container(
               width: 44, height: 44,
-              decoration: BoxDecoration(color: const Color(0xFF8B5CF6), borderRadius: BorderRadius.circular(12)),
-              child: const FaIcon(FontAwesomeIcons.robot, color: Colors.white, size: 18),
+              decoration: BoxDecoration(color: AppColors.aiGradientEnd, borderRadius: BorderRadius.circular(12)),
+              child: const Center(child: FaIcon(FontAwesomeIcons.robot, color: AppColors.surface, size: 18)),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Contexto del negocio', style: GoogleFonts.inter(color: const Color(0xFF5B21B6), fontSize: 13, fontWeight: FontWeight.bold)),
-                  Text('Editar la información que usa la IA para responder', style: GoogleFonts.inter(color: const Color(0xFF7C3AED), fontSize: 11)),
+                  Text('Contexto del negocio', style: GoogleFonts.inter(color: AppColors.aiGradientEnd, fontSize: 13, fontWeight: FontWeight.bold)),
+                  Text('Editar la información que usa la IA para responder', style: GoogleFonts.inter(color: AppColors.aiGradientStart, fontSize: 11)),
                 ],
               ),
             ),
-            const FaIcon(FontAwesomeIcons.chevronRight, color: Color(0xFF8B5CF6), size: 13),
+            const FaIcon(FontAwesomeIcons.chevronRight, color: AppColors.aiGradientEnd, size: 13),
           ],
         ),
       ),

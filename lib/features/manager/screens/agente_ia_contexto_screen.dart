@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 
 class AgenteIaContextoScreen extends StatefulWidget {
   const AgenteIaContextoScreen({super.key});
@@ -39,7 +40,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           Column(
@@ -79,7 +80,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF6D28D9), Color(0xFF8B5CF6)],
+          colors: [AppColors.aiGradientStart, AppColors.aiGradientEnd],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -97,8 +98,8 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
                     onTap: () => Navigator.pop(context),
                     child: Container(
                       width: 38, height: 38,
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                      child: const FaIcon(FontAwesomeIcons.arrowLeft, color: Colors.white, size: 16),
+                      decoration: BoxDecoration(color: AppColors.surface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
+                      child: const FaIcon(FontAwesomeIcons.arrowLeft, color: AppColors.surface, size: 16),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -106,8 +107,8 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Contexto del negocio', style: GoogleFonts.inter(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
-                        Text('Plantilla personalizada · ✏️', style: GoogleFonts.inter(color: Colors.white.withOpacity(0.7), fontSize: 11)),
+                        Text('Contexto del negocio', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
+                        Text('Plantilla personalizada · ✏️', style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.7), fontSize: 11)),
                       ],
                     ),
                   ),
@@ -117,18 +118,18 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: AppColors.surface.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  border: Border.all(color: AppColors.surface.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   children: [
-                    const FaIcon(FontAwesomeIcons.robot, color: Colors.white, size: 11),
+                    const FaIcon(FontAwesomeIcons.robot, color: AppColors.surface, size: 11),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Toda esta información la usa la IA para responder con precisión a tus clientes por WhatsApp.',
-                        style: GoogleFonts.inter(color: Colors.white.withOpacity(0.8), fontSize: 11, height: 1.5),
+                        style: GoogleFonts.inter(color: AppColors.surface.withValues(alpha: 0.8), fontSize: 11, height: 1.5),
                       ),
                     ),
                   ],
@@ -144,7 +145,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
   Widget _buildSectionTitle(String titulo) {
     return Text(
       titulo.toUpperCase(),
-      style: GoogleFonts.inter(color: const Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+      style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),
     );
   }
 
@@ -152,10 +153,10 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(17, 17, 17, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-        boxShadow: const [BoxShadow(color: Color(0x14000000), offset: Offset(0, 1), blurRadius: 3)],
+        border: Border.all(color: AppColors.borderLight),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), offset: const Offset(0, 1), blurRadius: 3)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,19 +167,19 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
               Container(
                 width: 28, height: 28,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFF8B5CF6), Color(0xFF6D28D9)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                  gradient: const LinearGradient(colors: [AppColors.aiGradientEnd, AppColors.aiGradientStart], begin: Alignment.topLeft, end: Alignment.bottomRight),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Center(child: Text('$numero', style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold))),
+                child: Center(child: Text('$numero', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 13, fontWeight: FontWeight.bold))),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(titulo, style: GoogleFonts.inter(color: const Color(0xFF0F172A), fontSize: 13, fontWeight: FontWeight.bold)),
+                    Text(titulo, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 2),
-                    Text(descripcion, style: GoogleFonts.inter(color: const Color(0xFF64748B), fontSize: 11, height: 1.5)),
+                    Text(descripcion, style: GoogleFonts.inter(color: AppColors.textTertiary, fontSize: 11, height: 1.5)),
                   ],
                 ),
               ),
@@ -188,21 +189,21 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
           if (ejemplo != null) ...[
             Container(
               padding: const EdgeInsets.fromLTRB(15, 10, 12, 10),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                border: const Border(left: BorderSide(color: Color(0xFF8B5CF6), width: 3)),
-                borderRadius: const BorderRadius.only(topRight: Radius.circular(12), bottomRight: Radius.circular(12)),
+              decoration: const BoxDecoration(
+                color: AppColors.background,
+                border: Border(left: BorderSide(color: AppColors.aiGradientEnd, width: 3)),
+                borderRadius: BorderRadius.only(topRight: Radius.circular(12), bottomRight: Radius.circular(12)),
               ),
-              child: Text(ejemplo, style: GoogleFonts.inter(color: const Color(0xFF334155), fontSize: 11, fontStyle: FontStyle.italic, height: 1.6)),
+              child: Text(ejemplo, style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 11, fontStyle: FontStyle.italic, height: 1.6)),
             ),
             const SizedBox(height: 10),
           ],
           Container(
             constraints: const BoxConstraints(minHeight: 80),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: AppColors.border),
             ),
             child: TextField(
               controller: controlador,
@@ -210,9 +211,9 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(13),
                 border: InputBorder.none,
-                hintStyle: GoogleFonts.inter(color: const Color(0xFF94A3B8), fontSize: 13),
+                hintStyle: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 13),
               ),
-              style: GoogleFonts.inter(color: const Color(0xFF1E293B), fontSize: 13, height: 1.6),
+              style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 13, height: 1.6),
             ),
           ),
         ],
@@ -229,7 +230,7 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [Colors.white, Colors.white.withOpacity(0.0)],
+            colors: [AppColors.surface, AppColors.surface.withValues(alpha: 0.0)],
             stops: const [0.7, 1.0],
           ),
         ),
@@ -240,14 +241,14 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
             child: Container(
               height: 52,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF25D366), Color(0xFF128C7E)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                gradient: const LinearGradient(colors: [AppColors.success, AppColors.primary], begin: Alignment.topLeft, end: Alignment.bottomRight),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: const [BoxShadow(color: Color(0x5925D366), offset: Offset(0, 4), blurRadius: 14)],
+                boxShadow: [BoxShadow(color: AppColors.success.withValues(alpha: 0.35), offset: const Offset(0, 4), blurRadius: 14)],
               ),
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const FaIcon(FontAwesomeIcons.floppyDisk, color: Colors.white, size: 16),
+                const FaIcon(FontAwesomeIcons.floppyDisk, color: AppColors.surface, size: 16),
                 const SizedBox(width: 8),
-                Text('Guardar contexto del negocio', style: GoogleFonts.inter(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                Text('Guardar contexto del negocio', style: GoogleFonts.inter(color: AppColors.surface, fontSize: 16, fontWeight: FontWeight.w600)),
               ]),
             ),
           ),

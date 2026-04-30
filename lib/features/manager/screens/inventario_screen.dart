@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 import '../widgets/ajustar_stock_modal.dart';
 import 'agregar_editar_producto_screen.dart';
 
@@ -22,10 +23,77 @@ class _InventarioScreenState extends State<InventarioScreen> {
     '🥗 Ensaladas',
   ];
 
+  final List<Map<String, dynamic>> _mockProducts = [
+    {
+      'icon': '🥐',
+      'name': 'Croissant de jamón y q...',
+      'category': '🥐 Panadería',
+      'price': '\$8,500',
+      'stockLabel': 'Stock: 40 uds',
+      'stockPercent': 0.8,
+      'statusBadgeText': 'Disponible',
+      'statusBadgeColor': AppColors.successText,
+      'statusBadgeBg': AppColors.successBg,
+      'stockFillColor': AppColors.successIcon,
+      'aiStatusText': 'IA activa',
+      'aiStatusIcon': FontAwesomeIcons.robot,
+      'isStockLow': false,
+      'isOutOfStock': false,
+    },
+    {
+      'icon': '☕',
+      'name': 'Café latte especial',
+      'category': '☕ Bebidas',
+      'price': '\$5,000',
+      'stockLabel': 'Stock: 5 uds',
+      'stockPercent': 0.2,
+      'statusBadgeText': 'Stock bajo',
+      'statusBadgeColor': AppColors.warningText,
+      'statusBadgeBg': AppColors.warningBg,
+      'stockFillColor': AppColors.warningIcon,
+      'aiStatusText': 'IA activa',
+      'aiStatusIcon': FontAwesomeIcons.robot,
+      'isStockLow': true,
+      'isOutOfStock': false,
+    },
+    {
+      'icon': '🍰',
+      'name': 'Torta de tres leches',
+      'category': '🍰 Repostería',
+      'price': '\$12,000',
+      'stockLabel': 'Stock: 0 uds',
+      'stockPercent': 0.0,
+      'statusBadgeText': 'Agotado',
+      'statusBadgeColor': AppColors.dangerText,
+      'statusBadgeBg': AppColors.dangerBg,
+      'stockFillColor': AppColors.border,
+      'aiStatusText': 'IA pausada',
+      'aiStatusIcon': FontAwesomeIcons.robot,
+      'isStockLow': false,
+      'isOutOfStock': true,
+    },
+    {
+      'icon': '🥖',
+      'name': 'Pan de bono x6',
+      'category': '🥐 Panadería',
+      'price': '\$9,000',
+      'stockLabel': 'Stock: 32 uds',
+      'stockPercent': 0.65,
+      'statusBadgeText': 'Disponible',
+      'statusBadgeColor': AppColors.successText,
+      'statusBadgeBg': AppColors.successBg,
+      'stockFillColor': AppColors.successIcon,
+      'aiStatusText': 'IA activa',
+      'aiStatusIcon': FontAwesomeIcons.robot,
+      'isStockLow': false,
+      'isOutOfStock': false,
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -34,78 +102,39 @@ class _InventarioScreenState extends State<InventarioScreen> {
             _buildSearchBar(),
             _buildCategories(),
             Expanded(
-              child: ListView(
+              child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                children: [
-                  _buildStockAlert(),
-                  const SizedBox(height: 10),
-                  _buildProductCard(
-                    context: context,
-                    icon: '🥐',
-                    name: 'Croissant de jamón y q...',
-                    category: '🥐 Panadería',
-                    price: '\$8,500',
-                    stockLabel: 'Stock: 40 uds',
-                    stockPercent: 0.8,
-                    statusBadgeText: 'Disponible',
-                    statusBadgeColor: const Color(0xFF15803D),
-                    statusBadgeBg: const Color(0xFFDCFCE7),
-                    stockFillColor: const Color(0xFF25D366),
-                    aiStatusText: 'IA activa',
-                    aiStatusIcon: FontAwesomeIcons.robot, // placeholder for robot
-                  ),
-                  const SizedBox(height: 12),
-                  _buildProductCard(
-                    context: context,
-                    icon: '☕',
-                    name: 'Café latte especial',
-                    category: '☕ Bebidas',
-                    price: '\$5,000',
-                    stockLabel: 'Stock: 5 uds',
-                    stockPercent: 0.2,
-                    statusBadgeText: 'Stock bajo',
-                    statusBadgeColor: const Color(0xFFB45309),
-                    statusBadgeBg: const Color(0xFFFEF3C7),
-                    stockFillColor: const Color(0xFFF59E0B),
-                    aiStatusText: 'IA activa',
-                    aiStatusIcon: FontAwesomeIcons.robot,
-                    isStockLow: true,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildProductCard(
-                    context: context,
-                    icon: '🍰',
-                    name: 'Torta de tres leches',
-                    category: '🍰 Repostería',
-                    price: '\$12,000',
-                    stockLabel: 'Stock: 0 uds',
-                    stockPercent: 0.0,
-                    statusBadgeText: 'Agotado',
-                    statusBadgeColor: const Color(0xFF991B1B),
-                    statusBadgeBg: const Color(0xFFFEE2E2),
-                    stockFillColor: const Color(0xFFE2E8F0),
-                    aiStatusText: 'IA pausada',
-                    aiStatusIcon: FontAwesomeIcons.robot,
-                    isOutOfStock: true,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildProductCard(
-                    context: context,
-                    icon: '🥖',
-                    name: 'Pan de bono x6',
-                    category: '🥐 Panadería',
-                    price: '\$9,000',
-                    stockLabel: 'Stock: 32 uds',
-                    stockPercent: 0.65,
-                    statusBadgeText: 'Disponible',
-                    statusBadgeColor: const Color(0xFF15803D),
-                    statusBadgeBg: const Color(0xFFDCFCE7),
-                    stockFillColor: const Color(0xFF25D366),
-                    aiStatusText: 'IA activa',
-                    aiStatusIcon: FontAwesomeIcons.robot,
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                itemCount: _mockProducts.length + 1, // +1 for the stock alert
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _buildStockAlert(),
+                    );
+                  }
+                  
+                  final product = _mockProducts[index - 1];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildProductCard(
+                      context: context,
+                      icon: product['icon'],
+                      name: product['name'],
+                      category: product['category'],
+                      price: product['price'],
+                      stockLabel: product['stockLabel'],
+                      stockPercent: product['stockPercent'],
+                      statusBadgeText: product['statusBadgeText'],
+                      statusBadgeColor: product['statusBadgeColor'],
+                      statusBadgeBg: product['statusBadgeBg'],
+                      stockFillColor: product['stockFillColor'],
+                      aiStatusText: product['aiStatusText'],
+                      aiStatusIcon: product['aiStatusIcon'],
+                      isStockLow: product['isStockLow'],
+                      isOutOfStock: product['isOutOfStock'],
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -126,13 +155,15 @@ class _InventarioScreenState extends State<InventarioScreen> {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: AppColors.borderLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const FaIcon(
-                FontAwesomeIcons.arrowLeft,
-                color: Color(0xFF334155),
-                size: 16,
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.arrowLeft,
+                  color: AppColors.textSecondary,
+                  size: 16,
+                ),
               ),
             ),
           ),
@@ -142,7 +173,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
               Text(
                 'Panadería El Trigo Dorado',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF64748B),
+                  color: AppColors.textTertiary,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -150,7 +181,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
               Text(
                 'Inventario',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF0F172A),
+                  color: AppColors.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.3,
@@ -171,13 +202,15 @@ class _InventarioScreenState extends State<InventarioScreen> {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFF25D366),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const FaIcon(
-                FontAwesomeIcons.plus,
-                color: Colors.white,
-                size: 16,
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.plus,
+                  color: AppColors.surface,
+                  size: 16,
+                ),
               ),
             ),
           ),
@@ -192,15 +225,15 @@ class _InventarioScreenState extends State<InventarioScreen> {
       child: Row(
         children: [
           Expanded(
-            child: _buildStatCard('24', 'Productos', const Color(0xFF0F172A)),
+            child: _buildStatCard('24', 'Productos', AppColors.textPrimary),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildStatCard('3', 'Stock bajo', const Color(0xFFF59E0B)),
+            child: _buildStatCard('3', 'Stock bajo', AppColors.warningIcon),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildStatCard('1', 'Agotado', const Color(0xFFEF4444)),
+            child: _buildStatCard('1', 'Agotado', AppColors.dangerIcon),
           ),
         ],
       ),
@@ -211,18 +244,18 @@ class _InventarioScreenState extends State<InventarioScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 9),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-        boxShadow: const [
+        border: Border.all(color: AppColors.borderLight),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x14000000), // 0.08 alpha
-            offset: Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.08),
+            offset: const Offset(0, 1),
             blurRadius: 3,
           ),
           BoxShadow(
-            color: Color(0x0A000000), // 0.04 alpha
-            offset: Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.04),
+            offset: const Offset(0, 1),
             blurRadius: 2,
           ),
         ],
@@ -241,7 +274,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
           Text(
             label,
             style: GoogleFonts.inter(
-              color: const Color(0xFF64748B),
+              color: AppColors.textTertiary,
               fontSize: 9,
               fontWeight: FontWeight.w500,
             ),
@@ -257,16 +290,16 @@ class _InventarioScreenState extends State<InventarioScreen> {
       child: Container(
         height: 46,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
             const SizedBox(width: 16),
             const FaIcon(
               FontAwesomeIcons.magnifyingGlass,
-              color: Color(0xFF94A3B8),
+              color: AppColors.textMuted,
               size: 14,
             ),
             const SizedBox(width: 12),
@@ -275,7 +308,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 decoration: InputDecoration(
                   hintText: 'Buscar producto...',
                   hintStyle: GoogleFonts.inter(
-                    color: const Color(0xFF757575),
+                    color: AppColors.textTertiary,
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
                   ),
@@ -284,7 +317,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                   isDense: true,
                 ),
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF0F172A),
+                  color: AppColors.textPrimary,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -295,13 +328,15 @@ class _InventarioScreenState extends State<InventarioScreen> {
               height: 30,
               margin: const EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFF25D366),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(999),
               ),
-              child: const FaIcon(
-                FontAwesomeIcons.sliders,
-                color: Colors.white,
-                size: 12,
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.sliders,
+                  color: AppColors.surface,
+                  size: 12,
+                ),
               ),
             ),
           ],
@@ -330,20 +365,20 @@ class _InventarioScreenState extends State<InventarioScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF25D366) : Colors.white,
+                  color: isSelected ? AppColors.primary : AppColors.surface,
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF25D366)
-                        : const Color(0xFFE2E8F0),
+                        ? AppColors.primary
+                        : AppColors.border,
                   ),
                 ),
                 child: Text(
                   _categories[index],
                   style: GoogleFonts.inter(
                     color: isSelected
-                        ? Colors.white
-                        : const Color(0xFF475569),
+                        ? AppColors.surface
+                        : AppColors.textSecondary,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -360,16 +395,16 @@ class _InventarioScreenState extends State<InventarioScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF3C7),
+        color: AppColors.warningBg,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFFDE68A)),
+        border: Border.all(color: AppColors.warningBg), // FDE68A
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const FaIcon(
             FontAwesomeIcons.triangleExclamation,
-            color: Color(0xFFF59E0B),
+            color: AppColors.warningIcon,
             size: 16,
           ),
           const SizedBox(width: 10),
@@ -377,7 +412,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
             child: RichText(
               text: TextSpan(
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF92400E),
+                  color: AppColors.warningDarker,
                   fontSize: 11,
                   height: 1.4,
                 ),
@@ -415,25 +450,25 @@ class _InventarioScreenState extends State<InventarioScreen> {
     bool isStockLow = false,
     bool isOutOfStock = false,
   }) {
-    Color borderColor = const Color(0xFFF1F5F9);
-    if (isStockLow) borderColor = const Color(0xFFFDE68A);
-    if (isOutOfStock) borderColor = const Color(0xFFFCA5A5);
+    Color borderColor = AppColors.borderLight;
+    if (isStockLow) borderColor = AppColors.warningBg; // Or something similar
+    if (isOutOfStock) borderColor = AppColors.dangerBg;
 
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: isOutOfStock ? Colors.white.withOpacity(0.7) : Colors.white,
+        color: isOutOfStock ? AppColors.surface.withValues(alpha: 0.7) : AppColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: borderColor),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x14000000), // 0.08 alpha
-            offset: Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.08),
+            offset: const Offset(0, 1),
             blurRadius: 3,
           ),
           BoxShadow(
-            color: Color(0x0A000000), // 0.04 alpha
-            offset: Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.04),
+            offset: const Offset(0, 1),
             blurRadius: 2,
           ),
         ],
@@ -445,7 +480,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
             width: 68,
             height: 68,
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9).withOpacity(isOutOfStock ? 0.5 : 1.0),
+              color: AppColors.borderLight.withValues(alpha: isOutOfStock ? 0.5 : 1.0),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
@@ -463,7 +498,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 Text(
                   name,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF0F172A),
+                    color: AppColors.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
@@ -474,7 +509,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 Text(
                   category,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF64748B),
+                    color: AppColors.textTertiary,
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
                   ),
@@ -486,7 +521,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                     Text(
                       price,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF128C7E),
+                        color: AppColors.primaryDark,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
@@ -528,7 +563,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                       width: double.infinity,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE2E8F0),
+                        color: AppColors.border,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: FractionallySizedBox(
@@ -549,7 +584,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                         Text(
                           stockLabel,
                           style: GoogleFonts.inter(
-                            color: const Color(0xFF64748B),
+                            color: AppColors.textTertiary,
                             fontSize: 9,
                             fontWeight: FontWeight.w400,
                           ),
@@ -557,21 +592,21 @@ class _InventarioScreenState extends State<InventarioScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: isOutOfStock ? const Color(0xFFF1F5F9) : const Color(0xFFEDE9FE),
+                            color: isOutOfStock ? AppColors.borderLight : AppColors.aiBg,
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Row(
                             children: [
                               FaIcon(
                                 aiStatusIcon,
-                                color: isOutOfStock ? const Color(0xFF64748B) : const Color(0xFF6D28D9),
+                                color: isOutOfStock ? AppColors.textTertiary : AppColors.aiText,
                                 size: 9,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 aiStatusText,
                                 style: GoogleFonts.inter(
-                                  color: isOutOfStock ? const Color(0xFF64748B) : const Color(0xFF6D28D9),
+                                  color: isOutOfStock ? AppColors.textTertiary : AppColors.aiText,
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -602,13 +637,15 @@ class _InventarioScreenState extends State<InventarioScreen> {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
+                    color: AppColors.borderLight,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const FaIcon(
-                    FontAwesomeIcons.pen,
-                    color: Color(0xFF475569),
-                    size: 16,
+                  child: const Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.pen,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
                   ),
                 ),
               ),
@@ -621,13 +658,15 @@ class _InventarioScreenState extends State<InventarioScreen> {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
+                    color: AppColors.borderLight,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const FaIcon(
-                    FontAwesomeIcons.ellipsisVertical,
-                    color: Color(0xFF475569),
-                    size: 16,
+                  child: const Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
                   ),
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,17 +24,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 21.73, vertical: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Configuración',
             style: GoogleFonts.inter(
-              color: const Color(0xFF0F172A),
-              fontSize: 23.90,
+              color: AppColors.textPrimary,
+              fontSize: 24,
               fontWeight: FontWeight.w800,
-              letterSpacing: -0.33,
+              letterSpacing: -0.3,
             ),
           ),
           const SizedBox(height: 24),
@@ -43,8 +44,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingsGroup([
             _buildToggleRow(
               icon: FontAwesomeIcons.bell,
-              iconBgColor: const Color(0xFFDCFCE7),
-              iconColor: const Color(0xFF15803D),
+              iconBgColor: AppColors.successBg,
+              iconColor: AppColors.successText,
               title: 'Nuevos pedidos',
               subtitle: 'Alerta inmediata al recibir',
               value: _newOrders,
@@ -52,8 +53,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildToggleRow(
               icon: FontAwesomeIcons.box,
-              iconBgColor: const Color(0xFFDBEAFE),
-              iconColor: const Color(0xFF1D4ED8),
+              iconBgColor: AppColors.infoBg,
+              iconColor: AppColors.infoText,
               title: 'Recordatorio entrega',
               subtitle: 'Aviso antes de la hora',
               value: _deliveryReminder,
@@ -61,8 +62,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildToggleRow(
               icon: FontAwesomeIcons.star,
-              iconBgColor: const Color(0xFFFEF3C7),
-              iconColor: const Color(0xFFB45309),
+              iconBgColor: AppColors.warningBg,
+              iconColor: AppColors.warningText,
               title: 'Reseñas de clientes',
               subtitle: 'Cuando dejan opinión',
               value: _customerReviews,
@@ -70,8 +71,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildToggleRow(
               icon: FontAwesomeIcons.chartSimple,
-              iconBgColor: const Color(0xFFEDE9FE),
-              iconColor: const Color(0xFF6D28D9),
+              iconBgColor: AppColors.aiBg,
+              iconColor: AppColors.aiText,
               title: 'Reporte diario',
               subtitle: 'Resumen al finalizar el día',
               value: _dailyReport,
@@ -86,8 +87,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingsGroup([
             _buildToggleRow(
               icon: FontAwesomeIcons.robot,
-              iconBgColor: const Color(0xFFDCFCE7),
-              iconColor: const Color(0xFF15803D),
+              iconBgColor: AppColors.successBg,
+              iconColor: AppColors.successText,
               title: 'IA activada',
               subtitle: 'Responde pedidos automáticamente',
               value: _aiEnabled,
@@ -95,8 +96,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildNavigationRow(
               icon: FontAwesomeIcons.gear,
-              iconBgColor: const Color(0xFFDBEAFE),
-              iconColor: const Color(0xFF1D4ED8),
+              iconBgColor: AppColors.infoBg,
+              iconColor: AppColors.infoText,
               title: 'Configuración básica',
               subtitle: 'Comportamiento básico y mensajes',
               isLast: true,
@@ -109,8 +110,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingsGroup([
             _buildToggleRow(
               icon: FontAwesomeIcons.eyeSlash,
-              iconBgColor: const Color(0xFFF1F5F9),
-              iconColor: const Color(0xFF475569),
+              iconBgColor: AppColors.borderLight,
+              iconColor: AppColors.textSecondary,
               title: 'Ocultar cancelados',
               subtitle: 'Solo mostrar activos',
               value: _hideCancelled,
@@ -118,8 +119,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildToggleRow(
               icon: FontAwesomeIcons.arrowDownWideShort,
-              iconBgColor: const Color(0xFFF1F5F9),
-              iconColor: const Color(0xFF475569),
+              iconBgColor: AppColors.borderLight,
+              iconColor: AppColors.textSecondary,
               title: 'Ordenar por recientes',
               subtitle: 'Más nuevos primero',
               value: _sortByRecent,
@@ -134,8 +135,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingsGroup([
             _buildToggleRow(
               icon: FontAwesomeIcons.moon,
-              iconBgColor: const Color(0xFF0F172A),
-              iconColor: const Color(0xFF94A3B8),
+              iconBgColor: AppColors.textPrimary,
+              iconColor: AppColors.textMuted,
               title: 'Modo oscuro',
               subtitle: 'Tema oscuro en la app',
               value: _darkMode,
@@ -149,18 +150,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Center(
             child: TextButton.icon(
               onPressed: () {},
-              icon: const FaIcon(FontAwesomeIcons.arrowRightFromBracket, color: Color(0xFFB91C1C), size: 16),
+              icon: const FaIcon(FontAwesomeIcons.arrowRightFromBracket, color: AppColors.dangerText, size: 16),
               label: Text(
                 'Borrar Cuenta',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFB91C1C),
-                  fontSize: 14.12,
+                  color: AppColors.dangerText,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13.04)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
@@ -172,14 +173,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.35),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         title,
         style: GoogleFonts.inter(
-          color: const Color(0xFF94A3B8),
-          fontSize: 11.95,
+          color: AppColors.textMuted,
+          fontSize: 12,
           fontWeight: FontWeight.bold,
-          letterSpacing: 0.87,
+          letterSpacing: 0.8,
         ),
       ),
     );
@@ -188,14 +189,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSettingsGroup(List<Widget> rows) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(17.38),
-        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.09),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.borderLight, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha((0.04 * 255).toInt()),
-            blurRadius: 2.17,
-            offset: const Offset(0, 1.09),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -216,24 +217,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool isLast = false,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 17.38, vertical: 15.21),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        border: isLast ? null : const Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1.09)),
+        border: isLast ? null : const Border(bottom: BorderSide(color: AppColors.borderLight, width: 1)),
       ),
       child: Row(
         children: [
           Container(
-            width: 36.94,
-            height: 36.94,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: iconBgColor,
-              borderRadius: BorderRadius.circular(8.69),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: FaIcon(icon, color: iconColor, size: 16.30),
+              child: FaIcon(icon, color: iconColor, size: 16),
             ),
           ),
-          const SizedBox(width: 13.04),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,16 +242,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   title,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF1E293B),
-                    fontSize: 14.12,
+                    color: AppColors.textPrimary, // Or specific title color
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   subtitle,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF64748B),
-                    fontSize: 11.95,
+                    color: AppColors.textTertiary,
+                    fontSize: 12,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -260,10 +261,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
-            activeTrackColor: const Color(0xFF25D366),
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xFFCBD5E1),
+            activeColor: AppColors.surface,
+            activeTrackColor: AppColors.primary,
+            inactiveThumbColor: AppColors.toggleInactiveThumb,
+            inactiveTrackColor: AppColors.toggleInactiveBg,
           ),
         ],
       ),
@@ -281,24 +282,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return InkWell(
       onTap: () {},
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 17.38, vertical: 15.21),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          border: isLast ? null : const Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1.09)),
+          border: isLast ? null : const Border(bottom: BorderSide(color: AppColors.borderLight, width: 1)),
         ),
         child: Row(
           children: [
             Container(
-              width: 36.94,
-              height: 36.94,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: iconBgColor,
-                borderRadius: BorderRadius.circular(8.69),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
-                child: FaIcon(icon, color: iconColor, size: 16.30),
+                child: FaIcon(icon, color: iconColor, size: 16),
               ),
             ),
-            const SizedBox(width: 13.04),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,23 +307,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Text(
                     title,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF1E293B),
-                      fontSize: 14.12,
+                      color: AppColors.textPrimary,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF64748B),
-                      fontSize: 11.95,
+                      color: AppColors.textTertiary,
+                      fontSize: 12,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
                 ],
               ),
             ),
-            const FaIcon(FontAwesomeIcons.chevronRight, color: Color(0xFFCBD5E1), size: 13.04),
+            const FaIcon(FontAwesomeIcons.chevronRight, color: AppColors.toggleInactiveBg, size: 14),
           ],
         ),
       ),

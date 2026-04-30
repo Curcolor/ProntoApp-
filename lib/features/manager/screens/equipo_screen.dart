@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 import 'perfil_empleado_screen.dart';
 import 'invitar_empleado_screen.dart';
 
@@ -12,10 +13,81 @@ class EquipoScreen extends StatefulWidget {
 }
 
 class _EquipoScreenState extends State<EquipoScreen> {
+  final List<Map<String, dynamic>> _admins = [
+    {
+      'initial': 'C',
+      'gradientColors': [AppColors.primary, AppColors.primaryDark],
+      'name': 'Carlos Martinez',
+      'phone': '+57 300 111 2233',
+      'role': 'Dueño',
+      'roleIcon': FontAwesomeIcons.crown,
+      'roleColor': AppColors.successText,
+      'roleBg': AppColors.successBg,
+      'statusText': 'En linea',
+      'statusColor': AppColors.textTertiary,
+      'statusDotColor': AppColors.successIcon,
+    }
+  ];
+
+  final List<Map<String, dynamic>> _kitchen = [
+    {
+      'initial': 'S',
+      'initialColor': AppColors.warningText,
+      'gradientColors': [AppColors.warningBg, const Color(0xFFFDE68A)],
+      'name': 'Sofia Herrera',
+      'phone': '+57 316 456 7890',
+      'role': 'Cocinera',
+      'roleIcon': FontAwesomeIcons.fireBurner,
+      'roleColor': AppColors.warningText,
+      'roleBg': AppColors.warningBg,
+      'statusText': 'En turno',
+      'statusColor': AppColors.textTertiary,
+      'statusDotColor': AppColors.successIcon,
+    },
+    {
+      'initial': 'A',
+      'initialColor': AppColors.warningText,
+      'gradientColors': [AppColors.warningBg, const Color(0xFFFDE68A)],
+      'name': 'Andres Lopez',
+      'phone': '+57 310 987 6543',
+      'role': 'Cocinero',
+      'roleIcon': FontAwesomeIcons.fireBurner,
+      'roleColor': AppColors.warningText,
+      'roleBg': AppColors.warningBg,
+      'statusText': 'Sin turno',
+      'statusColor': AppColors.textMuted,
+      'statusDotColor': AppColors.toggleInactiveBg,
+    }
+  ];
+
+  final List<Map<String, dynamic>> _delivery = [
+    {
+      'initial': 'D',
+      'initialColor': AppColors.infoText,
+      'gradientColors': [AppColors.infoBg, AppColors.infoBorder],
+      'name': 'Diego Castillo',
+      'phone': '+57 316 234 5678',
+      'role': 'Repartidor',
+      'roleIcon': FontAwesomeIcons.motorcycle,
+      'roleColor': AppColors.infoText,
+      'roleBg': AppColors.infoBg,
+      'statusText': 'En ruta',
+      'statusColor': AppColors.textTertiary,
+      'statusDotColor': AppColors.successIcon,
+    }
+  ];
+
+  final List<Map<String, dynamic>> _pending = [
+    {
+      'name': 'Laura Gomez',
+      'phone': '+57 315 888 4422',
+    }
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -25,75 +97,38 @@ class _EquipoScreenState extends State<EquipoScreen> {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 children: [
-                  _buildSectionTitle('Administradores'),
-                  _buildEmployeeCard(
-                    context: context,
-                    initial: 'C',
-                    gradientColors: const [Color(0xFF25D366), Color(0xFF128C7E)],
-                    name: 'Carlos Martinez',
-                    phone: '+57 300 111 2233',
-                    role: 'Dueño',
-                    roleIcon: FontAwesomeIcons.crown,
-                    roleColor: const Color(0xFF15803D),
-                    roleBg: const Color(0xFFDCFCE7),
-                    statusText: 'En linea',
-                    statusColor: const Color(0xFF64748B),
-                    statusDotColor: const Color(0xFF25D366),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildSectionTitle('Cocina'),
-                  _buildEmployeeCard(
-                    context: context,
-                    initial: 'S',
-                    initialColor: const Color(0xFFB45309),
-                    gradientColors: const [Color(0xFFFEF3C7), Color(0xFFFDE68A)],
-                    name: 'Sofia Herrera',
-                    phone: '+57 316 456 7890',
-                    role: 'Cocinera',
-                    roleIcon: FontAwesomeIcons.fireBurner,
-                    roleColor: const Color(0xFFB45309),
-                    roleBg: const Color(0xFFFEF3C7),
-                    statusText: 'En turno',
-                    statusColor: const Color(0xFF64748B),
-                    statusDotColor: const Color(0xFF25D366),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildEmployeeCard(
-                    context: context,
-                    initial: 'A',
-                    initialColor: const Color(0xFFB45309),
-                    gradientColors: const [Color(0xFFFEF3C7), Color(0xFFFDE68A)],
-                    name: 'Andres Lopez',
-                    phone: '+57 310 987 6543',
-                    role: 'Cocinero',
-                    roleIcon: FontAwesomeIcons.fireBurner,
-                    roleColor: const Color(0xFFB45309),
-                    roleBg: const Color(0xFFFEF3C7),
-                    statusText: 'Sin turno',
-                    statusColor: const Color(0xFF94A3B8),
-                    statusDotColor: const Color(0xFFCBD5E1),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildSectionTitle('Delivery'),
-                  _buildEmployeeCard(
-                    context: context,
-                    initial: 'D',
-                    initialColor: const Color(0xFF1D4ED8),
-                    gradientColors: const [Color(0xFFDBEAFE), Color(0xFFBFDBFE)],
-                    name: 'Diego Castillo',
-                    phone: '+57 316 234 5678',
-                    role: 'Repartidor',
-                    roleIcon: FontAwesomeIcons.motorcycle,
-                    roleColor: const Color(0xFF1D4ED8),
-                    roleBg: const Color(0xFFDBEAFE),
-                    statusText: 'En ruta',
-                    statusColor: const Color(0xFF64748B),
-                    statusDotColor: const Color(0xFF25D366),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildSectionTitle('Invitaciones pendientes'),
-                  _buildPendingCard(context),
-                  const SizedBox(height: 40),
+                  if (_admins.isNotEmpty) ...[
+                    _buildSectionTitle('Administradores'),
+                    ..._admins.map((e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildEmployeeCard(e),
+                    )),
+                    const SizedBox(height: 4),
+                  ],
+                  if (_kitchen.isNotEmpty) ...[
+                    _buildSectionTitle('Cocina'),
+                    ..._kitchen.map((e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildEmployeeCard(e),
+                    )),
+                    const SizedBox(height: 4),
+                  ],
+                  if (_delivery.isNotEmpty) ...[
+                    _buildSectionTitle('Delivery'),
+                    ..._delivery.map((e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildEmployeeCard(e),
+                    )),
+                    const SizedBox(height: 4),
+                  ],
+                  if (_pending.isNotEmpty) ...[
+                    _buildSectionTitle('Invitaciones pendientes'),
+                    ..._pending.map((e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildPendingCard(context, e),
+                    )),
+                    const SizedBox(height: 40),
+                  ],
                 ],
               ),
             ),
@@ -115,13 +150,15 @@ class _EquipoScreenState extends State<EquipoScreen> {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: AppColors.borderLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const FaIcon(
-                FontAwesomeIcons.arrowLeft,
-                color: Color(0xFF334155),
-                size: 16,
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.arrowLeft,
+                  color: AppColors.textSecondary, // 334155 close to 475569
+                  size: 16,
+                ),
               ),
             ),
           ),
@@ -131,7 +168,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
               Text(
                 'Panadería El Trigo Dorado',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF64748B),
+                  color: AppColors.textTertiary,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -139,7 +176,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
               Text(
                 'Mi equipo',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF0F172A),
+                  color: AppColors.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.3,
@@ -160,17 +197,17 @@ class _EquipoScreenState extends State<EquipoScreen> {
               height: 40,
               padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFF25D366),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Row(
                 children: [
-                  const FaIcon(FontAwesomeIcons.plus, color: Colors.white, size: 11),
+                  const FaIcon(FontAwesomeIcons.plus, color: AppColors.surface, size: 11),
                   const SizedBox(width: 6),
                   Text(
                     'Invitar',
                     style: GoogleFonts.inter(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
@@ -190,15 +227,15 @@ class _EquipoScreenState extends State<EquipoScreen> {
       child: Row(
         children: [
           Expanded(
-            child: _buildStatCard('4', 'Activos', const Color(0xFF0F172A)),
+            child: _buildStatCard('4', 'Activos', AppColors.textPrimary),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildStatCard('2', 'Cocineros', const Color(0xFFF59E0B)),
+            child: _buildStatCard('2', 'Cocineros', AppColors.warningIcon),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildStatCard('1', 'Delivery', const Color(0xFF1D4ED8)),
+            child: _buildStatCard('1', 'Delivery', AppColors.infoText),
           ),
         ],
       ),
@@ -209,18 +246,18 @@ class _EquipoScreenState extends State<EquipoScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 9),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-        boxShadow: const [
+        border: Border.all(color: AppColors.borderLight),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x14000000),
-            offset: Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.08),
+            offset: const Offset(0, 1),
             blurRadius: 3,
           ),
           BoxShadow(
-            color: Color(0x0A000000),
-            offset: Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.04),
+            offset: const Offset(0, 1),
             blurRadius: 2,
           ),
         ],
@@ -239,7 +276,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
           Text(
             label,
             style: GoogleFonts.inter(
-              color: const Color(0xFF64748B),
+              color: AppColors.textTertiary,
               fontSize: 9,
               fontWeight: FontWeight.w500,
             ),
@@ -255,7 +292,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
       child: Text(
         title.toUpperCase(),
         style: GoogleFonts.inter(
-          color: const Color(0xFF94A3B8),
+          color: AppColors.textMuted,
           fontSize: 11,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.8,
@@ -264,21 +301,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
     );
   }
 
-  Widget _buildEmployeeCard({
-    required BuildContext context,
-    required String initial,
-    required List<Color> gradientColors,
-    Color initialColor = Colors.white,
-    required String name,
-    required String phone,
-    required String role,
-    required FaIconData roleIcon,
-    required Color roleColor,
-    required Color roleBg,
-    required String statusText,
-    required Color statusColor,
-    required Color statusDotColor,
-  }) {
+  Widget _buildEmployeeCard(Map<String, dynamic> data) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -291,18 +314,18 @@ class _EquipoScreenState extends State<EquipoScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 15),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFF1F5F9)),
-          boxShadow: const [
+          border: Border.all(color: AppColors.borderLight),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x14000000),
-              offset: Offset(0, 1),
+              color: Colors.black.withValues(alpha: 0.08),
+              offset: const Offset(0, 1),
               blurRadius: 3,
             ),
             BoxShadow(
-              color: Color(0x0A000000),
-              offset: Offset(0, 1),
+              color: Colors.black.withValues(alpha: 0.04),
+              offset: const Offset(0, 1),
               blurRadius: 2,
             ),
           ],
@@ -314,7 +337,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
               height: 52,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: gradientColors,
+                  colors: data['gradientColors'] as List<Color>,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -322,9 +345,9 @@ class _EquipoScreenState extends State<EquipoScreen> {
               ),
               child: Center(
                 child: Text(
-                  initial,
+                  data['initial'] as String,
                   style: GoogleFonts.inter(
-                    color: initialColor,
+                    color: data['initialColor'] ?? AppColors.surface,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                   ),
@@ -337,18 +360,18 @@ class _EquipoScreenState extends State<EquipoScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    data['name'] as String,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF0F172A),
+                      color: AppColors.textPrimary,
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    phone,
+                    data['phone'] as String,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF64748B),
+                      color: AppColors.textTertiary,
                       fontSize: 11,
                     ),
                   ),
@@ -358,17 +381,17 @@ class _EquipoScreenState extends State<EquipoScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                         decoration: BoxDecoration(
-                          color: roleBg,
+                          color: data['roleBg'] as Color,
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Row(
                           children: [
-                            FaIcon(roleIcon, color: roleColor, size: 9),
+                            FaIcon(data['roleIcon'] as FaIconData, color: data['roleColor'] as Color, size: 9),
                             const SizedBox(width: 4),
                             Text(
-                              role,
+                              data['role'] as String,
                               style: GoogleFonts.inter(
-                                color: roleColor,
+                                color: data['roleColor'] as Color,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -381,15 +404,15 @@ class _EquipoScreenState extends State<EquipoScreen> {
                         width: 8,
                         height: 8,
                         decoration: BoxDecoration(
-                          color: statusDotColor,
+                          color: data['statusDotColor'] as Color,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        statusText,
+                        data['statusText'] as String,
                         style: GoogleFonts.inter(
-                          color: statusColor,
+                          color: data['statusColor'] as Color,
                           fontSize: 11,
                         ),
                       ),
@@ -402,13 +425,15 @@ class _EquipoScreenState extends State<EquipoScreen> {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: AppColors.borderLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const FaIcon(
-                FontAwesomeIcons.chevronRight,
-                color: Color(0xFF475569),
-                size: 13,
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.chevronRight,
+                  color: AppColors.textSecondary,
+                  size: 13,
+                ),
               ),
             ),
           ],
@@ -417,7 +442,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
     );
   }
 
-  Widget _buildPendingCard(BuildContext context) {
+  Widget _buildPendingCard(BuildContext context, Map<String, dynamic> data) {
     return GestureDetector(
       onTap: () {
         // Handle pending invitation tap
@@ -425,15 +450,15 @@ class _EquipoScreenState extends State<EquipoScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 15),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xFFF1F5F9),
+            color: AppColors.borderLight,
           ),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x14000000),
-              offset: Offset(0, 1),
+              color: Colors.black.withValues(alpha: 0.08),
+              offset: const Offset(0, 1),
               blurRadius: 3,
             ),
           ],
@@ -446,14 +471,14 @@ class _EquipoScreenState extends State<EquipoScreen> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
+                  color: AppColors.borderLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
                   child: Text(
                     '?',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF94A3B8),
+                      color: AppColors.textMuted,
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
                     ),
@@ -466,18 +491,18 @@ class _EquipoScreenState extends State<EquipoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Laura Gomez',
+                      data['name'] as String,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF475569),
+                        color: AppColors.textSecondary,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '+57 315 888 4422',
+                      data['phone'] as String,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF64748B),
+                        color: AppColors.textTertiary,
                         fontSize: 11,
                       ),
                     ),
@@ -485,18 +510,18 @@ class _EquipoScreenState extends State<EquipoScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: AppColors.borderLight,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const FaIcon(FontAwesomeIcons.clock, color: Color(0xFF475569), size: 9),
+                          const FaIcon(FontAwesomeIcons.clock, color: AppColors.textSecondary, size: 9),
                           const SizedBox(width: 4),
                           Text(
                             'Pendiente de aceptar',
                             style: GoogleFonts.inter(
-                              color: const Color(0xFF475569),
+                              color: AppColors.textSecondary,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -511,13 +536,15 @@ class _EquipoScreenState extends State<EquipoScreen> {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEF3C7),
+                  color: AppColors.warningBg,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const FaIcon(
-                  FontAwesomeIcons.arrowsRotate,
-                  color: Color(0xFFB45309),
-                  size: 13,
+                child: const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.arrowsRotate,
+                    color: AppColors.warningText,
+                    size: 13,
+                  ),
                 ),
               ),
             ],

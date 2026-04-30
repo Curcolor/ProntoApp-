@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 
 class AgregarEditarProductoScreen extends StatefulWidget {
   const AgregarEditarProductoScreen({super.key});
@@ -16,7 +17,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Stack(
           children: [
@@ -66,7 +67,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                               label: 'Alerta mínima',
                               hintText: 'Ej: 5',
                               icon: FontAwesomeIcons.triangleExclamation,
-                              iconColor: const Color(0xFFF59E0B),
+                              iconColor: AppColors.warning,
                             ),
                           ),
                         ],
@@ -125,13 +126,15 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: AppColors.borderLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const FaIcon(
-                FontAwesomeIcons.arrowLeft,
-                color: Color(0xFF334155),
-                size: 16,
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.arrowLeft,
+                  color: AppColors.textSecondary,
+                  size: 16,
+                ),
               ),
             ),
           ),
@@ -139,7 +142,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           Text(
             'Nuevo producto',
             style: GoogleFonts.inter(
-              color: const Color(0xFF0F172A),
+              color: AppColors.textPrimary,
               fontSize: 22,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.3,
@@ -157,7 +160,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
         Text(
           'Foto del producto',
           style: GoogleFonts.inter(
-            color: const Color(0xFF475569),
+            color: AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -167,10 +170,10 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           height: 138,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: const Color(0xFFCBD5E1),
+              color: AppColors.border,
               width: 2,
             ),
           ),
@@ -179,14 +182,14 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
             children: [
               const FaIcon(
                 FontAwesomeIcons.camera,
-                color: Color(0xFF94A3B8),
+                color: AppColors.textMuted,
                 size: 28,
               ),
               const SizedBox(height: 8),
               Text(
                 'Agregar foto',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF64748B),
+                  color: AppColors.textTertiary,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -195,7 +198,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               Text(
                 'JPG, PNG · Máx. 5 MB',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF94A3B8),
+                  color: AppColors.textMuted,
                   fontSize: 11,
                   fontWeight: FontWeight.w400,
                 ),
@@ -211,7 +214,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
     required String label,
     required String hintText,
     required FaIconData icon,
-    Color iconColor = const Color(0xFF94A3B8),
+    Color iconColor = AppColors.textMuted,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,7 +222,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
         Text(
           label,
           style: GoogleFonts.inter(
-            color: const Color(0xFF475569),
+            color: AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -229,9 +232,9 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           height: 52,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: AppColors.borderLight),
           ),
           child: Row(
             children: [
@@ -242,7 +245,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                   decoration: InputDecoration(
                     hintText: hintText,
                     hintStyle: GoogleFonts.inter(
-                      color: const Color(0xFF757575),
+                      color: AppColors.textMuted,
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
                     ),
@@ -251,7 +254,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                     isDense: true,
                   ),
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF0F172A),
+                    color: AppColors.textPrimary,
                     fontSize: 15,
                   ),
                 ),
@@ -274,7 +277,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
         Text(
           label,
           style: GoogleFonts.inter(
-            color: const Color(0xFF475569),
+            color: AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -284,24 +287,24 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           height: 52,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: AppColors.borderLight),
           ),
           child: Row(
             children: [
-              FaIcon(icon, color: const Color(0xFF94A3B8), size: 16),
+              FaIcon(icon, color: AppColors.textMuted, size: 16),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   value,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF1E293B),
+                    color: AppColors.textPrimary,
                     fontSize: 15,
                   ),
                 ),
               ),
-              const Icon(Icons.keyboard_arrow_down, color: Color(0xFF94A3B8)),
+              const Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
             ],
           ),
         ),
@@ -316,7 +319,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
         Text(
           'Precio *',
           style: GoogleFonts.inter(
-            color: const Color(0xFF475569),
+            color: AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -326,16 +329,16 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           height: 52,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: AppColors.borderLight),
           ),
           child: Row(
             children: [
               Text(
                 '\$',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF64748B),
+                  color: AppColors.textTertiary,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
@@ -347,7 +350,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                   decoration: InputDecoration(
                     hintText: '0',
                     hintStyle: GoogleFonts.inter(
-                      color: const Color(0xFF757575),
+                      color: AppColors.textMuted,
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
@@ -356,7 +359,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                     isDense: true,
                   ),
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF0F172A),
+                    color: AppColors.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
@@ -381,7 +384,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
         Text(
           label,
           style: GoogleFonts.inter(
-            color: const Color(0xFF475569),
+            color: AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -391,9 +394,9 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           height: 52,
           padding: const EdgeInsets.only(left: 15, right: 4),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: AppColors.borderLight),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -401,17 +404,17 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               Text(
                 text,
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF334155),
+                  color: AppColors.textSecondary,
                   fontSize: 13,
                 ),
               ),
               Switch(
                 value: value,
                 onChanged: onChanged,
-                activeColor: Colors.white,
-                activeTrackColor: const Color(0xFF25D366),
-                inactiveThumbColor: Colors.white,
-                inactiveTrackColor: const Color(0xFFE2E8F0),
+                activeColor: AppColors.surface,
+                activeTrackColor: AppColors.success,
+                inactiveThumbColor: AppColors.surface,
+                inactiveTrackColor: AppColors.borderLight,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ],
@@ -431,7 +434,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
         Text(
           label,
           style: GoogleFonts.inter(
-            color: const Color(0xFF475569),
+            color: AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -441,14 +444,14 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           constraints: const BoxConstraints(minHeight: 90),
           padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: AppColors.borderLight),
           ),
           child: Text(
             text,
             style: GoogleFonts.inter(
-              color: const Color(0xFF1E293B),
+              color: AppColors.textPrimary,
               fontSize: 13,
               height: 1.6,
             ),
@@ -463,12 +466,12 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFF5F0FF), Color(0xFFEDE9FE)],
+          colors: [AppColors.aiBg, AppColors.surface],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFC4B5FD)),
+        border: Border.all(color: AppColors.aiGradientStart.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,11 +482,11 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                 width: 30,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6),
+                  color: AppColors.aiGradientEnd,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: const Center(
-                  child: FaIcon(FontAwesomeIcons.robot, color: Colors.white, size: 14),
+                  child: FaIcon(FontAwesomeIcons.robot, color: AppColors.surface, size: 14),
                 ),
               ),
               const SizedBox(width: 8),
@@ -494,7 +497,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                     Text(
                       'Contexto para la IA',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF5B21B6),
+                        color: AppColors.aiGradientEnd,
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -502,7 +505,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                     Text(
                       'Ayuda al agente a responder mejor sobre este\nproducto',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF7C3AED),
+                        color: AppColors.aiGradientStart,
                         fontSize: 11,
                       ),
                     ),
@@ -516,14 +519,14 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
             height: 100,
             padding: const EdgeInsets.all(13),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFC4B5FD)),
+              border: Border.all(color: AppColors.aiGradientStart.withValues(alpha: 0.3)),
             ),
             child: Text(
               'Producto estrella de la tienda. Es apto para personas con intolerancia leve a la lactosa si se pide sin queso. Va bien con el café latte especial. Los lunes trae descuento. Disponible solo hasta las 12 pm porque se hornea temprano en la mañana.',
               style: GoogleFonts.inter(
-                color: const Color(0xFF1E293B),
+                color: AppColors.textPrimary,
                 fontSize: 13,
                 height: 1.6,
               ),
@@ -546,14 +549,14 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 2),
-          child: FaIcon(FontAwesomeIcons.lightbulb, color: Color(0xFF8B5CF6), size: 11),
+          child: FaIcon(FontAwesomeIcons.lightbulb, color: AppColors.aiGradientStart, size: 11),
         ),
         const SizedBox(width: 6),
         Expanded(
           child: Text(
             text,
             style: GoogleFonts.inter(
-              color: const Color(0xFF6D28D9),
+              color: AppColors.aiGradientEnd,
               fontSize: 11,
               height: 1.4,
             ),
@@ -567,13 +570,13 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: AppColors.borderLight),
       ),
       child: Row(
         children: [
-          const FaIcon(FontAwesomeIcons.robot, color: Color(0xFF8B5CF6), size: 20),
+          const FaIcon(FontAwesomeIcons.robot, color: AppColors.aiGradientStart, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -582,7 +585,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                 Text(
                   'IA activa para este producto',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF1E293B),
+                    color: AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -590,7 +593,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                 Text(
                   'La IA puede recomendarlo activamente en\nconversaciones',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF64748B),
+                    color: AppColors.textTertiary,
                     fontSize: 11,
                   ),
                 ),
@@ -600,10 +603,10 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
           Switch(
             value: _aiActive,
             onChanged: (val) => setState(() => _aiActive = val),
-            activeColor: Colors.white,
-            activeTrackColor: const Color(0xFF25D366),
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xFFE2E8F0),
+            activeColor: AppColors.surface,
+            activeTrackColor: AppColors.success,
+            inactiveThumbColor: AppColors.surface,
+            inactiveTrackColor: AppColors.borderLight,
           ),
         ],
       ),
@@ -622,9 +625,9 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              Colors.white,
-              Colors.white.withOpacity(0.8),
-              Colors.white.withOpacity(0.0),
+              AppColors.surface,
+              AppColors.surface.withValues(alpha: 0.8),
+              AppColors.surface.withValues(alpha: 0.0),
             ],
             stops: const [0.0, 0.7, 1.0],
           ),
@@ -639,15 +642,15 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               height: 52,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF25D366), Color(0xFF128C7E)],
+                  colors: [AppColors.success, AppColors.primary],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x5925D366), // 0.35 alpha
-                    offset: Offset(0, 4),
+                    color: AppColors.success.withValues(alpha: 0.35),
+                    offset: const Offset(0, 4),
                     blurRadius: 14,
                   ),
                 ],
@@ -655,12 +658,12 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const FaIcon(FontAwesomeIcons.floppyDisk, color: Colors.white, size: 16),
+                  const FaIcon(FontAwesomeIcons.floppyDisk, color: AppColors.surface, size: 16),
                   const SizedBox(width: 8),
                   Text(
                     'Guardar producto',
                     style: GoogleFonts.inter(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
