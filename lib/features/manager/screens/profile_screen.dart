@@ -163,7 +163,7 @@ class ProfileScreen extends StatelessWidget {
                 final int entregados = orderProvider.entregados.length;
                 final String satisfaccion = totalPedidos > 0 
                     ? '${((entregados / totalPedidos) * 100).toInt()}%' 
-                    : '100%';
+                    : '0%';
 
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -188,50 +188,59 @@ class ProfileScreen extends StatelessWidget {
                 _buildSectionTitle('NEGOCIO'),
                 const SizedBox(height: 8),
                 // Sección NEGOCIO: filas con fondo de color sólido y texto blanco (Figma node 2256:5009)
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(17.38),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 2.17,
-                        offset: const Offset(0, 1.09),
+                Consumer<OrderProvider>(
+                  builder: (context, orderProvider, child) {
+                    final int entrantes = orderProvider.recibidos.length;
+                    final String aiStatusText = entrantes > 0 
+                        ? 'IA Activa · $entrantes pedidos entrantes'
+                        : 'IA Activa · Sin pedidos nuevos';
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(17.38),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 2.17,
+                            offset: const Offset(0, 1.09),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      _buildBusinessRow(
-                        bgColor: const Color(0xFF1DB954),
-                        icon: FontAwesomeIcons.users,
-                        iconBgColor: const Color(0xFFDCFCE7),
-                        iconColor: const Color(0xFF1DB954),
-                        label: 'Equipo de trabajo',
-                        value: 'Administrar equipo',
-                        isFirst: true,
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EquipoScreen())),
+                      child: Column(
+                        children: [
+                          _buildBusinessRow(
+                            bgColor: const Color(0xFF1DB954),
+                            icon: FontAwesomeIcons.users,
+                            iconBgColor: const Color(0xFFDCFCE7),
+                            iconColor: const Color(0xFF1DB954),
+                            label: 'Equipo de trabajo',
+                            value: 'Administrar equipo',
+                            isFirst: true,
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EquipoScreen())),
+                          ),
+                          _buildBusinessRow(
+                            bgColor: const Color(0xFFF59E0B),
+                            icon: FontAwesomeIcons.boxOpen,
+                            iconBgColor: const Color(0xFFFEF3C7),
+                            iconColor: const Color(0xFFF59E0B),
+                            label: 'Inventario',
+                            value: 'Administrar inventario',
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventarioScreen())),
+                          ),
+                          _buildBusinessRow(
+                            bgColor: const Color(0xFF6D28D9),
+                            icon: FontAwesomeIcons.robot,
+                            iconBgColor: const Color(0xFFEDE9FE),
+                            iconColor: const Color(0xFF6D28D9),
+                            label: 'Agente de IA',
+                            value: aiStatusText,
+                            isLast: true,
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AgentesIaScreen())),
+                          ),
+                        ],
                       ),
-                      _buildBusinessRow(
-                        bgColor: const Color(0xFFF59E0B),
-                        icon: FontAwesomeIcons.boxOpen,
-                        iconBgColor: const Color(0xFFFEF3C7),
-                        iconColor: const Color(0xFFF59E0B),
-                        label: 'Inventario',
-                        value: 'Administrar inventario',
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventarioScreen())),
-                      ),
-                      _buildBusinessRow(
-                        bgColor: const Color(0xFF6D28D9),
-                        icon: FontAwesomeIcons.robot,
-                        iconBgColor: const Color(0xFFEDE9FE),
-                        iconColor: const Color(0xFF6D28D9),
-                        label: 'Agente de IA',
-                        value: 'Administrar Agente de IA',
-                        isLast: true,
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AgentesIaScreen())),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
                 
                 const SizedBox(height: 24),

@@ -330,7 +330,9 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                   color: iconBgColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: FaIcon(icon, color: iconColor, size: 14),
+                child: Center(
+                  child: FaIcon(icon, color: iconColor, size: 14),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -482,7 +484,9 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                   color: iconBgColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: FaIcon(icon, color: iconColor, size: 14),
+                child: Center(
+                  child: FaIcon(icon, color: iconColor, size: 14),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
