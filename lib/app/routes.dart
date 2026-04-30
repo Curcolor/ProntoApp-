@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prontoapp/landing_page.dart';
+import 'package:prontoapp/features/auth/screens/landing_page.dart';
 import 'package:prontoapp/features/auth/screens/login_screen.dart';
 import 'package:prontoapp/features/auth/screens/register_screen.dart';
 import 'package:prontoapp/features/auth/screens/recover_password_screen.dart';
