@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
+import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -84,25 +86,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 24),
           _buildSectionTitle('AGENTE IA'),
           const SizedBox(height: 8),
-          _buildSettingsGroup([
-            _buildToggleRow(
-              icon: FontAwesomeIcons.robot,
-              iconBgColor: AppColors.successBg,
-              iconColor: AppColors.successText,
-              title: 'IA activada',
-              subtitle: 'Responde pedidos automáticamente',
-              value: _aiEnabled,
-              onChanged: (val) => setState(() => _aiEnabled = val),
-            ),
-            _buildNavigationRow(
-              icon: FontAwesomeIcons.gear,
-              iconBgColor: AppColors.infoBg,
-              iconColor: AppColors.infoText,
-              title: 'Configuración básica',
-              subtitle: 'Comportamiento básico y mensajes',
-              isLast: true,
-            ),
-          ]),
+          Consumer<OrderProvider>(
+            builder: (context, orderProvider, child) {
+              final bool conectada = orderProvider.estaConectado;
+              
+              return _buildSettingsGroup([
+                _buildToggleRow(
+                  icon: FontAwesomeIcons.robot,
+                  iconBgColor: conectada ? AppColors.successBg : AppColors.warningBg,
+                  iconColor: conectada ? AppColors.successText : AppColors.warningText,
+                  title: conectada ? 'IA activada' : 'IA no activa',
+                  subtitle: conectada 
+                      ? 'Responde pedidos automáticamente' 
+                      : 'Sin conexión al servidor',
+                  value: conectada ? _aiEnabled : false,
+                  onChanged: conectada ? (val) => setState(() => _aiEnabled = val) : null,
+                ),
+                _buildNavigationRow(
+                  icon: FontAwesomeIcons.gear,
+                  iconBgColor: AppColors.infoBg,
+                  iconColor: AppColors.infoText,
+                  title: 'Configuración básica',
+                  subtitle: 'Comportamiento básico y mensajes',
+                  isLast: true,
+                ),
+              ]);
+            },
+          ),
           
           const SizedBox(height: 24),
           _buildSectionTitle('VISUALIZACIÓN'),
@@ -213,7 +223,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required String title,
     required String subtitle,
     required bool value,
-    required ValueChanged<bool> onChanged,
+    required ValueChanged<bool>? onChanged,
     bool isLast = false,
   }) {
     return Container(
