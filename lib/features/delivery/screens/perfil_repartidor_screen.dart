@@ -38,7 +38,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
                     _buildDeliveryHistory(historialReciente),
                     const SizedBox(height: 24),
                   ],
-                  _buildPersonalInfo(user?.email ?? ''),
+                  _buildPersonalInfo(context, user?.email ?? ''),
                   const SizedBox(height: 40),
                 ],
               ),
@@ -405,7 +405,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPersonalInfo(String email) {
+  Widget _buildPersonalInfo(BuildContext context, String email) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
