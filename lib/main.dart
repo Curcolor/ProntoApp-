@@ -2,8 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prontoapp/app/routes.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/features/manager/data/repositories/inventory_repository.dart';
+import 'package:prontoapp/features/manager/data/providers/inventory_provider.dart';
+import 'package:prontoapp/features/manager/data/repositories/order_repository.dart';
+import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 
 class AppScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -17,15 +22,38 @@ class AppScrollBehavior extends MaterialScrollBehavior {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthService().initialize();
-  
+
+  final prefs = await SharedPreferences.getInstance();
+  final inventoryRepo = InventoryRepository(prefs);
+  final orderRepo = OrderRepository(prefs);
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: AuthService()),
+        ChangeNotifierProvider(
+          create: (_) => InventoryProvider(inventoryRepo),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => OrderProvider(
+            repositorio: orderRepo,
+            baseUrl: 'http://localhost:5050',
+            secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
+          ),
+        ),
+        // Conecta el sync de inventario al OrderProvider tras ambos crearse
+        ProxyProvider<OrderProvider, InventoryProvider>(
+          update: (_, orderProvider, previous) {
+            final inv = previous ?? InventoryProvider(inventoryRepo);
+            inv.onInventarioActualizado = orderProvider.sincronizarInventario;
+            return inv;
+          },
+        ),
       ],
       child: const ProntoApp(),
     ),
   );
+
 }
 
 class ProntoApp extends StatelessWidget {
@@ -47,7 +75,7 @@ class ProntoApp extends StatelessWidget {
           routes: AppRoutes.getRoutes(),
           home: AppRoutes.getInitialScreen(),
         );
-      }
+      },
     );
   }
 }

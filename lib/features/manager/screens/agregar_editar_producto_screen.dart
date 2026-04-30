@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
+import '../data/providers/inventory_provider.dart';
+import '../data/models/category_model.dart';
+import '../data/models/product_model.dart';
 
 class AgregarEditarProductoScreen extends StatefulWidget {
   const AgregarEditarProductoScreen({super.key});
@@ -13,6 +17,7 @@ class AgregarEditarProductoScreen extends StatefulWidget {
 class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScreen> {
   bool _isAvailable = true;
   bool _aiActive = true;
+  String? _selectedCategoryId;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +44,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                       Row(
                         children: [
                           Expanded(
-                            child: _buildDropdownField(
-                              label: 'Categoría *',
-                              value: '🥐 Panadería',
-                              icon: FontAwesomeIcons.layerGroup,
-                            ),
+                            child: _buildCategoryDropdown(),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -67,7 +68,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                               label: 'Alerta mínima',
                               hintText: 'Ej: 5',
                               icon: FontAwesomeIcons.triangleExclamation,
-                              iconColor: AppColors.warning,
+                              iconColor: AppColors.warningIcon,
                             ),
                           ),
                         ],
@@ -266,49 +267,153 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
     );
   }
 
-  Widget _buildDropdownField({
-    required String label,
-    required String value,
-    required FaIconData icon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            color: AppColors.textTertiary,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          height: 52,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderLight),
-          ),
-          child: Row(
-            children: [
-              FaIcon(icon, color: AppColors.textMuted, size: 16),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Text(
-                  value,
-                  style: GoogleFonts.inter(
-                    color: AppColors.textPrimary,
-                    fontSize: 15,
+  Widget _buildCategoryDropdown() {
+    return Consumer<InventoryProvider>(
+      builder: (context, provider, child) {
+        if (_selectedCategoryId == null && provider.categories.isNotEmpty) {
+          _selectedCategoryId = provider.categories.first.id;
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Categoría *',
+              style: GoogleFonts.inter(
+                color: AppColors.textTertiary,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              height: 52,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.borderLight),
+              ),
+              child: Row(
+                children: [
+                  const FaIcon(FontAwesomeIcons.layerGroup, color: AppColors.textMuted, size: 16),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedCategoryId,
+                        isExpanded: true,
+                        icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
+                        style: GoogleFonts.inter(
+                          color: AppColors.textPrimary,
+                          fontSize: 15,
+                        ),
+                        onChanged: (String? newValue) {
+                          if (newValue == 'ADD_NEW') {
+                            _showAddCategoryModal(context, provider);
+                          } else if (newValue != null) {
+                            setState(() {
+                              _selectedCategoryId = newValue;
+                            });
+                          }
+                        },
+                        items: [
+                          ...provider.categories.map<DropdownMenuItem<String>>((Category category) {
+                            return DropdownMenuItem<String>(
+                              value: category.id,
+                              child: Text(category.displayTitle),
+                            );
+                          }),
+                          const DropdownMenuItem<String>(
+                            value: 'ADD_NEW',
+                            child: Row(
+                              children: [
+                                FaIcon(FontAwesomeIcons.plus, size: 12, color: AppColors.primary),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Crear nueva',
+                                  style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAddCategoryModal(BuildContext context, InventoryProvider provider) {
+    final nameController = TextEditingController();
+    final emojiController = TextEditingController(text: '📦');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            'Nueva categoría',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'Nombre',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
-              const Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
+              const SizedBox(height: 12),
+              TextField(
+                controller: emojiController,
+                maxLength: 2,
+                decoration: InputDecoration(
+                  labelText: 'Emoji (Ej: 🍞)',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
             ],
           ),
-        ),
-      ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar', style: TextStyle(color: AppColors.textSecondary)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.surface,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () async {
+                if (nameController.text.isNotEmpty) {
+                  await provider.addCategory(nameController.text, emojiController.text);
+                  // The provider updates listeners, so we just pop and wait for rebuild
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    // Select the newly added one
+                    setState(() {
+                      _selectedCategoryId = provider.categories.last.id;
+                    });
+                  }
+                }
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -412,7 +517,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                 value: value,
                 onChanged: onChanged,
                 activeColor: AppColors.surface,
-                activeTrackColor: AppColors.success,
+                activeTrackColor: AppColors.successIcon, // #25D366
                 inactiveThumbColor: AppColors.surface,
                 inactiveTrackColor: AppColors.borderLight,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -466,12 +571,12 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.aiBg, AppColors.surface],
+          colors: [Color(0xFFF5F0FF), Color(0xFFEDE9FE)], // aiGradientStart.withValues(alpha: 0.1), surface
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.aiGradientStart.withValues(alpha: 0.3)),
+        border: Border.all(color: const Color(0xFFC4B5FD)), // AppColors.aiGradientStart.withValues(alpha: 0.3)
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,7 +602,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                     Text(
                       'Contexto para la IA',
                       style: GoogleFonts.inter(
-                        color: AppColors.aiGradientEnd,
+                        color: const Color(0xFF5B21B6), // AppColors.aiGradientEnd
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -505,7 +610,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
                     Text(
                       'Ayuda al agente a responder mejor sobre este\nproducto',
                       style: GoogleFonts.inter(
-                        color: AppColors.aiGradientStart,
+                        color: const Color(0xFF7C3AED), // AppColors.aiGradientStart
                         fontSize: 11,
                       ),
                     ),
@@ -521,7 +626,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.aiGradientStart.withValues(alpha: 0.3)),
+              border: Border.all(color: const Color(0xFFC4B5FD)), // AppColors.aiGradientStart.withValues(alpha: 0.3)
             ),
             child: Text(
               'Producto estrella de la tienda. Es apto para personas con intolerancia leve a la lactosa si se pide sin queso. Va bien con el café latte especial. Los lunes trae descuento. Disponible solo hasta las 12 pm porque se hornea temprano en la mañana.',
@@ -549,14 +654,14 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 2),
-          child: FaIcon(FontAwesomeIcons.lightbulb, color: AppColors.aiGradientStart, size: 11),
+          child: FaIcon(FontAwesomeIcons.lightbulb, color: AppColors.aiGradientEnd, size: 11),
         ),
         const SizedBox(width: 6),
         Expanded(
           child: Text(
             text,
             style: GoogleFonts.inter(
-              color: AppColors.aiGradientEnd,
+              color: AppColors.aiGradientStart,
               fontSize: 11,
               height: 1.4,
             ),
@@ -576,16 +681,16 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
       ),
       child: Row(
         children: [
-          const FaIcon(FontAwesomeIcons.robot, color: AppColors.aiGradientStart, size: 20),
+          const FaIcon(FontAwesomeIcons.robot, color: AppColors.aiGradientEnd, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'IA activa para este producto',
+                  'IA menciona este producto',
                   style: GoogleFonts.inter(
-                    color: AppColors.textPrimary,
+                    color: const Color(0xFF1E293B), // AppColors.textPrimary
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -604,7 +709,7 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
             value: _aiActive,
             onChanged: (val) => setState(() => _aiActive = val),
             activeColor: AppColors.surface,
-            activeTrackColor: AppColors.success,
+            activeTrackColor: AppColors.successIcon, // #25D366
             inactiveThumbColor: AppColors.surface,
             inactiveTrackColor: AppColors.borderLight,
           ),
@@ -642,16 +747,16 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
               height: 52,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [AppColors.success, AppColors.primary],
+                  colors: [AppColors.successIcon, AppColors.primaryDark], // 25D366 -> 128C7E
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.success.withValues(alpha: 0.35),
+                    color: AppColors.successIcon.withValues(alpha: 0.35),
                     offset: const Offset(0, 4),
-                    blurRadius: 14,
+                    blurRadius: 7,
                   ),
                 ],
               ),

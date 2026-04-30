@@ -1,176 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
+import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/features/manager/data/models/order_model.dart';
+import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
 
 class ColaPedidosScreen extends StatelessWidget {
   const ColaPedidosScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> mockOrders = [
-      {
-        'orderId': '#38',
-        'orderRef': 'Pedido #P-0038',
-        'channel': 'vía WhatsApp · Ana Martínez',
-        'statusLabel': '¡Urgente!',
-        'statusBgColor': AppColors.dangerBg,
-        'statusTextColor': AppColors.dangerText,
-        'borderColor': AppColors.dangerIcon,
-        'timer': '12:35 min',
-        'timerColor': AppColors.dangerDark,
-        'timerBgColor': AppColors.dangerBg,
-        'items': ['2× Pan de bono', '1× Almojábana', '1× Café tinto'],
-        'primaryActionText': 'Preparando',
-        'primaryActionIcon': FontAwesomeIcons.fire,
-        'primaryActionBgColor': AppColors.warningIcon,
-        'secondaryActionText': 'Listo',
-        'secondaryActionIcon': FontAwesomeIcons.check,
-        'secondaryActionBgColor': AppColors.textPrimary,
-      },
-      {
-        'orderId': '#39',
-        'orderRef': 'Pedido #P-0039',
-        'channel': 'vía WhatsApp · Luis Pérez',
-        'statusLabel': 'En prep.',
-        'statusBgColor': AppColors.warningBg,
-        'statusTextColor': AppColors.warningText,
-        'borderColor': AppColors.warningIcon,
-        'timer': '5:20 min',
-        'timerColor': AppColors.warningText,
-        'timerBgColor': AppColors.warningBg,
-        'items': ['3× Croissant de jamón', '2× Jugo de naranja'],
-        'primaryActionText': 'Marcar listo',
-        'primaryActionIcon': FontAwesomeIcons.check,
-        'primaryActionBgColor': AppColors.textPrimary,
-      },
-      {
-        'orderId': '#40',
-        'orderRef': 'Pedido #P-0040',
-        'channel': 'vía WhatsApp · Juan Rodríguez',
-        'statusLabel': 'Nuevo',
-        'statusBgColor': AppColors.successBg,
-        'statusTextColor': AppColors.successText,
-        'borderColor': AppColors.borderLight, // Gray border for new
-        'timer': '0:45 min',
-        'timerColor': AppColors.successText,
-        'timerBgColor': AppColors.successBg,
-        'items': ['2× Pan de queso', '1× Chocolate caliente', '1× Medialunas ×3'],
-        'primaryActionText': 'Empezar',
-        'primaryActionIcon': FontAwesomeIcons.play,
-        'primaryActionBgColor': AppColors.primary,
-      },
-      {
-        'orderId': '#41',
-        'orderRef': 'Pedido #P-0041',
-        'channel': 'vía WhatsApp · María García',
-        'statusLabel': 'Nuevo',
-        'statusBgColor': AppColors.successBg,
-        'statusTextColor': AppColors.successText,
-        'borderColor': AppColors.primary, // Green border
-        'timer': '0:10 min',
-        'timerColor': AppColors.successText,
-        'timerBgColor': AppColors.successBg,
-        'items': ['1× Torta de cumpleaños', '2× Palitos de queso'],
-        'primaryActionText': 'Empezar',
-        'primaryActionIcon': FontAwesomeIcons.play,
-        'primaryActionBgColor': AppColors.primary,
-      },
-    ];
+    return Consumer<OrderProvider>(
+      builder: (context, provider, _) {
+        // Cocina ve: recibidos + en preparación
+        final colaCocina = [...provider.recibidos, ...provider.enPreparacion];
+        final nombreCocinero =
+            context.watch<AuthService>().currentUser?.name ?? 'Cocinero';
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: _buildAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Shift Metrics
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildShiftMetric('3', '🔴 Urgentes', AppColors.dangerDark),
-                _buildShiftMetric('5', '🟡 En cola', AppColors.warningText),
-                _buildShiftMetric('12', '✅ Listos', AppColors.primaryDark),
-              ],
-            ),
-            const SizedBox(height: 16),
-            
-            // Urgency Tabs
-            Row(
-              children: [
-                _buildUrgencyTab('3', 'Urgente', const Color(0xFFFEF2F2), AppColors.dangerIcon, AppColors.dangerDark),
-                const SizedBox(width: 8),
-                _buildUrgencyTab('5', 'Pendiente', const Color(0xFFFFFBEB), AppColors.warningIcon, AppColors.warningDark),
-                const SizedBox(width: 8),
-                _buildUrgencyTab('12', 'Listos', const Color(0xFFF0FDF4), AppColors.primary, AppColors.primaryDark),
-              ],
-            ),
-            const SizedBox(height: 24),
-            
-            // Section Title
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '📋 Cola activa',
-                  style: GoogleFonts.inter(
-                    color: AppColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+        return Scaffold(
+          backgroundColor: AppColors.surface,
+          appBar: _buildAppBar(nombreCocinero, provider),
+          body: colaCocina.isEmpty
+              ? _buildColaVacia()
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Métricas del turno
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildShiftMetric(
+                            '${provider.recibidos.length}',
+                            '🔴 Urgentes',
+                            AppColors.dangerDark,
+                          ),
+                          _buildShiftMetric(
+                            '${provider.enPreparacion.length}',
+                            '🟡 En cola',
+                            AppColors.warningText,
+                          ),
+                          _buildShiftMetric(
+                            '${provider.listos.length}',
+                            '✅ Listos',
+                            AppColors.primaryDark,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Tabs urgencia
+                      Row(
+                        children: [
+                          _buildUrgencyTab(
+                            '${provider.recibidos.length}',
+                            'Urgente',
+                            const Color(0xFFFEF2F2),
+                            AppColors.dangerIcon,
+                            AppColors.dangerDark,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildUrgencyTab(
+                            '${provider.enPreparacion.length}',
+                            'Preparando',
+                            const Color(0xFFFFFBEB),
+                            AppColors.warningIcon,
+                            AppColors.warningDark,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildUrgencyTab(
+                            '${provider.listos.length}',
+                            'Listos',
+                            const Color(0xFFF0FDF4),
+                            AppColors.primary,
+                            AppColors.primaryDark,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Título sección
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '📋 Cola activa',
+                            style: GoogleFonts.inter(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${colaCocina.length} pedido${colaCocina.length != 1 ? 's' : ''}',
+                            style: GoogleFonts.inter(
+                              color: AppColors.primary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Lista de pedidos
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: colaCocina.length,
+                        itemBuilder: (context, index) {
+                          final pedido = colaCocina[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: _buildOrderCard(context, pedido, provider),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  'Ordenar ↕',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF1DB954),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            
-            // Orders List
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: mockOrders.length,
-              itemBuilder: (context, index) {
-                final order = mockOrders[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: _buildOrderCard(
-                    orderId: order['orderId'] as String,
-                    orderRef: order['orderRef'] as String,
-                    channel: order['channel'] as String,
-                    statusLabel: order['statusLabel'] as String,
-                    statusBgColor: order['statusBgColor'] as Color,
-                    statusTextColor: order['statusTextColor'] as Color,
-                    borderColor: order['borderColor'] as Color,
-                    timer: order['timer'] as String,
-                    timerColor: order['timerColor'] as Color,
-                    timerBgColor: order['timerBgColor'] as Color,
-                    items: order['items'] as List<String>,
-                    primaryActionText: order['primaryActionText'] as String,
-                    primaryActionIcon: order['primaryActionIcon'] as FaIconData,
-                    primaryActionBgColor: order['primaryActionBgColor'] as Color,
-                    secondaryActionText: order['secondaryActionText'] as String?,
-                    secondaryActionIcon: order['secondaryActionIcon'] as FaIconData?,
-                    secondaryActionBgColor: order['secondaryActionBgColor'] as Color?,
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  // ─── AppBar ───────────────────────────────────────────────────────────────
+
+  PreferredSizeWidget _buildAppBar(
+      String nombreCocinero, OrderProvider provider) {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
@@ -189,7 +150,7 @@ class ColaPedidosScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                'Pedro Naranjo',
+                nombreCocinero.split(' ').first,
                 style: GoogleFonts.inter(
                   color: AppColors.textPrimary,
                   fontSize: 18,
@@ -200,7 +161,8 @@ class ColaPedidosScreen extends StatelessWidget {
             ],
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
               color: AppColors.warningBg,
               borderRadius: BorderRadius.circular(999),
@@ -211,12 +173,18 @@ class ColaPedidosScreen extends StatelessWidget {
                   width: 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: AppColors.warningIcon,
+                    color: provider.estaConectado
+                        ? AppColors.warningIcon
+                        : AppColors.dangerIcon,
                     shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 6),
-                FaIcon(FontAwesomeIcons.fireBurner, color: AppColors.warningDarker, size: 11),
+                FaIcon(
+                  FontAwesomeIcons.fireBurner,
+                  color: AppColors.warningDarker,
+                  size: 11,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   'Cocina',
@@ -235,7 +203,39 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildShiftMetric(String value, String label, Color valueColor) {
+  // ─── Estado vacío ─────────────────────────────────────────────────────────
+
+  Widget _buildColaVacia() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('🎉', style: TextStyle(fontSize: 56)),
+          const SizedBox(height: 16),
+          Text(
+            '¡Sin pedidos en cola!',
+            style: GoogleFonts.inter(
+              color: AppColors.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Los pedidos del bot de Telegram\naparecerán aquí automáticamente.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+                color: AppColors.textTertiary, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Widgets auxiliares ────────────────────────────────────────────────────
+
+  Widget _buildShiftMetric(
+      String value, String label, Color valueColor) {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -277,7 +277,8 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUrgencyTab(String value, String label, Color bgColor, Color borderColor, Color textColor) {
+  Widget _buildUrgencyTab(String value, String label, Color bgColor,
+      Color borderColor, Color textColor) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 9),
@@ -291,19 +292,17 @@ class ColaPedidosScreen extends StatelessWidget {
             Text(
               value,
               style: GoogleFonts.inter(
-                color: textColor,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
+                  color: textColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: GoogleFonts.inter(
-                color: textColor,
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-              ),
+                  color: textColor,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -311,25 +310,35 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderCard({
-    required String orderId,
-    required String orderRef,
-    required String channel,
-    required String statusLabel,
-    required Color statusBgColor,
-    required Color statusTextColor,
-    required Color borderColor,
-    required String timer,
-    required Color timerColor,
-    required Color timerBgColor,
-    required List<String> items,
-    required String primaryActionText,
-    required FaIconData primaryActionIcon,
-    required Color primaryActionBgColor,
-    String? secondaryActionText,
-    FaIconData? secondaryActionIcon,
-    Color? secondaryActionBgColor,
-  }) {
+  Widget _buildOrderCard(
+      BuildContext context, OrderModel pedido, OrderProvider provider) {
+    final esUrgente = pedido.minutosTranscurridos > 10;
+    final estaPreparando = pedido.estado == EstadoPedido.enPreparacion;
+
+    final borderColor = esUrgente
+        ? AppColors.dangerIcon
+        : estaPreparando
+            ? AppColors.warningIcon
+            : AppColors.primary;
+
+    final statusLabel = esUrgente
+        ? '¡Urgente!'
+        : estaPreparando
+            ? 'Preparando'
+            : 'Nuevo';
+
+    final statusBg = esUrgente
+        ? AppColors.dangerBg
+        : estaPreparando
+            ? AppColors.warningBg
+            : AppColors.successBg;
+
+    final statusText = esUrgente
+        ? AppColors.dangerText
+        : estaPreparando
+            ? AppColors.warningText
+            : AppColors.successText;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 15, 17, 15),
       decoration: BoxDecoration(
@@ -362,17 +371,16 @@ class ColaPedidosScreen extends StatelessWidget {
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: statusBgColor,
+                      color: statusBg,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
                       child: Text(
-                        orderId,
+                        pedido.inicialCliente,
                         style: GoogleFonts.inter(
-                          color: statusTextColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
+                            color: statusText,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800),
                       ),
                     ),
                   ),
@@ -381,52 +389,48 @@ class ColaPedidosScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        orderRef,
+                        pedido.id,
                         style: GoogleFonts.inter(
-                          color: AppColors.textPrimary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            color: AppColors.textPrimary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        channel,
+                        pedido.cliente,
                         style: GoogleFonts.inter(
-                          color: AppColors.textMuted,
-                          fontSize: 11,
-                          fontWeight: FontWeight.normal,
-                        ),
+                            color: AppColors.textMuted,
+                            fontSize: 11),
                       ),
                     ],
                   ),
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
-                  color: statusBgColor,
+                  color: statusBg,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   statusLabel,
                   style: GoogleFonts.inter(
-                    color: statusTextColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
+                      color: statusText,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          
-          // Items
+
+          // Ítems
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: items.map((item) {
+            children: pedido.items.map((item) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       width: 5,
@@ -439,12 +443,11 @@ class ColaPedidosScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        item,
+                        '${item.cantidad}× ${item.nombre}',
                         style: GoogleFonts.inter(
-                          color: AppColors.textSecondary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -453,25 +456,35 @@ class ColaPedidosScreen extends StatelessWidget {
             }).toList(),
           ),
           const SizedBox(height: 8),
-          
-          // Bottom Row Actions
+
+          // Acciones + timer
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Timer
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: timerBgColor,
+                  color: esUrgente ? AppColors.dangerBg : AppColors.successBg,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
                   children: [
-                    FaIcon(FontAwesomeIcons.clock, color: timerColor, size: 9),
+                    FaIcon(
+                      FontAwesomeIcons.clock,
+                      color: esUrgente
+                          ? AppColors.dangerDark
+                          : AppColors.primaryDark,
+                      size: 9,
+                    ),
                     const SizedBox(width: 4),
                     Text(
-                      timer,
+                      '${pedido.minutosTranscurridos} min',
                       style: GoogleFonts.inter(
-                        color: timerColor,
+                        color: esUrgente
+                            ? AppColors.dangerDark
+                            : AppColors.primaryDark,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -479,61 +492,41 @@ class ColaPedidosScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  if (secondaryActionText != null && secondaryActionIcon != null && secondaryActionBgColor != null) ...[
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: secondaryActionBgColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            FaIcon(secondaryActionIcon, color: AppColors.surface, size: 10),
-                            const SizedBox(width: 6),
-                            Text(
-                              secondaryActionText,
-                              style: GoogleFonts.inter(
-                                color: AppColors.surface,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+
+              // Botón de avance
+              if (pedido.estado.siguiente != null)
+                GestureDetector(
+                  onTap: () => provider.avanzarEstado(pedido.id),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: estaPreparando
+                          ? AppColors.primaryDark
+                          : AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    const SizedBox(width: 8),
-                  ],
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: primaryActionBgColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          FaIcon(primaryActionIcon, color: AppColors.surface, size: 10),
-                          const SizedBox(width: 6),
-                          Text(
-                            primaryActionText,
-                            style: GoogleFonts.inter(
+                    child: Row(
+                      children: [
+                        FaIcon(
+                          estaPreparando
+                              ? FontAwesomeIcons.check
+                              : FontAwesomeIcons.fire,
+                          color: AppColors.surface,
+                          size: 10,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          estaPreparando ? 'Marcar listo' : 'Empezar',
+                          style: GoogleFonts.inter(
                               color: AppColors.surface,
                               fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
             ],
           ),
         ],

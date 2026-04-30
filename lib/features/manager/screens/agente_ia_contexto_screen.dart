@@ -241,9 +241,9 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
             child: Container(
               height: 52,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [AppColors.success, AppColors.primary], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                gradient: const LinearGradient(colors: [AppColors.successIcon, AppColors.primaryDark], begin: Alignment.topLeft, end: Alignment.bottomRight),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: AppColors.success.withValues(alpha: 0.35), offset: const Offset(0, 4), blurRadius: 14)],
+                boxShadow: [BoxShadow(color: AppColors.successIcon.withValues(alpha: 0.35), offset: const Offset(0, 4), blurRadius: 14)],
               ),
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 const FaIcon(FontAwesomeIcons.floppyDisk, color: AppColors.surface, size: 16),

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
+import '../data/providers/inventory_provider.dart';
+import '../data/models/product_model.dart';
+import '../data/models/category_model.dart';
 import '../widgets/ajustar_stock_modal.dart';
 import 'agregar_editar_producto_screen.dart';
 
@@ -15,129 +19,65 @@ class InventarioScreen extends StatefulWidget {
 class _InventarioScreenState extends State<InventarioScreen> {
   int _selectedCategoryIndex = 0;
 
-  final List<String> _categories = [
-    'Todos',
-    '🥐 Panadería',
-    '☕ Bebidas',
-    '🍰 Repostería',
-    '🥗 Ensaladas',
-  ];
-
-  final List<Map<String, dynamic>> _mockProducts = [
-    {
-      'icon': '🥐',
-      'name': 'Croissant de jamón y q...',
-      'category': '🥐 Panadería',
-      'price': '\$8,500',
-      'stockLabel': 'Stock: 40 uds',
-      'stockPercent': 0.8,
-      'statusBadgeText': 'Disponible',
-      'statusBadgeColor': AppColors.successText,
-      'statusBadgeBg': AppColors.successBg,
-      'stockFillColor': AppColors.successIcon,
-      'aiStatusText': 'IA activa',
-      'aiStatusIcon': FontAwesomeIcons.robot,
-      'isStockLow': false,
-      'isOutOfStock': false,
-    },
-    {
-      'icon': '☕',
-      'name': 'Café latte especial',
-      'category': '☕ Bebidas',
-      'price': '\$5,000',
-      'stockLabel': 'Stock: 5 uds',
-      'stockPercent': 0.2,
-      'statusBadgeText': 'Stock bajo',
-      'statusBadgeColor': AppColors.warningText,
-      'statusBadgeBg': AppColors.warningBg,
-      'stockFillColor': AppColors.warningIcon,
-      'aiStatusText': 'IA activa',
-      'aiStatusIcon': FontAwesomeIcons.robot,
-      'isStockLow': true,
-      'isOutOfStock': false,
-    },
-    {
-      'icon': '🍰',
-      'name': 'Torta de tres leches',
-      'category': '🍰 Repostería',
-      'price': '\$12,000',
-      'stockLabel': 'Stock: 0 uds',
-      'stockPercent': 0.0,
-      'statusBadgeText': 'Agotado',
-      'statusBadgeColor': AppColors.dangerText,
-      'statusBadgeBg': AppColors.dangerBg,
-      'stockFillColor': AppColors.border,
-      'aiStatusText': 'IA pausada',
-      'aiStatusIcon': FontAwesomeIcons.robot,
-      'isStockLow': false,
-      'isOutOfStock': true,
-    },
-    {
-      'icon': '🥖',
-      'name': 'Pan de bono x6',
-      'category': '🥐 Panadería',
-      'price': '\$9,000',
-      'stockLabel': 'Stock: 32 uds',
-      'stockPercent': 0.65,
-      'statusBadgeText': 'Disponible',
-      'statusBadgeColor': AppColors.successText,
-      'statusBadgeBg': AppColors.successBg,
-      'stockFillColor': AppColors.successIcon,
-      'aiStatusText': 'IA activa',
-      'aiStatusIcon': FontAwesomeIcons.robot,
-      'isStockLow': false,
-      'isOutOfStock': false,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            _buildStats(),
-            _buildSearchBar(),
-            _buildCategories(),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                itemCount: _mockProducts.length + 1, // +1 for the stock alert
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: _buildStockAlert(),
-                    );
-                  }
-                  
-                  final product = _mockProducts[index - 1];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildProductCard(
-                      context: context,
-                      icon: product['icon'],
-                      name: product['name'],
-                      category: product['category'],
-                      price: product['price'],
-                      stockLabel: product['stockLabel'],
-                      stockPercent: product['stockPercent'],
-                      statusBadgeText: product['statusBadgeText'],
-                      statusBadgeColor: product['statusBadgeColor'],
-                      statusBadgeBg: product['statusBadgeBg'],
-                      stockFillColor: product['stockFillColor'],
-                      aiStatusText: product['aiStatusText'],
-                      aiStatusIcon: product['aiStatusIcon'],
-                      isStockLow: product['isStockLow'],
-                      isOutOfStock: product['isOutOfStock'],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+        child: Consumer<InventoryProvider>(
+          builder: (context, provider, child) {
+            final categories = [
+              Category(id: 'all', name: 'Todos', emoji: ''),
+              ...provider.categories
+            ];
+
+            List<Product> displayedProducts = provider.products;
+            if (_selectedCategoryIndex > 0 && _selectedCategoryIndex < categories.length) {
+              final selectedCat = categories[_selectedCategoryIndex];
+              displayedProducts = provider.products.where((p) => p.categoryId == selectedCat.id).toList();
+            }
+
+            int lowStockCount = provider.products.where((p) => p.stock > 0 && p.stock <= p.minStock).length;
+            int outOfStockCount = provider.products.where((p) => p.stock == 0).length;
+
+            return Column(
+              children: [
+                _buildHeader(context),
+                _buildStats(provider.products.length, lowStockCount, outOfStockCount),
+                _buildSearchBar(),
+                _buildCategories(categories),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    itemCount: displayedProducts.length + 1, // +1 for the stock alert
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: lowStockCount > 0 ? _buildStockAlert(lowStockCount) : const SizedBox.shrink(),
+                        );
+                      }
+                      
+                      final product = displayedProducts[index - 1];
+                      final category = provider.categories.firstWhere(
+                        (c) => c.id == product.categoryId, 
+                        orElse: () => Category(id: '', name: 'Desconocido', emoji: ''),
+                      );
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildProductCard(
+                          context: context,
+                          product: product,
+                          categoryName: category.displayTitle,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -219,21 +159,21 @@ class _InventarioScreenState extends State<InventarioScreen> {
     );
   }
 
-  Widget _buildStats() {
+  Widget _buildStats(int total, int lowStock, int outOfStock) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
           Expanded(
-            child: _buildStatCard('24', 'Productos', AppColors.textPrimary),
+            child: _buildStatCard(total.toString(), 'Productos', AppColors.textPrimary),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildStatCard('3', 'Stock bajo', AppColors.warningIcon),
+            child: _buildStatCard(lowStock.toString(), 'Stock bajo', const Color(0xFFF59E0B)),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildStatCard('1', 'Agotado', AppColors.dangerIcon),
+            child: _buildStatCard(outOfStock.toString(), 'Agotado', const Color(0xFFEF4444)),
           ),
         ],
       ),
@@ -251,12 +191,12 @@ class _InventarioScreenState extends State<InventarioScreen> {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
             offset: const Offset(0, 1),
-            blurRadius: 3,
+            blurRadius: 1.5,
           ),
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
             offset: const Offset(0, 1),
-            blurRadius: 2,
+            blurRadius: 1,
           ),
         ],
       ),
@@ -345,13 +285,13 @@ class _InventarioScreenState extends State<InventarioScreen> {
     );
   }
 
-  Widget _buildCategories() {
+  Widget _buildCategories(List<Category> categories) {
     return SizedBox(
       height: 42,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
-        itemCount: _categories.length,
+        itemCount: categories.length,
         separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final isSelected = index == _selectedCategoryIndex;
@@ -374,7 +314,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                   ),
                 ),
                 child: Text(
-                  _categories[index],
+                  categories[index].displayTitle,
                   style: GoogleFonts.inter(
                     color: isSelected
                         ? AppColors.surface
@@ -391,13 +331,13 @@ class _InventarioScreenState extends State<InventarioScreen> {
     );
   }
 
-  Widget _buildStockAlert() {
+  Widget _buildStockAlert(int count) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.warningBg,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.warningBg), // FDE68A
+        border: Border.all(color: const Color(0xFFFDE68A)), // FDE68A
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -418,7 +358,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: '3 productos ',
+                    text: '$count productos ',
                     style: GoogleFonts.inter(fontWeight: FontWeight.bold),
                   ),
                   const TextSpan(
@@ -435,24 +375,37 @@ class _InventarioScreenState extends State<InventarioScreen> {
 
   Widget _buildProductCard({
     required BuildContext context,
-    required String icon,
-    required String name,
-    required String category,
-    required String price,
-    required String stockLabel,
-    required double stockPercent,
-    required String statusBadgeText,
-    required Color statusBadgeColor,
-    required Color statusBadgeBg,
-    required Color stockFillColor,
-    required String aiStatusText,
-    required FaIconData aiStatusIcon,
-    bool isStockLow = false,
-    bool isOutOfStock = false,
+    required Product product,
+    required String categoryName,
   }) {
+    bool isOutOfStock = product.stock == 0;
+    bool isStockLow = product.stock > 0 && product.stock <= product.minStock;
+    
     Color borderColor = AppColors.borderLight;
-    if (isStockLow) borderColor = AppColors.warningBg; // Or something similar
-    if (isOutOfStock) borderColor = AppColors.dangerBg;
+    if (isStockLow) borderColor = const Color(0xFFFDE68A); // warning border
+    if (isOutOfStock) borderColor = const Color(0xFFFCA5A5); // danger border
+
+    String statusBadgeText = 'Disponible';
+    Color statusBadgeColor = AppColors.successText;
+    Color statusBadgeBg = AppColors.successBg;
+    Color stockFillColor = AppColors.successIcon;
+    
+    if (isOutOfStock) {
+      statusBadgeText = 'Agotado';
+      statusBadgeColor = AppColors.dangerText;
+      statusBadgeBg = AppColors.dangerBg;
+      stockFillColor = AppColors.border;
+    } else if (isStockLow) {
+      statusBadgeText = 'Stock bajo';
+      statusBadgeColor = AppColors.warningText;
+      statusBadgeBg = AppColors.warningBg;
+      stockFillColor = AppColors.warningIcon;
+    }
+
+    double stockPercent = isOutOfStock ? 0.0 : (product.stock / 50.0).clamp(0.0, 1.0); // Arbitrary max for visualization
+    String stockLabel = 'Stock: ${product.stock} uds';
+    String aiStatusText = product.aiActive ? 'IA activa' : 'IA pausada';
+    FaIconData aiStatusIcon = FontAwesomeIcons.robot;
 
     return Container(
       padding: const EdgeInsets.all(15),
@@ -464,12 +417,12 @@ class _InventarioScreenState extends State<InventarioScreen> {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
             offset: const Offset(0, 1),
-            blurRadius: 3,
+            blurRadius: 1.5,
           ),
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
             offset: const Offset(0, 1),
-            blurRadius: 2,
+            blurRadius: 1,
           ),
         ],
       ),
@@ -485,7 +438,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
             ),
             child: Center(
               child: Text(
-                icon,
+                product.emoji,
                 style: const TextStyle(fontSize: 28),
               ),
             ),
@@ -496,7 +449,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  product.name,
                   style: GoogleFonts.inter(
                     color: AppColors.textPrimary,
                     fontSize: 15,
@@ -507,7 +460,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  category,
+                  categoryName,
                   style: GoogleFonts.inter(
                     color: AppColors.textTertiary,
                     fontSize: 11,
@@ -519,7 +472,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      price,
+                      '\$${product.price.toInt()}',
                       style: GoogleFonts.inter(
                         color: AppColors.primaryDark,
                         fontSize: 16,

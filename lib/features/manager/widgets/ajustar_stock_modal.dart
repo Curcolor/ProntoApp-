@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:prontoapp/core/constants/app_colors.dart';
 
 class AjustarStockModal extends StatefulWidget {
   const AjustarStockModal({super.key});
@@ -37,7 +38,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
@@ -55,7 +56,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFFE2E8F0),
+              color: AppColors.borderLight,
               borderRadius: BorderRadius.circular(999),
             ),
           ),
@@ -69,7 +70,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
+                    color: AppColors.background,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -84,27 +85,27 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                             style: GoogleFonts.inter(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0F172A),
+                              color: AppColors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFEF3C7),
+                              color: AppColors.warningBg,
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const FaIcon(FontAwesomeIcons.exclamationTriangle, size: 11, color: Color(0xFFB45309)),
+                                const FaIcon(FontAwesomeIcons.triangleExclamation, size: 11, color: AppColors.warningDarker),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Stock bajo · 5 uds',
                                   style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFFB45309),
+                                    color: AppColors.warningDarker,
                                   ),
                                 ),
                               ],
@@ -124,7 +125,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF334155),
+                    color: AppColors.textSecondary,
                   ),
                 ),
                 
@@ -133,8 +134,8 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                 // Counter
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    color: AppColors.background,
+                    border: Border.all(color: AppColors.borderLight),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -148,7 +149,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                           alignment: Alignment.center,
                           child: Text(
                             '−',
-                            style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w700, color: const Color(0xFF334155)),
+                            style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
                           ),
                         ),
                       ),
@@ -157,7 +158,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                           alignment: Alignment.center,
                           child: Text(
                             '$_currentStock',
-                            style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.w800, color: const Color(0xFF0F172A)),
+                            style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
                           ),
                         ),
                       ),
@@ -170,7 +171,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                           alignment: Alignment.center,
                           child: Text(
                             '+',
-                            style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w700, color: const Color(0xFF334155)),
+                            style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
                           ),
                         ),
                       ),
@@ -201,7 +202,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF475569),
+                    color: AppColors.textTertiary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -225,7 +226,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
+                          color: AppColors.borderLight,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: TextButton(
@@ -235,7 +236,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                           ),
                           child: Text(
                             'Cancelar',
-                            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFF334155)),
+                            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
                           ),
                         ),
                       ),
@@ -246,9 +247,9 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(colors: [Color(0xFF25D366), Color(0xFF128C7E)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                          gradient: const LinearGradient(colors: [AppColors.successIcon, AppColors.primaryDark], begin: Alignment.topLeft, end: Alignment.bottomRight),
                           borderRadius: BorderRadius.circular(16),
-                          boxShadow: const [BoxShadow(color: Color(0x5925D366), offset: Offset(0, 4), blurRadius: 14)],
+                          boxShadow: [BoxShadow(color: AppColors.successIcon.withValues(alpha: 0.35), offset: const Offset(0, 4), blurRadius: 7)],
                         ),
                         child: ElevatedButton(
                           onPressed: () {
@@ -263,11 +264,11 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const FaIcon(FontAwesomeIcons.check, size: 13, color: Colors.white),
+                              const FaIcon(FontAwesomeIcons.check, size: 13, color: AppColors.surface),
                               const SizedBox(width: 8),
                               Text(
                                 'Actualizar stock',
-                                style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
+                                style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.surface),
                               ),
                             ],
                           ),
@@ -291,7 +292,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
         child: Container(
           height: 34,
           decoration: BoxDecoration(
-            color: isDanger ? const Color(0xFFFEE2E2) : const Color(0xFFF1F5F9),
+            color: isDanger ? AppColors.dangerBg : AppColors.borderLight,
             borderRadius: BorderRadius.circular(999),
           ),
           alignment: Alignment.center,
@@ -300,7 +301,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
             style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              color: isDanger ? const Color(0xFFDC2626) : const Color(0xFF334155),
+              color: isDanger ? AppColors.dangerIcon : AppColors.textSecondary,
             ),
           ),
         ),
@@ -319,8 +320,8 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFDCFCE7) : const Color(0xFFF1F5F9),
-          border: Border.all(color: isSelected ? const Color(0xFF86EFAC) : const Color(0xFFE2E8F0)),
+          color: isSelected ? AppColors.successBg : AppColors.borderLight,
+          border: Border.all(color: isSelected ? const Color(0xFF86EFAC) : AppColors.border),
           borderRadius: BorderRadius.circular(999),
         ),
         child: Text(
@@ -328,7 +329,7 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: isSelected ? const Color(0xFF166534) : const Color(0xFF475569),
+            color: isSelected ? const Color(0xFF166534) : AppColors.textSecondary,
           ),
         ),
       ),
