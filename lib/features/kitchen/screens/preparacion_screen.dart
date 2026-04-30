@@ -97,11 +97,10 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
       _checked.isEmpty ? 0 : _checkedCount / _checked.length;
 
   Future<void> _marcarListo(BuildContext context) async {
-    final siguienteEstado = widget.pedido.estado.siguiente;
-    if (siguienteEstado == null) return;
+    if (widget.pedido.estado.siguiente == null) return;
 
     try {
-      await widget.provider.actualizarEstado(widget.pedido.id, siguienteEstado);
+      await widget.provider.avanzarEstado(widget.pedido.id);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

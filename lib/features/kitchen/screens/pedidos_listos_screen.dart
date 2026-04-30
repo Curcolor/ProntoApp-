@@ -344,19 +344,16 @@ class PedidosListosScreen extends StatelessWidget {
           // Botón para avanzar a "En camino"
           GestureDetector(
             onTap: () async {
-              final sig = pedido.estado.siguiente;
-              if (sig != null) {
-                await provider.actualizarEstado(pedido.id, sig);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          '🛵 ${pedido.id} marcado como ${sig.etiqueta}'),
-                      backgroundColor: const Color(0xFF128C7E),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
+              await provider.avanzarEstado(pedido.id);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        '🛵 ${pedido.id} marcado como En camino'),
+                    backgroundColor: const Color(0xFF128C7E),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
               }
             },
             child: Container(
