@@ -542,9 +542,11 @@ class DetalleEntregaScreen extends StatelessWidget {
             ),
             child: ElevatedButton(
               onPressed: () async {
-                // Si el pedido está 'listo', avanzamos a 'en_camino'
+                // Si el pedido está 'listo', lo pasamos a 'en_camino'
                 if (pedido.estado == EstadoPedido.listo) {
-                  await provider.avanzarEstado(pedido.id);
+                  // Disparamos la actualización sin bloquear la navegación si es posible,
+                  // o navegamos inmediatamente después.
+                  provider.avanzarEstado(pedido.id); 
                 }
                 
                 if (context.mounted) {
