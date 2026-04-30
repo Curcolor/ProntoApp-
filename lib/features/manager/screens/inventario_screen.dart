@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/modals/ajustar_stock_modal.dart';
+import '../widgets/ajustar_stock_modal.dart';
 import 'agregar_editar_producto_screen.dart';
 
 class InventarioScreen extends StatefulWidget {

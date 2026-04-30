@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/modals/invitacion_enviada_modal.dart';
+import '../widgets/invitacion_enviada_modal.dart';
 
 class InvitarEmpleadoScreen extends StatefulWidget {
   const InvitarEmpleadoScreen({super.key});

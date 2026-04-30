@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../services/auth_service.dart';
+import 'package:prontoapp/data/services/auth_service.dart';
 import 'inventario_screen.dart';
 import 'equipo_screen.dart';
 import 'agentes_ia_screen.dart';
-import '../../widgets/modals/editar_perfil_modals.dart';
+import '../widgets/editar_perfil_modals.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

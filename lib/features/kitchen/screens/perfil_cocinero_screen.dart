@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../auth/login_screen.dart';
-import '../../services/auth_service.dart';
+import 'package:prontoapp/features/auth/screens/login_screen.dart';
+import 'package:prontoapp/data/services/auth_service.dart';
 
 class PerfilCocineroScreen extends StatelessWidget {
   const PerfilCocineroScreen({super.key});
