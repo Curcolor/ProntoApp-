@@ -4,8 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
-import 'package:prontoapp/features/manager/data/models/order_model.dart';
-import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
+import 'package:prontoapp/data/models/order_model.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
 
 class ColaPedidosScreen extends StatelessWidget {
   const ColaPedidosScreen({super.key});

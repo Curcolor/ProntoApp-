@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
 import 'package:prontoapp/data/models/user_model.dart';
-import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
 import 'inventario_screen.dart';
 import 'equipo_screen.dart';
 import 'agentes_ia_screen.dart';

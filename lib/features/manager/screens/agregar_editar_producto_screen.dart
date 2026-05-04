@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
-import '../data/providers/inventory_provider.dart';
-import '../data/models/category_model.dart';
-import '../data/models/product_model.dart';
+import 'package:prontoapp/data/providers/inventory_provider.dart';
+import 'package:prontoapp/data/models/category_model.dart';
+import 'package:prontoapp/data/models/product_model.dart';
 
 class AgregarEditarProductoScreen extends StatefulWidget {
   final Product? productToEdit;

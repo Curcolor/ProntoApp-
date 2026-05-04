@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
-import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
 import 'agente_ia_contexto_screen.dart';
 
 class AgentesIaScreen extends StatefulWidget {

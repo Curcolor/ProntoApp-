@@ -71,10 +71,12 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
                 color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const FaIcon(
-                FontAwesomeIcons.arrowLeft,
-                color: Color(0xFF334155),
-                size: 16,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.arrowLeft,
+                  color: Color(0xFF334155),
+                  size: 16,
+                ),
               ),
             ),
           ),

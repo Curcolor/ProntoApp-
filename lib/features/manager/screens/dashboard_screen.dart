@@ -4,9 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
-import '../data/models/order_model.dart';
-import '../data/providers/order_provider.dart';
-import '../data/providers/notification_provider.dart';
+import 'package:prontoapp/data/models/order_model.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
+import 'package:prontoapp/data/providers/notification_provider.dart';
 import 'notificaciones_screen.dart';
 
 class DashboardScreen extends StatefulWidget {

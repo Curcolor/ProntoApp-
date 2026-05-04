@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prontoapp/app/routes.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
-import 'package:prontoapp/features/manager/data/repositories/inventory_repository.dart';
-import 'package:prontoapp/features/manager/data/providers/inventory_provider.dart';
-import 'package:prontoapp/features/manager/data/repositories/order_repository.dart';
-import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
-import 'package:prontoapp/features/manager/data/providers/notification_provider.dart';
+import 'package:prontoapp/data/repositories/inventory_repository.dart';
+import 'package:prontoapp/data/providers/inventory_provider.dart';
+import 'package:prontoapp/data/repositories/order_repository.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
+import 'package:prontoapp/data/providers/notification_provider.dart';
 
 class AppScrollBehavior extends MaterialScrollBehavior {
   @override

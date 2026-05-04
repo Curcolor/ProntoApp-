@@ -1,0 +1,15 @@
+python-telegram-bot==13.15
+openai>=1.0.0
+httpx>=0.25.0
+python-dotenv>=1.0.0
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+# Dependencias directas de python-telegram-bot==13.15
+certifi
+tornado==6.1
+APScheduler==3.6.3
+pytz>=2018.6
+cachetools==4.2.2
+urllib3<2.0
+six
+setuptools<70

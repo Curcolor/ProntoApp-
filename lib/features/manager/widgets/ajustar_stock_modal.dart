@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 
-import '../data/models/product_model.dart';
-import '../data/providers/inventory_provider.dart';
+import 'package:prontoapp/data/models/product_model.dart';
+import 'package:prontoapp/data/providers/inventory_provider.dart';
 import 'package:provider/provider.dart';
 
 class AjustarStockModal extends StatefulWidget {

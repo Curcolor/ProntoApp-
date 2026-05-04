@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../data/models/order_model.dart';
-import '../data/providers/order_provider.dart';
+import 'package:prontoapp/data/models/order_model.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
 
 class KpisScreen extends StatefulWidget {
   const KpisScreen({super.key});

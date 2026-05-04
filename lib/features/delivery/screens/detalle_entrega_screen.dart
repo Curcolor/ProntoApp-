@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:prontoapp/features/manager/data/models/order_model.dart';
-import 'package:prontoapp/features/manager/data/providers/order_provider.dart';
+import 'package:prontoapp/data/models/order_model.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
 import 'en_ruta_screen.dart';
 
 class DetalleEntregaScreen extends StatelessWidget {
