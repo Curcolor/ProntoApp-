@@ -24,8 +24,9 @@ load_dotenv()
 
 SECRETO = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
-ARCHIVO_PEDIDOS = Path("pedidos.json")
-ARCHIVO_INVENTARIO = Path("inventario.json")
+BASE_DIR = Path(__file__).resolve().parent.parent
+ARCHIVO_PEDIDOS = BASE_DIR / "data" / "pedidos.json"
+ARCHIVO_INVENTARIO = BASE_DIR / "data" / "inventario.json"
 
 app = FastAPI(title="ProntoApp API", version="1.0.0")
 

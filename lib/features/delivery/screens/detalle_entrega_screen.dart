@@ -9,10 +9,7 @@ import 'en_ruta_screen.dart';
 class DetalleEntregaScreen extends StatelessWidget {
   final OrderModel pedido;
 
-  const DetalleEntregaScreen({
-    super.key,
-    required this.pedido,
-  });
+  const DetalleEntregaScreen({super.key, required this.pedido});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +23,12 @@ class DetalleEntregaScreen extends StatelessWidget {
                 _buildHeader(context),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 100.0),
+                    padding: const EdgeInsets.only(
+                      left: 20.0,
+                      right: 20.0,
+                      top: 10.0,
+                      bottom: 100.0,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -35,7 +37,8 @@ class DetalleEntregaScreen extends StatelessWidget {
                         _buildAddressCard(),
                         const SizedBox(height: 12),
                         _buildItemsCard(),
-                        if (pedido.direccion != null && pedido.direccion!.isNotEmpty) ...[
+                        if (pedido.direccion != null &&
+                            pedido.direccion!.isNotEmpty) ...[
                           const SizedBox(height: 12),
                           _buildNoteCard(),
                         ],
@@ -54,7 +57,12 @@ class DetalleEntregaScreen extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 16.0, bottom: 14.0),
+      padding: const EdgeInsets.only(
+        left: 20.0,
+        right: 20.0,
+        top: 16.0,
+        bottom: 14.0,
+      ),
       child: Row(
         children: [
           GestureDetector(
@@ -67,7 +75,11 @@ class DetalleEntregaScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,
-              child: const FaIcon(FontAwesomeIcons.arrowLeft, size: 16, color: Color(0xFF334155)),
+              child: const FaIcon(
+                FontAwesomeIcons.arrowLeft,
+                size: 16,
+                color: Color(0xFF334155),
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -123,7 +135,11 @@ class DetalleEntregaScreen extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFFDBEAFE), Color(0xFFBFDBFE)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFDBEAFE), Color(0xFFBFDBFE)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
@@ -161,7 +177,10 @@ class DetalleEntregaScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 3,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFDCFCE7),
                   borderRadius: BorderRadius.circular(999),
@@ -190,7 +209,11 @@ class DetalleEntregaScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const FaIcon(FontAwesomeIcons.phone, size: 11, color: Colors.white),
+                      const FaIcon(
+                        FontAwesomeIcons.phone,
+                        size: 11,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'Llamar',
@@ -215,7 +238,11 @@ class DetalleEntregaScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const FaIcon(FontAwesomeIcons.whatsapp, size: 14, color: Colors.white),
+                      const FaIcon(
+                        FontAwesomeIcons.whatsapp,
+                        size: 14,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'WhatsApp',
@@ -256,7 +283,11 @@ class DetalleEntregaScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              const FaIcon(FontAwesomeIcons.locationDot, size: 13, color: Color(0xFFEF4444)),
+              const FaIcon(
+                FontAwesomeIcons.locationDot,
+                size: 13,
+                color: Color(0xFFEF4444),
+              ),
               const SizedBox(width: 6),
               Text(
                 'Dirección de entrega',
@@ -278,7 +309,9 @@ class DetalleEntregaScreen extends StatelessWidget {
             ),
           ),
           Text(
-            pedido.tipo == TipoPedido.domicilio ? 'Entrega a domicilio' : 'El cliente recoge',
+            pedido.tipo == TipoPedido.domicilio
+                ? 'Entrega a domicilio'
+                : 'El cliente recoge',
             style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w400,
@@ -292,7 +325,7 @@ class DetalleEntregaScreen extends StatelessWidget {
                 icon: FontAwesomeIcons.clock,
                 iconColor: const Color(0xFF15803D),
                 bgColor: const Color(0xFFDCFCE7),
-                value: '${pedido.minutosTranscurridos} min',
+                value: pedido.tiempoTranscurridoFormat,
                 label: 'Espera',
               ),
               const SizedBox(width: 8),
@@ -310,7 +343,13 @@ class DetalleEntregaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip({required FaIconData icon, required Color iconColor, required Color bgColor, required String value, required String label}) {
+  Widget _buildInfoChip({
+    required FaIconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required String value,
+    required String label,
+  }) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -371,7 +410,11 @@ class DetalleEntregaScreen extends StatelessWidget {
             padding: const EdgeInsets.all(17.0),
             child: Row(
               children: [
-                const FaIcon(FontAwesomeIcons.bagShopping, size: 13, color: Color(0xFF1DB954)),
+                const FaIcon(
+                  FontAwesomeIcons.bagShopping,
+                  size: 13,
+                  color: Color(0xFF1DB954),
+                ),
                 const SizedBox(width: 6),
                 Text(
                   'Contenido del pedido',
@@ -386,10 +429,19 @@ class DetalleEntregaScreen extends StatelessWidget {
           ),
           const Divider(height: 1, color: Color(0xFFF1F5F9)),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 11.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 17.0,
+              vertical: 11.0,
+            ),
             child: Column(
               children: [
-                ...pedido.items.map((i) => _buildItemRow(i.cantidad.toString(), i.nombre, '\$${(i.precio * i.cantidad).toStringAsFixed(0)}')),
+                ...pedido.items.map(
+                  (i) => _buildItemRow(
+                    i.cantidad.toString(),
+                    i.nombre,
+                    '\$${(i.precio * i.cantidad).toStringAsFixed(0)}',
+                  ),
+                ),
                 const SizedBox(height: 4),
                 const Divider(height: 1, color: Color(0xFFE2E8F0)),
                 const SizedBox(height: 9),
@@ -482,7 +534,11 @@ class DetalleEntregaScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const FaIcon(FontAwesomeIcons.noteSticky, size: 14, color: Color(0xFFF59E0B)),
+          const FaIcon(
+            FontAwesomeIcons.noteSticky,
+            size: 14,
+            color: Color(0xFFF59E0B),
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -546,25 +602,33 @@ class DetalleEntregaScreen extends StatelessWidget {
                 if (pedido.estado == EstadoPedido.listo) {
                   // Disparamos la actualización sin bloquear la navegación si es posible,
                   // o navegamos inmediatamente después.
-                  provider.avanzarEstado(pedido.id); 
+                  provider.avanzarEstado(pedido.id);
                 }
-                
+
                 if (context.mounted) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => EnRutaScreen(pedido: pedido)),
+                    MaterialPageRoute(
+                      builder: (context) => EnRutaScreen(pedido: pedido),
+                    ),
                   );
                 }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const FaIcon(FontAwesomeIcons.motorcycle, size: 15, color: Colors.white),
+                  const FaIcon(
+                    FontAwesomeIcons.motorcycle,
+                    size: 15,
+                    color: Colors.white,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     yaEnCamino ? 'Ver mapa de entrega' : 'Salir a entregar',

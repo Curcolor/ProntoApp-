@@ -29,17 +29,26 @@ class ColaPedidosScreen extends StatelessWidget {
                       ? _buildColaVacia()
                       : ListView(
                           physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
                           children: [
                             _buildMetricsRow(provider),
                             const SizedBox(height: 32),
-                            
+
                             _buildSectionTitle(colaCocina.length),
                             const SizedBox(height: 16),
-                            
+
                             // Lista de tarjetas - VERSION ULTRA SEGURA
-                            ...colaCocina.map((pedido) => _buildOrderCardUltraSeguro(context, pedido, provider)),
-                            
+                            ...colaCocina.map(
+                              (pedido) => _buildOrderCardUltraSeguro(
+                                context,
+                                pedido,
+                                provider,
+                              ),
+                            ),
+
                             const SizedBox(height: 80),
                           ],
                         ),
@@ -63,7 +72,13 @@ class ColaPedidosScreen extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Buenos días 👋', style: GoogleFonts.inter(color: AppColors.textTertiary, fontSize: 13)),
+              Text(
+                'Buenos días 👋',
+                style: GoogleFonts.inter(
+                  color: AppColors.textTertiary,
+                  fontSize: 13,
+                ),
+              ),
               Text(
                 nombre,
                 style: GoogleFonts.inter(
@@ -85,11 +100,19 @@ class ColaPedidosScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.circle, color: AppColors.warningIcon, size: 6),
                 const SizedBox(width: 6),
-                const FaIcon(FontAwesomeIcons.fire, color: Color(0xFF92400E), size: 11),
+                const FaIcon(
+                  FontAwesomeIcons.fire,
+                  color: Color(0xFF92400E),
+                  size: 11,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   'Cocina',
-                  style: GoogleFonts.inter(color: const Color(0xFF92400E), fontSize: 11, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF92400E),
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -102,11 +125,23 @@ class ColaPedidosScreen extends StatelessWidget {
   Widget _buildMetricsRow(OrderProvider provider) {
     return Row(
       children: [
-        _buildMetricCard('${provider.recibidos.length}', 'Urgentes', AppColors.dangerDark),
+        _buildMetricCard(
+          '${provider.recibidos.length}',
+          'Urgentes',
+          AppColors.dangerDark,
+        ),
         const SizedBox(width: 8),
-        _buildMetricCard('${provider.enPreparacion.length}', 'En cola', AppColors.warningText),
+        _buildMetricCard(
+          '${provider.enPreparacion.length}',
+          'En cola',
+          AppColors.warningText,
+        ),
         const SizedBox(width: 8),
-        _buildMetricCard('${provider.listos.length}', 'Listos', AppColors.primaryDark),
+        _buildMetricCard(
+          '${provider.listos.length}',
+          'Listos',
+          AppColors.primaryDark,
+        ),
       ],
     );
   }
@@ -122,8 +157,21 @@ class ColaPedidosScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(value, style: GoogleFonts.inter(color: color, fontSize: 20, fontWeight: FontWeight.w800)),
-            Text(label, style: GoogleFonts.inter(color: AppColors.textTertiary, fontSize: 9)),
+            Text(
+              value,
+              style: GoogleFonts.inter(
+                color: color,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                color: AppColors.textTertiary,
+                fontSize: 9,
+              ),
+            ),
           ],
         ),
       ),
@@ -134,8 +182,18 @@ class ColaPedidosScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('📋 Cola activa', style: TextStyle(color: Colors.blueGrey[900], fontSize: 16, fontWeight: FontWeight.bold)),
-        const Text('Ordenar ↕', style: TextStyle(color: Colors.green, fontSize: 13)),
+        Text(
+          '📋 Cola activa',
+          style: TextStyle(
+            color: Colors.blueGrey[900],
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const Text(
+          'Ordenar ↕',
+          style: TextStyle(color: Colors.green, fontSize: 13),
+        ),
       ],
     );
   }
@@ -143,15 +201,22 @@ class ColaPedidosScreen extends StatelessWidget {
   // ─── Tarjeta ULTRA SEGURA ──────────────────────────────────────────────
   // Usamos solo widgets base de Flutter y colores nativos para descartar errores de dependencias.
 
-  Widget _buildOrderCardUltraSeguro(BuildContext context, OrderModel pedido, OrderProvider provider) {
+  Widget _buildOrderCardUltraSeguro(
+    BuildContext context,
+    OrderModel pedido,
+    OrderProvider provider,
+  ) {
     final bool estaPreparando = pedido.estado == EstadoPedido.enPreparacion;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: estaPreparando ? Colors.orange : Colors.green, width: 2),
+        side: BorderSide(
+          color: estaPreparando ? Colors.orange : Colors.green,
+          width: 2,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -164,18 +229,29 @@ class ColaPedidosScreen extends StatelessWidget {
               children: [
                 Text(
                   'ORDEN: ${pedido.id}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: estaPreparando ? Colors.orange[100] : Colors.green[100],
+                    color: estaPreparando
+                        ? Colors.orange[100]
+                        : Colors.green[100],
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     estaPreparando ? 'PREPARANDO' : 'RECIBIDO',
                     style: TextStyle(
-                      color: estaPreparando ? Colors.orange[900] : Colors.green[900],
+                      color: estaPreparando
+                          ? Colors.orange[900]
+                          : Colors.green[900],
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -189,7 +265,7 @@ class ColaPedidosScreen extends StatelessWidget {
               style: const TextStyle(color: Colors.black87, fontSize: 14),
             ),
             const Divider(color: Colors.grey),
-            
+
             // Listado de productos (Manual para mayor seguridad)
             for (var item in pedido.items)
               Padding(
@@ -199,21 +275,23 @@ class ColaPedidosScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 14, color: Colors.black),
                 ),
               ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Acciones
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${pedido.minutosTranscurridos} minutos',
+                  pedido.tiempoTranscurridoFormat,
                   style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
                 TextButton(
                   onPressed: () => provider.avanzarEstado(pedido.id),
                   style: TextButton.styleFrom(
-                    backgroundColor: estaPreparando ? Colors.blueGrey[800] : Colors.green[600],
+                    backgroundColor: estaPreparando
+                        ? Colors.blueGrey[800]
+                        : Colors.green[600],
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                   ),

@@ -18,8 +18,6 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# Ignorar la carpeta SVG y todo su contenido
-/SVG/
 
 
 
@@ -50,3 +48,6 @@ app.*.map.json
 /android/app/release
 
 .env
+.venv/
+__pycache__/
+*.pyc

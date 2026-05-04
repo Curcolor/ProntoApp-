@@ -72,10 +72,7 @@ class _PedidoPreparacionCard extends StatefulWidget {
   final OrderModel pedido;
   final OrderProvider provider;
 
-  const _PedidoPreparacionCard({
-    required this.pedido,
-    required this.provider,
-  });
+  const _PedidoPreparacionCard({required this.pedido, required this.provider});
 
   @override
   State<_PedidoPreparacionCard> createState() => _PedidoPreparacionCardState();
@@ -125,7 +122,6 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
   @override
   Widget build(BuildContext context) {
     final pedido = widget.pedido;
-    final minutos = pedido.minutosTranscurridos;
 
     return Stack(
       children: [
@@ -146,7 +142,7 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(pedido, minutos),
+              _buildHeader(pedido),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                 child: Column(
@@ -204,8 +200,9 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
                   boxShadow: _todoListo
                       ? [
                           BoxShadow(
-                            color: const Color(0xFF25D366)
-                                .withAlpha((0.35 * 255).toInt()),
+                            color: const Color(
+                              0xFF25D366,
+                            ).withAlpha((0.35 * 255).toInt()),
                             blurRadius: 14,
                             offset: const Offset(0, 4),
                           ),
@@ -243,7 +240,7 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
     );
   }
 
-  Widget _buildHeader(OrderModel pedido, int minutos) {
+  Widget _buildHeader(OrderModel pedido) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
       child: Row(
@@ -272,8 +269,10 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
                 ),
                 const SizedBox(height: 6),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withAlpha((0.2 * 255).toInt()),
                     borderRadius: BorderRadius.circular(999),
@@ -306,8 +305,7 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
             ),
           ),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.black.withAlpha((0.2 * 255).toInt()),
               borderRadius: BorderRadius.circular(12),
@@ -315,7 +313,7 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
             child: Column(
               children: [
                 Text(
-                  '$minutos min',
+                  pedido.tiempoTranscurridoFormat,
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 20,
@@ -359,8 +357,11 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                const FaIcon(FontAwesomeIcons.listCheck,
-                    color: Color(0xFF1DB954), size: 15),
+                const FaIcon(
+                  FontAwesomeIcons.listCheck,
+                  color: Color(0xFF1DB954),
+                  size: 15,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'Ítems a preparar',
@@ -383,11 +384,12 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
                 });
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: const BoxDecoration(
-                  border:
-                      Border(top: BorderSide(color: Color(0xFFF1F5F9))),
+                  border: Border(top: BorderSide(color: Color(0xFFF1F5F9))),
                 ),
                 child: Row(
                   children: [
@@ -395,9 +397,7 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
                       width: 26,
                       height: 26,
                       decoration: BoxDecoration(
-                        color: marcado
-                            ? const Color(0xFF25D366)
-                            : Colors.white,
+                        color: marcado ? const Color(0xFF25D366) : Colors.white,
                         borderRadius: BorderRadius.circular(13),
                         border: Border.all(
                           color: marcado
@@ -408,8 +408,12 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
                       ),
                       child: marcado
                           ? const Center(
-                              child: FaIcon(FontAwesomeIcons.check,
-                                  color: Colors.white, size: 12))
+                              child: FaIcon(
+                                FontAwesomeIcons.check,
+                                color: Colors.white,
+                                size: 12,
+                              ),
+                            )
                           : null,
                     ),
                     const SizedBox(width: 12),
@@ -484,7 +488,8 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
                     minHeight: 6,
                     backgroundColor: const Color(0xFFF1F5F9),
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFF25D366)),
+                      Color(0xFF25D366),
+                    ),
                   ),
                 ),
               ],
@@ -508,8 +513,11 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
         children: [
           const Padding(
             padding: EdgeInsets.only(top: 2),
-            child: FaIcon(FontAwesomeIcons.locationDot,
-                color: Color(0xFFF59E0B), size: 14),
+            child: FaIcon(
+              FontAwesomeIcons.locationDot,
+              color: Color(0xFFF59E0B),
+              size: 14,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -603,8 +611,11 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(
-              child: FaIcon(FontAwesomeIcons.telegram,
-                  color: Colors.white, size: 14),
+              child: FaIcon(
+                FontAwesomeIcons.telegram,
+                color: Colors.white,
+                size: 14,
+              ),
             ),
           ),
         ],

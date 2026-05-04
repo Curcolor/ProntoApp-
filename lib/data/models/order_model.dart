@@ -120,10 +120,10 @@ class ItemPedido {
   }
 
   Map<String, dynamic> toJson() => {
-        'nombre': nombre,
-        'cantidad': cantidad,
-        'precio': precio,
-      };
+    'nombre': nombre,
+    'cantidad': cantidad,
+    'precio': precio,
+  };
 }
 
 /// Pedido completo recibido desde el bot de Telegram.
@@ -171,9 +171,25 @@ class OrderModel {
   String get inicialCliente =>
       cliente.isNotEmpty ? cliente[0].toUpperCase() : '?';
 
-  /// Cuántos minutos han pasado desde que se creó el pedido.
-  int get minutosTranscurridos =>
-      DateTime.now().difference(creadoEn).inMinutes;
+  /// Calcula los minutos transcurridos desde la creación del pedido.
+  int get minutosTranscurridos {
+    return DateTime.now().difference(creadoEn).inMinutes;
+  }
+
+  /// Texto legible del tiempo transcurrido (ej. "5 min", "2 h", "3 d")
+  String get tiempoTranscurridoFormat {
+    final diff = DateTime.now().difference(creadoEn);
+    if (diff.inDays >= 7) {
+      final semanas = (diff.inDays / 7).floor();
+      return '$semanas sem';
+    } else if (diff.inDays >= 1) {
+      return '${diff.inDays} d';
+    } else if (diff.inHours >= 1) {
+      return '${diff.inHours} h';
+    } else {
+      return '${diff.inMinutes} min';
+    }
+  }
 
   /// Texto legible de los ítems para mostrar en tarjetas.
   String get resumenItems =>
@@ -192,22 +208,23 @@ class OrderModel {
       estado: EstadoPedido.desdeApi(json['estado'] as String? ?? 'recibido'),
       tipo: TipoPedido.desdeString(json['tipo'] as String? ?? 'recoger'),
       direccion: json['direccion'] as String?,
-      creadoEn: DateTime.tryParse(json['creado_en'] as String? ?? '') ??
+      creadoEn:
+          DateTime.tryParse(json['creado_en'] as String? ?? '') ??
           DateTime.now(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'cliente': cliente,
-        'telefono': telefono,
-        'items': items.map((i) => i.toJson()).toList(),
-        'total': total,
-        'estado': estado.claveApi,
-        'tipo': tipo == TipoPedido.domicilio ? 'domicilio' : 'recoger',
-        'direccion': direccion,
-        'creado_en': creadoEn.toIso8601String(),
-      };
+    'id': id,
+    'cliente': cliente,
+    'telefono': telefono,
+    'items': items.map((i) => i.toJson()).toList(),
+    'total': total,
+    'estado': estado.claveApi,
+    'tipo': tipo == TipoPedido.domicilio ? 'domicilio' : 'recoger',
+    'direccion': direccion,
+    'creado_en': creadoEn.toIso8601String(),
+  };
 
   /// Devuelve una copia del pedido con campos actualizados.
   OrderModel copyWith({EstadoPedido? estado}) {

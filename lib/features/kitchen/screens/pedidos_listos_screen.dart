@@ -41,7 +41,10 @@ class PedidosListosScreen extends StatelessWidget {
               children: [
                 // ── Banner resumen dinámico ──────────────────────────────────
                 _buildBannerResumen(
-                    totalPreparadosHoy, listos.length, provider),
+                  totalPreparadosHoy,
+                  listos.length,
+                  provider,
+                ),
 
                 const SizedBox(height: 24),
 
@@ -102,8 +105,7 @@ class PedidosListosScreen extends StatelessWidget {
 
   // ── Banner superior con conteo real ─────────────────────────────────────────
 
-  Widget _buildBannerResumen(
-      int total, int enEspera, OrderProvider provider) {
+  Widget _buildBannerResumen(int total, int enEspera, OrderProvider provider) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -152,8 +154,7 @@ class PedidosListosScreen extends StatelessWidget {
                 _buildStatDivider(),
                 _buildStat('$enEspera', 'En espera'),
                 _buildStatDivider(),
-                _buildStat(
-                    '${provider.entregados.length}', 'Entregados'),
+                _buildStat('${provider.entregados.length}', 'Entregados'),
               ],
             ),
           ),
@@ -199,7 +200,11 @@ class PedidosListosScreen extends StatelessWidget {
   // ── Encabezados de sección ───────────────────────────────────────────────────
 
   Widget _buildSectionHeader(
-      String titulo, String badge, Color badgeBg, Color badgeText) {
+    String titulo,
+    String badge,
+    Color badgeBg,
+    Color badgeText,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -212,8 +217,7 @@ class PedidosListosScreen extends StatelessWidget {
           ),
         ),
         Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
           decoration: BoxDecoration(
             color: badgeBg,
             borderRadius: BorderRadius.circular(999),
@@ -234,7 +238,10 @@ class PedidosListosScreen extends StatelessWidget {
   // ── Tarjeta de pedido listo esperando repartidor ──────────────────────────
 
   Widget _buildListoCard(
-      OrderModel pedido, OrderProvider provider, BuildContext context) {
+    OrderModel pedido,
+    OrderProvider provider,
+    BuildContext context,
+  ) {
     final minutos = pedido.minutosTranscurridos;
     final urgente = minutos > 15;
     return Container(
@@ -243,9 +250,7 @@ class PedidosListosScreen extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: urgente
-              ? const Color(0xFFF59E0B)
-              : const Color(0xFF25D366),
+          color: urgente ? const Color(0xFFF59E0B) : const Color(0xFF25D366),
           width: 2,
         ),
         boxShadow: [
@@ -276,7 +281,9 @@ class PedidosListosScreen extends StatelessWidget {
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 3),
+                  horizontal: 10,
+                  vertical: 3,
+                ),
                 decoration: BoxDecoration(
                   color: urgente
                       ? const Color(0xFFFEF3C7)
@@ -287,9 +294,7 @@ class PedidosListosScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     FaIcon(
-                      urgente
-                          ? FontAwesomeIcons.clock
-                          : FontAwesomeIcons.check,
+                      urgente ? FontAwesomeIcons.clock : FontAwesomeIcons.check,
                       color: urgente
                           ? const Color(0xFFB45309)
                           : const Color(0xFF15803D),
@@ -297,7 +302,9 @@ class PedidosListosScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      urgente ? '$minutos min esperando' : 'Listo',
+                      urgente
+                          ? '${pedido.tiempoTranscurridoFormat} esperando'
+                          : 'Listo',
                       style: GoogleFonts.inter(
                         color: urgente
                             ? const Color(0xFFB45309)
@@ -324,8 +331,11 @@ class PedidosListosScreen extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                const FaIcon(FontAwesomeIcons.locationDot,
-                    color: Color(0xFF25D366), size: 10),
+                const FaIcon(
+                  FontAwesomeIcons.locationDot,
+                  color: Color(0xFF25D366),
+                  size: 10,
+                ),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
@@ -348,8 +358,7 @@ class PedidosListosScreen extends StatelessWidget {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                        '🛵 ${pedido.id} marcado como En camino'),
+                    content: Text('🛵 ${pedido.id} marcado como En camino'),
                     backgroundColor: const Color(0xFF128C7E),
                     duration: const Duration(seconds: 2),
                   ),
@@ -369,8 +378,11 @@ class PedidosListosScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const FaIcon(FontAwesomeIcons.motorcycle,
-                      color: Colors.white, size: 13),
+                  const FaIcon(
+                    FontAwesomeIcons.motorcycle,
+                    color: Colors.white,
+                    size: 13,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'Pasar a En camino',
@@ -417,8 +429,11 @@ class PedidosListosScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Center(
-              child: FaIcon(FontAwesomeIcons.check,
-                  color: Color(0xFF128C7E), size: 18),
+              child: FaIcon(
+                FontAwesomeIcons.check,
+                color: Color(0xFF128C7E),
+                size: 18,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -462,8 +477,7 @@ class PedidosListosScreen extends StatelessWidget {
 
   // ── Estado vacío de sección ──────────────────────────────────────────────────
 
-  Widget _buildSeccionVacia(
-      String emoji, String titulo, String subtitulo) {
+  Widget _buildSeccionVacia(String emoji, String titulo, String subtitulo) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),

@@ -2,7 +2,7 @@
 
 echo -e "\033[1;36mConfigurando entorno de desarrollo...\033[0m"
 
-SERVICES_DIR="python_services"
+SERVICES_DIR="services"
 
 # Comprobar si existe el entorno virtual, si no, crearlo e instalar dependencias
 if [ ! -d "$SERVICES_DIR/.venv" ]; then
@@ -26,11 +26,11 @@ cleanup() {
 trap cleanup SIGINT SIGTERM EXIT
 
 echo -e "\033[1;32mIniciando API de Pedidos (FastAPI)...\033[0m"
-(cd "$SERVICES_DIR" && "./.venv/Scripts/python" api_pedidos.py) &
+(cd "$SERVICES_DIR" && "./.venv/Scripts/python" src/api_pedidos.py) &
 API_PID=$!
 
 echo -e "\033[1;32mIniciando Bot de Telegram...\033[0m"
-(cd "$SERVICES_DIR" && "./.venv/Scripts/python" bot_telegram.py) &
+(cd "$SERVICES_DIR" && "./.venv/Scripts/python" src/bot_telegram.py) &
 BOT_PID=$!
 
 echo -e "\033[1;35mIniciando Flutter Server...\033[0m"

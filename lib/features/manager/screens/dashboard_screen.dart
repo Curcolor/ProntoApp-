@@ -577,7 +577,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           color: AppColors.textMuted, size: 11),
                       const SizedBox(width: 4),
                       Text(
-                        'Hace ${pedido.minutosTranscurridos} min',
+                        'Hace ${pedido.tiempoTranscurridoFormat}',
                         style: GoogleFonts.inter(
                             color: AppColors.textMuted, fontSize: 12),
                       ),
