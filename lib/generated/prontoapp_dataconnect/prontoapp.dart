@@ -6,17 +6,7 @@ import 'package:flutter/foundation.dart';
 
 part 'crear_cliente.dart';
 
-part 'crear_pedido_manual.dart';
-
-part 'agregar_detalle_pedido.dart';
-
-part 'cambiar_estado_pedido.dart';
-
-part 'asignar_pedido.dart';
-
-part 'guardar_producto.dart';
-
-part 'obtener_dashboard_negocio.dart';
+part 'obtener_dashboard_negocio_v2.dart';
 
 part 'obtener_pedidos_kanban.dart';
 
@@ -119,6 +109,14 @@ part 'obtener_plantillas_ia.dart';
     
       REQUIERE_REVISION,
     
+      LISTO_DESPACHO,
+    
+      ENVIADO,
+    
+      PAGADO,
+    
+      CERRADO,
+    
   }
   
   String estadoPedidoSerializer(EnumValue<EstadoPedido> e) {
@@ -147,6 +145,18 @@ part 'obtener_plantillas_ia.dart';
       
       case 'REQUIERE_REVISION':
         return const Known(EstadoPedido.REQUIERE_REVISION);
+      
+      case 'LISTO_DESPACHO':
+        return const Known(EstadoPedido.LISTO_DESPACHO);
+      
+      case 'ENVIADO':
+        return const Known(EstadoPedido.ENVIADO);
+      
+      case 'PAGADO':
+        return const Known(EstadoPedido.PAGADO);
+      
+      case 'CERRADO':
+        return const Known(EstadoPedido.CERRADO);
       
       default:
         return Unknown(data);
@@ -190,6 +200,52 @@ part 'obtener_plantillas_ia.dart';
   }
   
 
+  enum OrigenOperacion {
+    
+      APP,
+    
+      ADMIN,
+    
+      IA,
+    
+      WHATSAPP,
+    
+      TELEGRAM,
+    
+      SISTEMA,
+    
+  }
+  
+  String origenOperacionSerializer(EnumValue<OrigenOperacion> e) {
+    return e.stringValue;
+  }
+  EnumValue<OrigenOperacion> origenOperacionDeserializer(dynamic data) {
+    switch (data) {
+      
+      case 'APP':
+        return const Known(OrigenOperacion.APP);
+      
+      case 'ADMIN':
+        return const Known(OrigenOperacion.ADMIN);
+      
+      case 'IA':
+        return const Known(OrigenOperacion.IA);
+      
+      case 'WHATSAPP':
+        return const Known(OrigenOperacion.WHATSAPP);
+      
+      case 'TELEGRAM':
+        return const Known(OrigenOperacion.TELEGRAM);
+      
+      case 'SISTEMA':
+        return const Known(OrigenOperacion.SISTEMA);
+      
+      default:
+        return Unknown(data);
+    }
+  }
+  
+
   enum RolAdmin {
     
       PROPIETARIO,
@@ -224,6 +280,62 @@ part 'obtener_plantillas_ia.dart';
       
       case 'SUPERVISOR':
         return const Known(RolAdmin.SUPERVISOR);
+      
+      default:
+        return Unknown(data);
+    }
+  }
+  
+
+  enum TipoNegocio {
+    
+      RESTAURANTE,
+    
+      CAFE,
+    
+      COMIDA_RAPIDA,
+    
+      PANADERIA,
+    
+      FARMACIA,
+    
+      TIENDA,
+    
+      COMERCIO,
+    
+      OTRO,
+    
+  }
+  
+  String tipoNegocioSerializer(EnumValue<TipoNegocio> e) {
+    return e.stringValue;
+  }
+  EnumValue<TipoNegocio> tipoNegocioDeserializer(dynamic data) {
+    switch (data) {
+      
+      case 'RESTAURANTE':
+        return const Known(TipoNegocio.RESTAURANTE);
+      
+      case 'CAFE':
+        return const Known(TipoNegocio.CAFE);
+      
+      case 'COMIDA_RAPIDA':
+        return const Known(TipoNegocio.COMIDA_RAPIDA);
+      
+      case 'PANADERIA':
+        return const Known(TipoNegocio.PANADERIA);
+      
+      case 'FARMACIA':
+        return const Known(TipoNegocio.FARMACIA);
+      
+      case 'TIENDA':
+        return const Known(TipoNegocio.TIENDA);
+      
+      case 'COMERCIO':
+        return const Known(TipoNegocio.COMERCIO);
+      
+      case 'OTRO':
+        return const Known(TipoNegocio.OTRO);
       
       default:
         return Unknown(data);
@@ -290,33 +402,8 @@ class ProntoappConnector {
   }
   
   
-  CrearPedidoManualVariablesBuilder crearPedidoManual ({required String negocioId, required String codigoPedido, required double total, }) {
-    return CrearPedidoManualVariablesBuilder(dataConnect, negocioId: negocioId,codigoPedido: codigoPedido,total: total,);
-  }
-  
-  
-  AgregarDetallePedidoVariablesBuilder agregarDetallePedido ({required String negocioId, required String pedidoId, required String productoNombreSnapshot, required int cantidad, required double precioUnitario, required double descuento, required double subtotal, }) {
-    return AgregarDetallePedidoVariablesBuilder(dataConnect, negocioId: negocioId,pedidoId: pedidoId,productoNombreSnapshot: productoNombreSnapshot,cantidad: cantidad,precioUnitario: precioUnitario,descuento: descuento,subtotal: subtotal,);
-  }
-  
-  
-  CambiarEstadoPedidoVariablesBuilder cambiarEstadoPedido ({required String negocioId, required String pedidoId, required EstadoPedido estadoNuevo, }) {
-    return CambiarEstadoPedidoVariablesBuilder(dataConnect, negocioId: negocioId,pedidoId: pedidoId,estadoNuevo: estadoNuevo,);
-  }
-  
-  
-  AsignarPedidoVariablesBuilder asignarPedido ({required String negocioId, required String pedidoId, required String usuarioAsignadoId, }) {
-    return AsignarPedidoVariablesBuilder(dataConnect, negocioId: negocioId,pedidoId: pedidoId,usuarioAsignadoId: usuarioAsignadoId,);
-  }
-  
-  
-  GuardarProductoVariablesBuilder guardarProducto ({required String id, required String negocioId, required String nombre, required String codigo, required double precio, required int stock, required double descuento, required bool disponible, }) {
-    return GuardarProductoVariablesBuilder(dataConnect, id: id,negocioId: negocioId,nombre: nombre,codigo: codigo,precio: precio,stock: stock,descuento: descuento,disponible: disponible,);
-  }
-  
-  
-  ObtenerDashboardNegocioVariablesBuilder obtenerDashboardNegocio ({required String negocioId, required Timestamp pedidosDesde, required DateTime metricasDesde, required DateTime metricasHasta, }) {
-    return ObtenerDashboardNegocioVariablesBuilder(dataConnect, negocioId: negocioId,pedidosDesde: pedidosDesde,metricasDesde: metricasDesde,metricasHasta: metricasHasta,);
+  ObtenerDashboardNegocioV2VariablesBuilder obtenerDashboardNegocioV2 ({required String negocioId, required Timestamp pedidosDesde, }) {
+    return ObtenerDashboardNegocioV2VariablesBuilder(dataConnect, negocioId: negocioId,pedidosDesde: pedidosDesde,);
   }
   
   

@@ -83,6 +83,7 @@ class ObtenerPedidosKanbanPedidos {
   final EnumValue<EstadoPedido> estado;
   final double total;
   final EnumValue<CanalPedido> canal;
+  final EnumValue<OrigenOperacion> origenCreacion;
   final String? clienteNombreSnapshot;
   final String? clienteWhatsappSnapshot;
   final Timestamp? venceEn;
@@ -96,6 +97,7 @@ class ObtenerPedidosKanbanPedidos {
   estado = estadoPedidoDeserializer(json['estado']),
   total = nativeFromJson<double>(json['total']),
   canal = canalPedidoDeserializer(json['canal']),
+  origenCreacion = origenOperacionDeserializer(json['origenCreacion']),
   clienteNombreSnapshot = json['clienteNombreSnapshot'] == null ? null : nativeFromJson<String>(json['clienteNombreSnapshot']),
   clienteWhatsappSnapshot = json['clienteWhatsappSnapshot'] == null ? null : nativeFromJson<String>(json['clienteWhatsappSnapshot']),
   venceEn = json['venceEn'] == null ? null : Timestamp.fromJson(json['venceEn']),
@@ -119,6 +121,7 @@ class ObtenerPedidosKanbanPedidos {
     estado == otherTyped.estado && 
     total == otherTyped.total && 
     canal == otherTyped.canal && 
+    origenCreacion == otherTyped.origenCreacion && 
     clienteNombreSnapshot == otherTyped.clienteNombreSnapshot && 
     clienteWhatsappSnapshot == otherTyped.clienteWhatsappSnapshot && 
     venceEn == otherTyped.venceEn && 
@@ -128,7 +131,7 @@ class ObtenerPedidosKanbanPedidos {
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, codigoPedido.hashCode, estado.hashCode, total.hashCode, canal.hashCode, clienteNombreSnapshot.hashCode, clienteWhatsappSnapshot.hashCode, venceEn.hashCode, fechaHora.hashCode, usuarioAsignado.hashCode, detallePedidos_on_pedido.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, codigoPedido.hashCode, estado.hashCode, total.hashCode, canal.hashCode, origenCreacion.hashCode, clienteNombreSnapshot.hashCode, clienteWhatsappSnapshot.hashCode, venceEn.hashCode, fechaHora.hashCode, usuarioAsignado.hashCode, detallePedidos_on_pedido.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -141,6 +144,9 @@ class ObtenerPedidosKanbanPedidos {
     json['total'] = nativeToJson<double>(total);
     json['canal'] = 
     canalPedidoSerializer(canal)
+    ;
+    json['origenCreacion'] = 
+    origenOperacionSerializer(origenCreacion)
     ;
     if (clienteNombreSnapshot != null) {
       json['clienteNombreSnapshot'] = nativeToJson<String?>(clienteNombreSnapshot);
@@ -165,6 +171,7 @@ class ObtenerPedidosKanbanPedidos {
     required this.estado,
     required this.total,
     required this.canal,
+    required this.origenCreacion,
     this.clienteNombreSnapshot,
     this.clienteWhatsappSnapshot,
     this.venceEn,
@@ -178,10 +185,12 @@ class ObtenerPedidosKanbanPedidos {
 class ObtenerPedidosKanbanPedidosUsuarioAsignado {
   final String id;
   final String nombre;
+  final EnumValue<RolAdmin> cargo;
   ObtenerPedidosKanbanPedidosUsuarioAsignado.fromJson(dynamic json):
   
   id = nativeFromJson<String>(json['id']),
-  nombre = nativeFromJson<String>(json['nombre']);
+  nombre = nativeFromJson<String>(json['nombre']),
+  cargo = rolAdminDeserializer(json['cargo']);
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) {
@@ -193,23 +202,28 @@ class ObtenerPedidosKanbanPedidosUsuarioAsignado {
 
     final ObtenerPedidosKanbanPedidosUsuarioAsignado otherTyped = other as ObtenerPedidosKanbanPedidosUsuarioAsignado;
     return id == otherTyped.id && 
-    nombre == otherTyped.nombre;
+    nombre == otherTyped.nombre && 
+    cargo == otherTyped.cargo;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, nombre.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, nombre.hashCode, cargo.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['id'] = nativeToJson<String>(id);
     json['nombre'] = nativeToJson<String>(nombre);
+    json['cargo'] = 
+    rolAdminSerializer(cargo)
+    ;
     return json;
   }
 
   ObtenerPedidosKanbanPedidosUsuarioAsignado({
     required this.id,
     required this.nombre,
+    required this.cargo,
   });
 }
 
@@ -219,6 +233,7 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
   final String productoNombreSnapshot;
   final int cantidad;
   final double precioUnitario;
+  final double descuento;
   final double subtotal;
   ObtenerPedidosKanbanPedidosDetallePedidosOnPedido.fromJson(dynamic json):
   
@@ -226,6 +241,7 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
   productoNombreSnapshot = nativeFromJson<String>(json['productoNombreSnapshot']),
   cantidad = nativeFromJson<int>(json['cantidad']),
   precioUnitario = nativeFromJson<double>(json['precioUnitario']),
+  descuento = nativeFromJson<double>(json['descuento']),
   subtotal = nativeFromJson<double>(json['subtotal']);
   @override
   bool operator ==(Object other) {
@@ -241,11 +257,12 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
     productoNombreSnapshot == otherTyped.productoNombreSnapshot && 
     cantidad == otherTyped.cantidad && 
     precioUnitario == otherTyped.precioUnitario && 
+    descuento == otherTyped.descuento && 
     subtotal == otherTyped.subtotal;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, productoNombreSnapshot.hashCode, cantidad.hashCode, precioUnitario.hashCode, subtotal.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, productoNombreSnapshot.hashCode, cantidad.hashCode, precioUnitario.hashCode, descuento.hashCode, subtotal.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -254,6 +271,7 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
     json['productoNombreSnapshot'] = nativeToJson<String>(productoNombreSnapshot);
     json['cantidad'] = nativeToJson<int>(cantidad);
     json['precioUnitario'] = nativeToJson<double>(precioUnitario);
+    json['descuento'] = nativeToJson<double>(descuento);
     json['subtotal'] = nativeToJson<double>(subtotal);
     return json;
   }
@@ -263,6 +281,7 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
     required this.productoNombreSnapshot,
     required this.cantidad,
     required this.precioUnitario,
+    required this.descuento,
     required this.subtotal,
   });
 }

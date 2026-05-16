@@ -2,12 +2,7 @@
 
 ```dart
 ProntoappConnector.instance.CrearCliente(crearClienteVariables).execute();
-ProntoappConnector.instance.CrearPedidoManual(crearPedidoManualVariables).execute();
-ProntoappConnector.instance.AgregarDetallePedido(agregarDetallePedidoVariables).execute();
-ProntoappConnector.instance.CambiarEstadoPedido(cambiarEstadoPedidoVariables).execute();
-ProntoappConnector.instance.AsignarPedido(asignarPedidoVariables).execute();
-ProntoappConnector.instance.GuardarProducto(guardarProductoVariables).execute();
-ProntoappConnector.instance.ObtenerDashboardNegocio(obtenerDashboardNegocioVariables).execute();
+ProntoappConnector.instance.ObtenerDashboardNegocioV2(obtenerDashboardNegocioV2Variables).execute();
 ProntoappConnector.instance.ObtenerPedidosKanban(obtenerPedidosKanbanVariables).execute();
 ProntoappConnector.instance.ObtenerMenuInventario(obtenerMenuInventarioVariables).execute();
 ProntoappConnector.instance.ObtenerPlantillasIa(obtenerPlantillasIaVariables).execute();
@@ -23,8 +18,8 @@ Optional fields can be discovered based on classes that have `Optional` object t
 This is an example of a mutation with an optional field:
 
 ```dart
-await ProntoappConnector.instance.GuardarProducto({ ... })
-.categoriaId(...)
+await ProntoappConnector.instance.CrearCliente({ ... })
+.email(...)
 .execute();
 ```
 

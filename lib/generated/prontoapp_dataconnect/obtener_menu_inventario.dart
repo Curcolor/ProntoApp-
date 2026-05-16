@@ -78,6 +78,7 @@ class ObtenerMenuInventarioProductos {
   final double precio;
   final int stock;
   final double descuento;
+  final int umbralStockBajo;
   final String? urlImagen;
   ObtenerMenuInventarioProductos.fromJson(dynamic json):
   
@@ -89,6 +90,7 @@ class ObtenerMenuInventarioProductos {
   precio = nativeFromJson<double>(json['precio']),
   stock = nativeFromJson<int>(json['stock']),
   descuento = nativeFromJson<double>(json['descuento']),
+  umbralStockBajo = nativeFromJson<int>(json['umbralStockBajo']),
   urlImagen = json['urlImagen'] == null ? null : nativeFromJson<String>(json['urlImagen']);
   @override
   bool operator ==(Object other) {
@@ -108,11 +110,12 @@ class ObtenerMenuInventarioProductos {
     precio == otherTyped.precio && 
     stock == otherTyped.stock && 
     descuento == otherTyped.descuento && 
+    umbralStockBajo == otherTyped.umbralStockBajo && 
     urlImagen == otherTyped.urlImagen;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, categoriaId.hashCode, nombre.hashCode, descripcion.hashCode, codigo.hashCode, precio.hashCode, stock.hashCode, descuento.hashCode, urlImagen.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, categoriaId.hashCode, nombre.hashCode, descripcion.hashCode, codigo.hashCode, precio.hashCode, stock.hashCode, descuento.hashCode, umbralStockBajo.hashCode, urlImagen.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -129,6 +132,7 @@ class ObtenerMenuInventarioProductos {
     json['precio'] = nativeToJson<double>(precio);
     json['stock'] = nativeToJson<int>(stock);
     json['descuento'] = nativeToJson<double>(descuento);
+    json['umbralStockBajo'] = nativeToJson<int>(umbralStockBajo);
     if (urlImagen != null) {
       json['urlImagen'] = nativeToJson<String?>(urlImagen);
     }
@@ -144,6 +148,7 @@ class ObtenerMenuInventarioProductos {
     required this.precio,
     required this.stock,
     required this.descuento,
+    required this.umbralStockBajo,
     this.urlImagen,
   });
 }

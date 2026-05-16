@@ -5,9 +5,14 @@ class CrearClienteVariablesBuilder {
   String nombre;
   String numeroWhatsapp;
   Optional<String> _email = Optional.optional(nativeFromJson, nativeToJson);
+  Optional<String> _notas = Optional.optional(nativeFromJson, nativeToJson);
 
   final FirebaseDataConnect _dataConnect;  CrearClienteVariablesBuilder email(String? t) {
    _email.value = t;
+   return this;
+  }
+  CrearClienteVariablesBuilder notas(String? t) {
+   _notas.value = t;
    return this;
   }
 
@@ -19,7 +24,7 @@ class CrearClienteVariablesBuilder {
   }
 
   MutationRef<CrearClienteData, CrearClienteVariables> ref() {
-    CrearClienteVariables vars= CrearClienteVariables(negocioId: negocioId,nombre: nombre,numeroWhatsapp: numeroWhatsapp,email: _email,);
+    CrearClienteVariables vars= CrearClienteVariables(negocioId: negocioId,nombre: nombre,numeroWhatsapp: numeroWhatsapp,email: _email,notas: _notas,);
     return _dataConnect.mutation("CrearCliente", dataDeserializer, varsSerializer, vars);
   }
 }
@@ -98,6 +103,7 @@ class CrearClienteVariables {
   final String nombre;
   final String numeroWhatsapp;
   late final Optional<String>email;
+  late final Optional<String>notas;
   @Deprecated('fromJson is deprecated for Variable classes as they are no longer required for deserialization.')
   CrearClienteVariables.fromJson(Map<String, dynamic> json):
   
@@ -111,6 +117,10 @@ class CrearClienteVariables {
   
     email = Optional.optional(nativeFromJson, nativeToJson);
     email.value = json['email'] == null ? null : nativeFromJson<String>(json['email']);
+  
+  
+    notas = Optional.optional(nativeFromJson, nativeToJson);
+    notas.value = json['notas'] == null ? null : nativeFromJson<String>(json['notas']);
   
   }
   @override
@@ -126,11 +136,12 @@ class CrearClienteVariables {
     return negocioId == otherTyped.negocioId && 
     nombre == otherTyped.nombre && 
     numeroWhatsapp == otherTyped.numeroWhatsapp && 
-    email == otherTyped.email;
+    email == otherTyped.email && 
+    notas == otherTyped.notas;
     
   }
   @override
-  int get hashCode => Object.hashAll([negocioId.hashCode, nombre.hashCode, numeroWhatsapp.hashCode, email.hashCode]);
+  int get hashCode => Object.hashAll([negocioId.hashCode, nombre.hashCode, numeroWhatsapp.hashCode, email.hashCode, notas.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -141,6 +152,9 @@ class CrearClienteVariables {
     if(email.state == OptionalState.set) {
       json['email'] = email.toJson();
     }
+    if(notas.state == OptionalState.set) {
+      json['notas'] = notas.toJson();
+    }
     return json;
   }
 
@@ -149,6 +163,7 @@ class CrearClienteVariables {
     required this.nombre,
     required this.numeroWhatsapp,
     required this.email,
+    required this.notas,
   });
 }
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349110200183",
+    "project_id": "test-firestore-c77ab",
+    "storage_bucket": "test-firestore-c77ab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349110200183:android:71941cd60357d01fd06372",
+        "android_client_info": {
+          "package_name": "com.example.prontoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7aGa3BnhlFA8qM6ZTzTL_GIn1AjZocZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
