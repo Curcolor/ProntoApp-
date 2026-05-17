@@ -16,6 +16,8 @@ part 'obtener_plantillas_ia.dart';
 
 part 'obtener_integraciones_mensajeria.dart';
 
+part 'obtener_mi_perfil_usuario_admin.dart';
+
 
 
   enum ActorOperacion {
@@ -600,6 +602,11 @@ class ProntoappConnector {
   
   ObtenerIntegracionesMensajeriaVariablesBuilder obtenerIntegracionesMensajeria ({required String negocioId, }) {
     return ObtenerIntegracionesMensajeriaVariablesBuilder(dataConnect, negocioId: negocioId,);
+  }
+  
+  
+  ObtenerMiPerfilUsuarioAdminVariablesBuilder obtenerMiPerfilUsuarioAdmin () {
+    return ObtenerMiPerfilUsuarioAdminVariablesBuilder(dataConnect, );
   }
   
 

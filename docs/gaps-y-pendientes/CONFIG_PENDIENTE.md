@@ -116,16 +116,42 @@ Features que NO pueden probarse end-to-end hasta configurar algo externo (Fireba
 
 ### 2026-05-16 — Aplicar seeds plantillas IA + herramientas (migrations 003 + 004)
 
-- **Bloqueo:** seeds 003_seed_plantillas_globales.sql + 004_seed_herramientas.sql escritas pero NO aplicadas a Cloud SQL. Claude no tiene la password de postgres (rotada externa).
-- **Qué falta:**
-  1. Conectarse a Cloud SQL via `gcloud sql connect test-firestore-c77ab-instance --user=postgres --database=test-firestore-c77ab-2-database` (pide password).
-  2. Ejecutar: `\i dataconnect/migrations/003_seed_plantillas_globales.sql` y `\i 004_seed_herramientas.sql`.
-  3. Verificar: `SELECT codigo FROM plantillas_ia WHERE id_negocio IS NULL;` debe devolver 4 filas. `SELECT nombre FROM herramientas_ia WHERE id_negocio IS NULL;` debe devolver 5 filas.
-- **Quién:** Junior (tiene password).
+- **Bloqueo:** seeds 003_seed_plantillas_globales.sql + 004_seed_herramientas.sql escritas pero NO aplicadas a Cloud SQL. Agente Claude Code no puede correr shells interactivos.
+- **Qué falta — Junior ejecuta:**
+  1. Recuperar password Cloud SQL desde password manager local (NO en repo, NO en chat).
+  2. Conectarse: `gcloud sql connect test-firestore-c77ab-instance --user=postgres --database=test-firestore-c77ab-2-database` y pegar password.
+  3. En psql, ejecutar como una sola sentencia:
+     ```
+     SET ROLE "firebaseowner_test-firestore-c77ab-2-database_public";
+     \i C:/WorkSpace-Vs-Code/ProntoApp--Back/dataconnect/migrations/003_seed_plantillas_globales.sql
+     \i C:/WorkSpace-Vs-Code/ProntoApp--Back/dataconnect/migrations/004_seed_herramientas.sql
+     ```
+     (Path ajustar según OS. Si no funciona `\i`, copiar y pegar contenido.)
+  4. Verificar:
+     - `SELECT codigo FROM plantillas_ia WHERE id_negocio IS NULL;` → 4 filas.
+     - `SELECT nombre FROM herramientas_ia WHERE id_negocio IS NULL;` → 5 filas.
+  5. **Inmediatamente rotar password tras aplicar:** `gcloud sql users set-password postgres --instance=test-firestore-c77ab-instance --password=$(openssl rand -hex 24)`. Guardar nueva en password manager.
+- **Quién:** Junior.
 - **Costo:** $0.
-- **Prioridad:** P0 — bloquea Fase 4.2 (service-ai-agent necesita plantilla + herramientas configuradas para arrancar).
-- **Workaround:** `service-ai-agent` puede arrancar con plantillas hardcoded de fallback hasta que se apliquen los seeds; pero rompe principio multi-tenant.
-- **Test:** `service-ai-agent` carga `global_atencion_cliente_v1` por `codigo` y arranca graph atencion_cliente sin errores.
+- **Prioridad:** P0 — bloquea Fase 4.2 (service-ai-agent necesita plantilla + herramientas).
+- **Workaround:** scaffold service-ai-agent puede arrancar con plantillas dummy en tests (mocks), pero runtime real requiere seeds aplicados.
+- **Test:** `service-ai-agent` carga `global_atencion_cliente_v1` por `codigo` y arranca graph sin errores.
+
+### 2026-05-16 — Migrar Cloud SQL a IAM authentication (sin password)
+
+- **Bloqueo:** backend depende de password rotativa frágil. Mejor: Cloud SQL IAM auth (gratis, sin password).
+- **Qué falta:**
+  ```bash
+  gcloud sql instances patch test-firestore-c77ab-instance --database-flags=cloudsql.iam_authentication=on
+  ```
+  + crear service account para `service-ai-agent` y `service-orders` con role `firebasewriter_*_public`.
+  + actualizar adapters backend para usar `google-cloud-sql-connector` con `enable_iam_auth=True`.
+- **Quién:** Junior + agente backend.
+- **Costo:** $0.
+- **Prioridad:** P1 — habilitarlo antes de deploy producción.
+- **Workaround:** password actual + rotación manual.
+- **Test:** `service-ai-agent` conecta a Cloud SQL sin password env var.
+- **Doc:** ver `docs/arquitectura/SEGURIDAD_PLAN.md` sección "Cloud SQL IAM authentication".
 
 ---
 

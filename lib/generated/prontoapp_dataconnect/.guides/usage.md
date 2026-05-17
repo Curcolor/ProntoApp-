@@ -7,6 +7,7 @@ ProntoappConnector.instance.ObtenerPedidosKanban(obtenerPedidosKanbanVariables).
 ProntoappConnector.instance.ObtenerMenuInventario(obtenerMenuInventarioVariables).execute();
 ProntoappConnector.instance.ObtenerPlantillasIa(obtenerPlantillasIaVariables).execute();
 ProntoappConnector.instance.ObtenerIntegracionesMensajeria(obtenerIntegracionesMensajeriaVariables).execute();
+ProntoappConnector.instance.ObtenerMiPerfilUsuarioAdmin().execute();
 
 ```
 
