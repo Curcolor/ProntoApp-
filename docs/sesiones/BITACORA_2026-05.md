@@ -61,3 +61,51 @@ Entradas cortas por día/hito. El agente en `/goal` mode debe agregar entrada ca
 - **Bloqueos nuevos:** ninguno propio. Pendiente Junior: rotar secret backend + aplicar seeds 003+004.
 - **Próximo turno:** review outputs Codex F4.3 + F5 cuando notifiquen; F6.3 (providers SDK SQL Connect) tras ello; F6.4 vistas configuración faltantes (perfil_negocio, integraciones_mensajeria).
 - **Métricas:** ~32 turnos acumulados; 8 tasks completadas + 2 in-progress Codex; 13 commits totales.
+
+### 2026-05-17 — F6.3 cerrada + F6.4 cerrada + Codex F4.3/F5 caídos post-resume
+
+- **Hecho:**
+  - F6.3: `main.dart` limpio. Inyectados `FirebaseAuthService`,
+    `PerfilUsuarioAdminService` (ahora `ChangeNotifier` con cache `perfil`
+    para `context.watch`) y `ProntoappConnector`. Secret literal
+    `83c58120…43` eliminado de los providers HTTP legacy (quedan con
+    baseUrl/secreto vacíos hasta que F6.5 migre providers al SDK Data
+    Connect; backend viejo no se reactiva — service-employees fake
+    desmontado per decisión Junior).
+  - F6.4: 5 pantallas CRUD bajo `lib/features/manager/screens/configuracion/`
+    cableadas desde `settings_screen.dart` (nueva sección "NEGOCIO"):
+    `perfil_negocio_screen.dart`, `categorias_screen.dart`,
+    `integraciones_mensajeria_screen.dart`, `pasos_flujo_pedido_screen.dart`,
+    `plantillas_ia_admin_screen.dart`. Cada una consume el SDK Data Connect
+    (read query + insert/update + soft delete via `activo=false`). Soft
+    delete elegido para preservar integridad referencial.
+  - Backend GQL: añadidas mutations CRUD para Negocio, Categoria,
+    IntegracionMensajeria, PasoFlujoPedido, PlantillaIa + queries admin
+    correspondientes (incluyen inactivos). Permisos PROPIETARIO/GERENTE
+    via `@check` server-side; SUPERVISOR sólo en Categoria. Queries
+    NUNCA devuelven `credencialSecretRef` ni `webhookSecret`
+    (write-only desde UI hacia Secret Manager).
+  - Cleanup hardcoded: "Mi Panadería" / "Panadería El Trigo Dorado" fuera
+    de 6 archivos (dashboard, inventario, equipo, profile, configurar
+    agente modal, editar perfil modal). Reemplazados por
+    `perfil.negocioNombre` o defaults vacíos.
+  - Commits: backend `6f43c20` (669 LOC GQL); frontend `e330e96`
+    (35 archivos +6372/-34 incluyendo SDK regen).
+  - `flutter analyze`: zero errors, sólo warnings preexistentes
+    (god widgets legacy + line endings).
+- **Fase:** 6.3 ✅, 6.4 ✅.
+- **Bloqueos nuevos:** Codex agentes F4.3 (`a29dba25…`) y F5
+  (`acb7481c…`) muertos post-resume — tareas #9 y #10 quedaron sin
+  entrega en repo backend. Cuenta como 1ª caída de cada uno; pendiente
+  re-delegar en próximo turno. Si vuelven a caer → BLOCKER + Claude solo.
+- **Próximo turno:** A) re-lanzar Codex F4.3 y F5 paralelos; B) F6.5
+  tests integration AuthGuard + FirebaseAuthService con
+  `firebase_auth_mocks`; C) F7 OTel exporter Cloud Trace en
+  service-ai-agent.
+- **Métricas:** ~12 turnos en este episodio post-resume; 14 tasks pipeline
+  (4 nuevas creadas, 2 completadas en este turno, 2 in-progress Codex
+  inválidas); 3 commits totales hoy (1 backend, 1 frontend, 1 bitácora).
+- **Acción manual Junior pendiente:**
+  - Aplicar seeds 003+004 a Cloud SQL.
+  - Habilitar Email/Password en Firebase Console.
+  - (Documentado en `CONFIG_PENDIENTE.md`).
