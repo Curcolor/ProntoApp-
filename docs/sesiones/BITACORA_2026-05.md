@@ -109,3 +109,54 @@ Entradas cortas por día/hito. El agente en `/goal` mode debe agregar entrada ca
   - Aplicar seeds 003+004 a Cloud SQL.
   - Habilitar Email/Password en Firebase Console.
   - (Documentado en `CONFIG_PENDIENTE.md`).
+
+### 2026-05-17 — F6.5 tests Auth + F7 OTel/structured logging cerradas
+
+- **Hecho:**
+  - F6.5 (Flutter): `firebase_auth_mocks ^0.15.2` + `mocktail ^1.0.4`
+    como devDeps. Suite con 9 tests:
+    - `test/features/auth/auth_guard_test.dart`: 5 escenarios — sin
+      sesión Firebase, usuario logueado sin `UsuarioAdmin` (onboarding),
+      cargo permitido (PROPIETARIO), cargo bloqueado (SUPERVISOR contra
+      whitelist GERENTE/PROPIETARIO) y error al cargar perfil.
+    - `test/data/services/firebase_auth_service_test.dart`: 4 tests
+      cubriendo `estaLogueado`, `iniciarSesionEmail`, `cerrarSesion` y
+      `obtenerIdToken` con `MockFirebaseAuth`.
+    - Bug fixed AuthGuard: loop infinito cuando `obtenerMiPerfil`
+      devolvía `null` (el guard reagendaba la carga cada frame). Añadida
+      bandera `_cargado` que se levanta una vez completa la carga,
+      sea cual sea el resultado.
+    - 9/9 verdes (~1.2 s). Commit `c050a31`.
+  - F7 (service-ai-agent): observabilidad real.
+    - `tracing.py` ahora arma un `TracerProvider` propio con
+      `service.name` resource y elige exporter según env:
+      Cloud Trace si `OTEL_EXPORTER_GCP_PROJECT`, OTLP gRPC si
+      `OTEL_EXPORTER_OTLP_ENDPOINT`, no-op en caso contrario.
+      `FastAPIInstrumentor.instrument_app(app)` sigue conectado.
+    - Nuevo `logging_setup.py` con `structlog` + processor
+      `redactar_secretos` que tapa `Authorization`,
+      `credencialSecretRef`, `webhookSecret`, `password`, `secret`,
+      `token` (top-level + dict anidado un nivel). Output JSON
+      compatible con Cloud Logging (`severity` + `message`).
+    - `Settings` añade `otel_service_name`, `otel_gcp_project`,
+      `otel_otlp_endpoint`, `log_json` con aliases env.
+    - `main.py` arranca con `configure_structured_logging` +
+      `OpenTelemetryFastAPIAdapter` parametrizados desde `Settings`.
+    - Tests: `test_observability.py` ahora cubre 6 escenarios
+      (no-op sin SDK, sin config, OTLP, Cloud Trace,
+      redacción auth/credencialSecretRef, JSON renderer). Total
+      29 unit tests verdes para el servicio (3.2 s). Commit
+      `618786a`, tag `f7-otel-completed-20260517`.
+- **Fase:** 6.5 ✅, 7 (parcial — falta App Check + rate limiting + cost
+  monitoring, pendientes para F7.x).
+- **Bloqueos nuevos:** ninguno propio. Codex F4.3 + F5 siguen pendientes
+  de re-delegación (no se relanzaron en este turno para ahorrar tokens;
+  se relanzan al inicio del próximo).
+- **Próximo turno:** A) re-delegar Codex F4.3 + F5 paralelos; B) si los
+  agentes fallan otra vez, marcar BLOCKER y continuar Claude solo
+  (webhooks WA/TG + outbox transaccional son security-gated); C) F7.x
+  hardening (App Check Firebase, rate limiting, cost monitoring).
+- **Métricas:** ~22 turnos acumulados post-resume; 14 tasks pipeline
+  (4 completadas hoy: F6.3, F6.4, F6.5, F7), 2 pending Codex; 6 commits
+  hoy entre backend y frontend; 3 tags fase (`f6.3-completed-`,
+  `f6.4-completed-`, `f7-otel-completed-`).
