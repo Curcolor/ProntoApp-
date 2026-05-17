@@ -2,12 +2,15 @@
 
 ```dart
 ProntoappConnector.instance.CrearCliente(crearClienteVariables).execute();
-ProntoappConnector.instance.ObtenerDashboardNegocioV2(obtenerDashboardNegocioV2Variables).execute();
-ProntoappConnector.instance.ObtenerPedidosKanban(obtenerPedidosKanbanVariables).execute();
-ProntoappConnector.instance.ObtenerMenuInventario(obtenerMenuInventarioVariables).execute();
-ProntoappConnector.instance.ObtenerPlantillasIa(obtenerPlantillasIaVariables).execute();
-ProntoappConnector.instance.ObtenerIntegracionesMensajeria(obtenerIntegracionesMensajeriaVariables).execute();
-ProntoappConnector.instance.ObtenerMiPerfilUsuarioAdmin().execute();
+ProntoappConnector.instance.ActualizarNegocio(actualizarNegocioVariables).execute();
+ProntoappConnector.instance.CrearCategoria(crearCategoriaVariables).execute();
+ProntoappConnector.instance.ActualizarCategoria(actualizarCategoriaVariables).execute();
+ProntoappConnector.instance.DesactivarCategoria(desactivarCategoriaVariables).execute();
+ProntoappConnector.instance.CrearIntegracionMensajeria(crearIntegracionMensajeriaVariables).execute();
+ProntoappConnector.instance.ActualizarIntegracionMensajeria(actualizarIntegracionMensajeriaVariables).execute();
+ProntoappConnector.instance.DesactivarIntegracionMensajeria(desactivarIntegracionMensajeriaVariables).execute();
+ProntoappConnector.instance.CrearPasoFlujoPedido(crearPasoFlujoPedidoVariables).execute();
+ProntoappConnector.instance.ActualizarPasoFlujoPedido(actualizarPasoFlujoPedidoVariables).execute();
 
 ```
 
@@ -20,8 +23,8 @@ Optional fields can be discovered based on classes that have `Optional` object t
 This is an example of a mutation with an optional field:
 
 ```dart
-await ProntoappConnector.instance.CrearCliente({ ... })
-.email(...)
+await ProntoappConnector.instance.ActualizarPlantillaIa({ ... })
+.promptUsuarioTemplate(...)
 .execute();
 ```
 

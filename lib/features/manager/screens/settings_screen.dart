@@ -5,6 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
 import 'package:prontoapp/features/manager/widgets/configurar_agente_modal.dart';
+import 'package:prontoapp/features/manager/screens/configuracion/perfil_negocio_screen.dart';
+import 'package:prontoapp/features/manager/screens/configuracion/categorias_screen.dart';
+import 'package:prontoapp/features/manager/screens/configuracion/integraciones_mensajeria_screen.dart';
+import 'package:prontoapp/features/manager/screens/configuracion/pasos_flujo_pedido_screen.dart';
+import 'package:prontoapp/features/manager/screens/configuracion/plantillas_ia_admin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -41,7 +46,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
+          _buildSectionTitle('NEGOCIO'),
+          const SizedBox(height: 8),
+          _buildSettingsGroup([
+            _buildNavigationRow(
+              icon: FontAwesomeIcons.shop,
+              iconBgColor: AppColors.warningBg,
+              iconColor: AppColors.warningText,
+              title: 'Perfil del negocio',
+              subtitle: 'Nombre, horario, zona horaria, moneda, SLA',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PerfilNegocioScreen()),
+              ),
+            ),
+            _buildNavigationRow(
+              icon: FontAwesomeIcons.tags,
+              iconBgColor: AppColors.infoBg,
+              iconColor: AppColors.infoText,
+              title: 'Categorías',
+              subtitle: 'Agrupa productos del menú',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CategoriasScreen()),
+              ),
+            ),
+            _buildNavigationRow(
+              icon: FontAwesomeIcons.comments,
+              iconBgColor: AppColors.successBg,
+              iconColor: AppColors.successText,
+              title: 'Integraciones mensajería',
+              subtitle: 'WhatsApp, Telegram, webhooks',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const IntegracionesMensajeriaScreen()),
+              ),
+            ),
+            _buildNavigationRow(
+              icon: FontAwesomeIcons.diagramProject,
+              iconBgColor: AppColors.infoBg,
+              iconColor: AppColors.infoText,
+              title: 'Flujo de pedidos',
+              subtitle: 'Pasos, SLAs y disparadores',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PasosFlujoPedidoScreen()),
+              ),
+            ),
+            _buildNavigationRow(
+              icon: FontAwesomeIcons.robot,
+              iconBgColor: AppColors.aiBg,
+              iconColor: AppColors.aiText,
+              title: 'Plantillas IA',
+              subtitle: 'Prompts del agente del negocio',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PlantillasIaAdminScreen()),
+              ),
+              isLast: true,
+            ),
+          ]),
+          const SizedBox(height: 24),
+
           _buildSectionTitle('NOTIFICACIONES'),
           const SizedBox(height: 8),
           _buildSettingsGroup([

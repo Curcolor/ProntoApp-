@@ -4,8 +4,13 @@
 /// `firebaseUid: { eq_expr: "auth.uid" }` resuelve el usuario por el ID token
 /// activo. Devuelve `null` si Firebase Auth está logueado pero aún no existe
 /// `UsuarioAdmin` (caso primer login pre-onboarding).
+///
+/// Es `ChangeNotifier` para que la UI consuma el último perfil resuelto vía
+/// `context.watch<PerfilUsuarioAdminService>().perfil` sin refetch en cada
+/// pantalla.
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:prontoapp/generated/prontoapp_dataconnect/prontoapp.dart';
 
 /// Snapshot mínimo del perfil que la UI consume.
@@ -35,22 +40,30 @@ class PerfilUsuarioAdmin {
   final String monedaIso;
 }
 
-class PerfilUsuarioAdminService {
+class PerfilUsuarioAdminService extends ChangeNotifier {
   PerfilUsuarioAdminService(this._connector);
 
   final ProntoappConnector _connector;
 
-  /// Llama la query Data Connect y normaliza a `PerfilUsuarioAdmin`.
-  /// Devuelve `null` si el SDK devuelve la lista vacía.
+  PerfilUsuarioAdmin? _perfilCache;
+
+  /// Último perfil resuelto. UI lo consume vía `context.watch` para mostrar
+  /// nombre del negocio, cargo, etc. sin refetch en cada pantalla.
+  PerfilUsuarioAdmin? get perfil => _perfilCache;
+
+  /// Llama la query Data Connect y normaliza a `PerfilUsuarioAdmin`. Cachea el
+  /// resultado para acceso síncrono vía `perfil`.
   Future<PerfilUsuarioAdmin?> obtenerMiPerfil() async {
     final result = await _connector.obtenerMiPerfilUsuarioAdmin().execute();
     final data = result.data.usuariosAdmin;
     if (data.isEmpty) {
+      _perfilCache = null;
+      notifyListeners();
       return null;
     }
     final row = data.first;
     final negocio = row.negocio;
-    return PerfilUsuarioAdmin(
+    final perfil = PerfilUsuarioAdmin(
       id: row.id,
       nombre: row.nombre,
       email: row.email,
@@ -62,5 +75,14 @@ class PerfilUsuarioAdminService {
       zonaHoraria: negocio.zonaHoraria,
       monedaIso: negocio.monedaIso,
     );
+    _perfilCache = perfil;
+    notifyListeners();
+    return perfil;
+  }
+
+  /// Limpia el cache (usar en logout).
+  void limpiar() {
+    _perfilCache = null;
+    notifyListeners();
   }
 }

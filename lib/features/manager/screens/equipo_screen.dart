@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
+import 'package:prontoapp/data/services/perfil_usuario_admin_service.dart';
 import 'package:prontoapp/data/models/user_model.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
 import 'perfil_empleado_screen.dart';
@@ -159,7 +161,7 @@ class _EquipoScreenState extends State<EquipoScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Panadería El Trigo Dorado',
+                context.watch<PerfilUsuarioAdminService>().perfil?.negocioNombre ?? 'Mi negocio',
                 style: GoogleFonts.inter(
                   color: AppColors.textTertiary,
                   fontSize: 13,

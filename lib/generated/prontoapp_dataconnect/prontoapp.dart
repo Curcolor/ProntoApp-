@@ -6,6 +6,32 @@ import 'package:flutter/foundation.dart';
 
 part 'crear_cliente.dart';
 
+part 'actualizar_negocio.dart';
+
+part 'crear_categoria.dart';
+
+part 'actualizar_categoria.dart';
+
+part 'desactivar_categoria.dart';
+
+part 'crear_integracion_mensajeria.dart';
+
+part 'actualizar_integracion_mensajeria.dart';
+
+part 'desactivar_integracion_mensajeria.dart';
+
+part 'crear_paso_flujo_pedido.dart';
+
+part 'actualizar_paso_flujo_pedido.dart';
+
+part 'desactivar_paso_flujo_pedido.dart';
+
+part 'crear_plantilla_ia.dart';
+
+part 'actualizar_plantilla_ia.dart';
+
+part 'desactivar_plantilla_ia.dart';
+
 part 'obtener_dashboard_negocio_v2.dart';
 
 part 'obtener_pedidos_kanban.dart';
@@ -17,6 +43,16 @@ part 'obtener_plantillas_ia.dart';
 part 'obtener_integraciones_mensajeria.dart';
 
 part 'obtener_mi_perfil_usuario_admin.dart';
+
+part 'obtener_negocio.dart';
+
+part 'obtener_categorias_admin.dart';
+
+part 'obtener_pasos_flujo_pedido_admin.dart';
+
+part 'obtener_plantillas_ia_admin.dart';
+
+part 'obtener_integraciones_mensajeria_admin.dart';
 
 
 
@@ -218,6 +254,42 @@ part 'obtener_mi_perfil_usuario_admin.dart';
       
       case 'RESUMEN_CONVERSACION':
         return const Known(CasoUsoPlantilla.RESUMEN_CONVERSACION);
+      
+      default:
+        return Unknown(data);
+    }
+  }
+  
+
+  enum DisparadorFlujo {
+    
+      PEDIDO_CREADO,
+    
+      ESTADO_CAMBIADO,
+    
+      SLA_EXPIRADO,
+    
+      MANUAL,
+    
+  }
+  
+  String disparadorFlujoSerializer(EnumValue<DisparadorFlujo> e) {
+    return e.stringValue;
+  }
+  EnumValue<DisparadorFlujo> disparadorFlujoDeserializer(dynamic data) {
+    switch (data) {
+      
+      case 'PEDIDO_CREADO':
+        return const Known(DisparadorFlujo.PEDIDO_CREADO);
+      
+      case 'ESTADO_CAMBIADO':
+        return const Known(DisparadorFlujo.ESTADO_CAMBIADO);
+      
+      case 'SLA_EXPIRADO':
+        return const Known(DisparadorFlujo.SLA_EXPIRADO);
+      
+      case 'MANUAL':
+        return const Known(DisparadorFlujo.MANUAL);
       
       default:
         return Unknown(data);
@@ -580,6 +652,71 @@ class ProntoappConnector {
   }
   
   
+  ActualizarNegocioVariablesBuilder actualizarNegocio ({required String negocioId, required String nombre, required FormatoEntrega formatoEntrega, required String zonaHoraria, required String monedaIso, required int minutosGraciaSla, }) {
+    return ActualizarNegocioVariablesBuilder(dataConnect, negocioId: negocioId,nombre: nombre,formatoEntrega: formatoEntrega,zonaHoraria: zonaHoraria,monedaIso: monedaIso,minutosGraciaSla: minutosGraciaSla,);
+  }
+  
+  
+  CrearCategoriaVariablesBuilder crearCategoria ({required String negocioId, required String nombre, required int orden, }) {
+    return CrearCategoriaVariablesBuilder(dataConnect, negocioId: negocioId,nombre: nombre,orden: orden,);
+  }
+  
+  
+  ActualizarCategoriaVariablesBuilder actualizarCategoria ({required String negocioId, required String id, required String nombre, required int orden, }) {
+    return ActualizarCategoriaVariablesBuilder(dataConnect, negocioId: negocioId,id: id,nombre: nombre,orden: orden,);
+  }
+  
+  
+  DesactivarCategoriaVariablesBuilder desactivarCategoria ({required String negocioId, required String id, }) {
+    return DesactivarCategoriaVariablesBuilder(dataConnect, negocioId: negocioId,id: id,);
+  }
+  
+  
+  CrearIntegracionMensajeriaVariablesBuilder crearIntegracionMensajeria ({required String negocioId, required CanalMensajeria canal, required String identificadorExterno, required String credencialSecretRef, }) {
+    return CrearIntegracionMensajeriaVariablesBuilder(dataConnect, negocioId: negocioId,canal: canal,identificadorExterno: identificadorExterno,credencialSecretRef: credencialSecretRef,);
+  }
+  
+  
+  ActualizarIntegracionMensajeriaVariablesBuilder actualizarIntegracionMensajeria ({required String negocioId, required String id, required String identificadorExterno, required String credencialSecretRef, required bool activo, }) {
+    return ActualizarIntegracionMensajeriaVariablesBuilder(dataConnect, negocioId: negocioId,id: id,identificadorExterno: identificadorExterno,credencialSecretRef: credencialSecretRef,activo: activo,);
+  }
+  
+  
+  DesactivarIntegracionMensajeriaVariablesBuilder desactivarIntegracionMensajeria ({required String negocioId, required String id, }) {
+    return DesactivarIntegracionMensajeriaVariablesBuilder(dataConnect, negocioId: negocioId,id: id,);
+  }
+  
+  
+  CrearPasoFlujoPedidoVariablesBuilder crearPasoFlujoPedido ({required String negocioId, required EstadoPedido estado, required String etiqueta, required int orden, required DisparadorFlujo disparador, }) {
+    return CrearPasoFlujoPedidoVariablesBuilder(dataConnect, negocioId: negocioId,estado: estado,etiqueta: etiqueta,orden: orden,disparador: disparador,);
+  }
+  
+  
+  ActualizarPasoFlujoPedidoVariablesBuilder actualizarPasoFlujoPedido ({required String negocioId, required String id, required String etiqueta, required int orden, required DisparadorFlujo disparador, required bool activo, }) {
+    return ActualizarPasoFlujoPedidoVariablesBuilder(dataConnect, negocioId: negocioId,id: id,etiqueta: etiqueta,orden: orden,disparador: disparador,activo: activo,);
+  }
+  
+  
+  DesactivarPasoFlujoPedidoVariablesBuilder desactivarPasoFlujoPedido ({required String negocioId, required String id, }) {
+    return DesactivarPasoFlujoPedidoVariablesBuilder(dataConnect, negocioId: negocioId,id: id,);
+  }
+  
+  
+  CrearPlantillaIaVariablesBuilder crearPlantillaIa ({required String negocioId, required String codigo, required CasoUsoPlantilla casoUso, required int version, required ProveedorLlm proveedor, required String modelo, required String promptSistema, required String idioma, }) {
+    return CrearPlantillaIaVariablesBuilder(dataConnect, negocioId: negocioId,codigo: codigo,casoUso: casoUso,version: version,proveedor: proveedor,modelo: modelo,promptSistema: promptSistema,idioma: idioma,);
+  }
+  
+  
+  ActualizarPlantillaIaVariablesBuilder actualizarPlantillaIa ({required String negocioId, required String id, required String codigo, required int version, required ProveedorLlm proveedor, required String modelo, required String promptSistema, required String idioma, required bool activo, }) {
+    return ActualizarPlantillaIaVariablesBuilder(dataConnect, negocioId: negocioId,id: id,codigo: codigo,version: version,proveedor: proveedor,modelo: modelo,promptSistema: promptSistema,idioma: idioma,activo: activo,);
+  }
+  
+  
+  DesactivarPlantillaIaVariablesBuilder desactivarPlantillaIa ({required String negocioId, required String id, }) {
+    return DesactivarPlantillaIaVariablesBuilder(dataConnect, negocioId: negocioId,id: id,);
+  }
+  
+  
   ObtenerDashboardNegocioV2VariablesBuilder obtenerDashboardNegocioV2 ({required String negocioId, required Timestamp pedidosDesde, }) {
     return ObtenerDashboardNegocioV2VariablesBuilder(dataConnect, negocioId: negocioId,pedidosDesde: pedidosDesde,);
   }
@@ -607,6 +744,31 @@ class ProntoappConnector {
   
   ObtenerMiPerfilUsuarioAdminVariablesBuilder obtenerMiPerfilUsuarioAdmin () {
     return ObtenerMiPerfilUsuarioAdminVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ObtenerNegocioVariablesBuilder obtenerNegocio ({required String negocioId, }) {
+    return ObtenerNegocioVariablesBuilder(dataConnect, negocioId: negocioId,);
+  }
+  
+  
+  ObtenerCategoriasAdminVariablesBuilder obtenerCategoriasAdmin ({required String negocioId, }) {
+    return ObtenerCategoriasAdminVariablesBuilder(dataConnect, negocioId: negocioId,);
+  }
+  
+  
+  ObtenerPasosFlujoPedidoAdminVariablesBuilder obtenerPasosFlujoPedidoAdmin ({required String negocioId, }) {
+    return ObtenerPasosFlujoPedidoAdminVariablesBuilder(dataConnect, negocioId: negocioId,);
+  }
+  
+  
+  ObtenerPlantillasIaAdminVariablesBuilder obtenerPlantillasIaAdmin ({required String negocioId, }) {
+    return ObtenerPlantillasIaAdminVariablesBuilder(dataConnect, negocioId: negocioId,);
+  }
+  
+  
+  ObtenerIntegracionesMensajeriaAdminVariablesBuilder obtenerIntegracionesMensajeriaAdmin ({required String negocioId, }) {
+    return ObtenerIntegracionesMensajeriaAdminVariablesBuilder(dataConnect, negocioId: negocioId,);
   }
   
 

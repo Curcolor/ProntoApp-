@@ -15,7 +15,7 @@ class _ConfigurarAgenteModalState extends State<ConfigurarAgenteModal> {
   String _modoRespuesta = 'automatico'; // automatico, semi, manual
   bool _modoNocturno = true;
   final TextEditingController _mensajeController = TextEditingController(
-    text: '¡Hola! 👋 Gracias por escribir a *Panadería El Trigo Dorado*. Soy Prontoa, tu asistente virtual. ¿Qué deseas pedir hoy?',
+    text: '¡Hola! 👋 Gracias por escribirnos. Soy Prontoa, tu asistente virtual. ¿Qué deseas pedir hoy?',
   );
 
   @override

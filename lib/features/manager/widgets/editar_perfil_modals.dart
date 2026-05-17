@@ -811,10 +811,11 @@ class _EditarNegocioSheet extends StatefulWidget {
 }
 
 class _EditarNegocioSheetState extends State<_EditarNegocioSheet> {
-  final _nombreCtrl = TextEditingController(text: 'Panadería El Trigo Dorado');
-  final _descripCtrl = TextEditingController(
-    text: 'Panadería artesanal con los mejores productos de la región, abiertos desde 1998.',
-  );
+  // Controllers vacíos por defecto; la pantalla F6.4 PerfilNegocioScreen es la
+  // fuente real de edición conectada a Data Connect. Este sheet legacy
+  // permanece sólo para no romper la navegación previa hasta que se migre.
+  final _nombreCtrl = TextEditingController();
+  final _descripCtrl = TextEditingController();
 
   String _tipoNegocio = '🥐 Panadería';
   final List<String> _tiposNegocio = [

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/data/services/perfil_usuario_admin_service.dart';
 import 'package:prontoapp/data/models/user_model.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
 import 'inventario_screen.dart';
@@ -283,14 +284,19 @@ class ProfileScreen extends StatelessWidget {
                     value: 'Barrio El Prado, Barranquilla',
                     onTap: () => EditarPerfilModals.showEditarUbicacion(context),
                   ),
-                  _buildSettingsRow(
-                    icon: FontAwesomeIcons.shop,
-                    iconBgColor: const Color(0xFFFEF3C7),
-                    iconColor: const Color(0xFFB45309),
-                    label: 'Negocio',
-                    value: 'Panadería El Trigo Dorado',
-                    isLast: true,
-                    onTap: () => EditarPerfilModals.showEditarNegocio(context),
+                  Builder(
+                    builder: (ctx) {
+                      final perfil = ctx.watch<PerfilUsuarioAdminService>().perfil;
+                      return _buildSettingsRow(
+                        icon: FontAwesomeIcons.shop,
+                        iconBgColor: const Color(0xFFFEF3C7),
+                        iconColor: const Color(0xFFB45309),
+                        label: 'Negocio',
+                        value: perfil?.negocioNombre ?? 'Sin negocio asociado',
+                        isLast: true,
+                        onTap: () => EditarPerfilModals.showEditarNegocio(context),
+                      );
+                    },
                   ),
                 ]),
                 

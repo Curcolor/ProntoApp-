@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/data/services/perfil_usuario_admin_service.dart';
 import 'package:prontoapp/data/models/order_model.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
 import 'package:prontoapp/data/providers/notification_provider.dart';
@@ -66,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
                               Text(
-                                'Mi Panadería',
+                                context.watch<PerfilUsuarioAdminService>().perfil?.negocioNombre ?? 'Mi negocio',
                                 style: GoogleFonts.inter(
                                   color: AppColors.textPrimary,
                                   fontSize: 20,
