@@ -79,6 +79,7 @@ class ObtenerMenuInventarioProductos {
   final int stock;
   final double descuento;
   final int umbralStockBajo;
+  final bool rastreaStock;
   final String? urlImagen;
   ObtenerMenuInventarioProductos.fromJson(dynamic json):
   
@@ -91,6 +92,7 @@ class ObtenerMenuInventarioProductos {
   stock = nativeFromJson<int>(json['stock']),
   descuento = nativeFromJson<double>(json['descuento']),
   umbralStockBajo = nativeFromJson<int>(json['umbralStockBajo']),
+  rastreaStock = nativeFromJson<bool>(json['rastreaStock']),
   urlImagen = json['urlImagen'] == null ? null : nativeFromJson<String>(json['urlImagen']);
   @override
   bool operator ==(Object other) {
@@ -111,11 +113,12 @@ class ObtenerMenuInventarioProductos {
     stock == otherTyped.stock && 
     descuento == otherTyped.descuento && 
     umbralStockBajo == otherTyped.umbralStockBajo && 
+    rastreaStock == otherTyped.rastreaStock && 
     urlImagen == otherTyped.urlImagen;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, categoriaId.hashCode, nombre.hashCode, descripcion.hashCode, codigo.hashCode, precio.hashCode, stock.hashCode, descuento.hashCode, umbralStockBajo.hashCode, urlImagen.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, categoriaId.hashCode, nombre.hashCode, descripcion.hashCode, codigo.hashCode, precio.hashCode, stock.hashCode, descuento.hashCode, umbralStockBajo.hashCode, rastreaStock.hashCode, urlImagen.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -133,6 +136,7 @@ class ObtenerMenuInventarioProductos {
     json['stock'] = nativeToJson<int>(stock);
     json['descuento'] = nativeToJson<double>(descuento);
     json['umbralStockBajo'] = nativeToJson<int>(umbralStockBajo);
+    json['rastreaStock'] = nativeToJson<bool>(rastreaStock);
     if (urlImagen != null) {
       json['urlImagen'] = nativeToJson<String?>(urlImagen);
     }
@@ -149,6 +153,7 @@ class ObtenerMenuInventarioProductos {
     required this.stock,
     required this.descuento,
     required this.umbralStockBajo,
+    required this.rastreaStock,
     this.urlImagen,
   });
 }

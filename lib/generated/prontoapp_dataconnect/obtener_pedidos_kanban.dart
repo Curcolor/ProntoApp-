@@ -81,13 +81,17 @@ class ObtenerPedidosKanbanPedidos {
   final String id;
   final String codigoPedido;
   final EnumValue<EstadoPedido> estado;
+  final EnumValue<EstadoPago> estadoPago;
   final double total;
   final EnumValue<CanalPedido> canal;
-  final EnumValue<OrigenOperacion> origenCreacion;
+  final EnumValue<CanalOperacion> origenCanal;
+  final EnumValue<ActorOperacion> origenActor;
+  final EnumValue<FormatoEntrega> formatoEntrega;
+  final AnyValue? direccionSnapshot;
   final String? clienteNombreSnapshot;
   final String? clienteWhatsappSnapshot;
   final Timestamp? venceEn;
-  final Timestamp fechaHora;
+  final Timestamp creadoEn;
   final ObtenerPedidosKanbanPedidosUsuarioAsignado? usuarioAsignado;
   final List<ObtenerPedidosKanbanPedidosDetallePedidosOnPedido> detallePedidos_on_pedido;
   ObtenerPedidosKanbanPedidos.fromJson(dynamic json):
@@ -95,13 +99,17 @@ class ObtenerPedidosKanbanPedidos {
   id = nativeFromJson<String>(json['id']),
   codigoPedido = nativeFromJson<String>(json['codigoPedido']),
   estado = estadoPedidoDeserializer(json['estado']),
+  estadoPago = estadoPagoDeserializer(json['estadoPago']),
   total = nativeFromJson<double>(json['total']),
   canal = canalPedidoDeserializer(json['canal']),
-  origenCreacion = origenOperacionDeserializer(json['origenCreacion']),
+  origenCanal = canalOperacionDeserializer(json['origenCanal']),
+  origenActor = actorOperacionDeserializer(json['origenActor']),
+  formatoEntrega = formatoEntregaDeserializer(json['formatoEntrega']),
+  direccionSnapshot = json['direccionSnapshot'] == null ? null : AnyValue.fromJson(json['direccionSnapshot']),
   clienteNombreSnapshot = json['clienteNombreSnapshot'] == null ? null : nativeFromJson<String>(json['clienteNombreSnapshot']),
   clienteWhatsappSnapshot = json['clienteWhatsappSnapshot'] == null ? null : nativeFromJson<String>(json['clienteWhatsappSnapshot']),
   venceEn = json['venceEn'] == null ? null : Timestamp.fromJson(json['venceEn']),
-  fechaHora = Timestamp.fromJson(json['fechaHora']),
+  creadoEn = Timestamp.fromJson(json['creadoEn']),
   usuarioAsignado = json['usuarioAsignado'] == null ? null : ObtenerPedidosKanbanPedidosUsuarioAsignado.fromJson(json['usuarioAsignado']),
   detallePedidos_on_pedido = (json['detallePedidos_on_pedido'] as List<dynamic>)
         .map((e) => ObtenerPedidosKanbanPedidosDetallePedidosOnPedido.fromJson(e))
@@ -119,19 +127,23 @@ class ObtenerPedidosKanbanPedidos {
     return id == otherTyped.id && 
     codigoPedido == otherTyped.codigoPedido && 
     estado == otherTyped.estado && 
+    estadoPago == otherTyped.estadoPago && 
     total == otherTyped.total && 
     canal == otherTyped.canal && 
-    origenCreacion == otherTyped.origenCreacion && 
+    origenCanal == otherTyped.origenCanal && 
+    origenActor == otherTyped.origenActor && 
+    formatoEntrega == otherTyped.formatoEntrega && 
+    direccionSnapshot == otherTyped.direccionSnapshot && 
     clienteNombreSnapshot == otherTyped.clienteNombreSnapshot && 
     clienteWhatsappSnapshot == otherTyped.clienteWhatsappSnapshot && 
     venceEn == otherTyped.venceEn && 
-    fechaHora == otherTyped.fechaHora && 
+    creadoEn == otherTyped.creadoEn && 
     usuarioAsignado == otherTyped.usuarioAsignado && 
     detallePedidos_on_pedido == otherTyped.detallePedidos_on_pedido;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, codigoPedido.hashCode, estado.hashCode, total.hashCode, canal.hashCode, origenCreacion.hashCode, clienteNombreSnapshot.hashCode, clienteWhatsappSnapshot.hashCode, venceEn.hashCode, fechaHora.hashCode, usuarioAsignado.hashCode, detallePedidos_on_pedido.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, codigoPedido.hashCode, estado.hashCode, estadoPago.hashCode, total.hashCode, canal.hashCode, origenCanal.hashCode, origenActor.hashCode, formatoEntrega.hashCode, direccionSnapshot.hashCode, clienteNombreSnapshot.hashCode, clienteWhatsappSnapshot.hashCode, venceEn.hashCode, creadoEn.hashCode, usuarioAsignado.hashCode, detallePedidos_on_pedido.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -141,13 +153,25 @@ class ObtenerPedidosKanbanPedidos {
     json['estado'] = 
     estadoPedidoSerializer(estado)
     ;
+    json['estadoPago'] = 
+    estadoPagoSerializer(estadoPago)
+    ;
     json['total'] = nativeToJson<double>(total);
     json['canal'] = 
     canalPedidoSerializer(canal)
     ;
-    json['origenCreacion'] = 
-    origenOperacionSerializer(origenCreacion)
+    json['origenCanal'] = 
+    canalOperacionSerializer(origenCanal)
     ;
+    json['origenActor'] = 
+    actorOperacionSerializer(origenActor)
+    ;
+    json['formatoEntrega'] = 
+    formatoEntregaSerializer(formatoEntrega)
+    ;
+    if (direccionSnapshot != null) {
+      json['direccionSnapshot'] = direccionSnapshot!.toJson();
+    }
     if (clienteNombreSnapshot != null) {
       json['clienteNombreSnapshot'] = nativeToJson<String?>(clienteNombreSnapshot);
     }
@@ -157,7 +181,7 @@ class ObtenerPedidosKanbanPedidos {
     if (venceEn != null) {
       json['venceEn'] = venceEn!.toJson();
     }
-    json['fechaHora'] = fechaHora.toJson();
+    json['creadoEn'] = creadoEn.toJson();
     if (usuarioAsignado != null) {
       json['usuarioAsignado'] = usuarioAsignado!.toJson();
     }
@@ -169,13 +193,17 @@ class ObtenerPedidosKanbanPedidos {
     required this.id,
     required this.codigoPedido,
     required this.estado,
+    required this.estadoPago,
     required this.total,
     required this.canal,
-    required this.origenCreacion,
+    required this.origenCanal,
+    required this.origenActor,
+    required this.formatoEntrega,
+    this.direccionSnapshot,
     this.clienteNombreSnapshot,
     this.clienteWhatsappSnapshot,
     this.venceEn,
-    required this.fechaHora,
+    required this.creadoEn,
     this.usuarioAsignado,
     required this.detallePedidos_on_pedido,
   });
@@ -235,6 +263,7 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
   final double precioUnitario;
   final double descuento;
   final double subtotal;
+  final AnyValue? modificadoresJson;
   ObtenerPedidosKanbanPedidosDetallePedidosOnPedido.fromJson(dynamic json):
   
   id = nativeFromJson<String>(json['id']),
@@ -242,7 +271,8 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
   cantidad = nativeFromJson<int>(json['cantidad']),
   precioUnitario = nativeFromJson<double>(json['precioUnitario']),
   descuento = nativeFromJson<double>(json['descuento']),
-  subtotal = nativeFromJson<double>(json['subtotal']);
+  subtotal = nativeFromJson<double>(json['subtotal']),
+  modificadoresJson = json['modificadoresJson'] == null ? null : AnyValue.fromJson(json['modificadoresJson']);
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) {
@@ -258,11 +288,12 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
     cantidad == otherTyped.cantidad && 
     precioUnitario == otherTyped.precioUnitario && 
     descuento == otherTyped.descuento && 
-    subtotal == otherTyped.subtotal;
+    subtotal == otherTyped.subtotal && 
+    modificadoresJson == otherTyped.modificadoresJson;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, productoNombreSnapshot.hashCode, cantidad.hashCode, precioUnitario.hashCode, descuento.hashCode, subtotal.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, productoNombreSnapshot.hashCode, cantidad.hashCode, precioUnitario.hashCode, descuento.hashCode, subtotal.hashCode, modificadoresJson.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -273,6 +304,9 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
     json['precioUnitario'] = nativeToJson<double>(precioUnitario);
     json['descuento'] = nativeToJson<double>(descuento);
     json['subtotal'] = nativeToJson<double>(subtotal);
+    if (modificadoresJson != null) {
+      json['modificadoresJson'] = modificadoresJson!.toJson();
+    }
     return json;
   }
 
@@ -283,6 +317,7 @@ class ObtenerPedidosKanbanPedidosDetallePedidosOnPedido {
     required this.precioUnitario,
     required this.descuento,
     required this.subtotal,
+    this.modificadoresJson,
   });
 }
 

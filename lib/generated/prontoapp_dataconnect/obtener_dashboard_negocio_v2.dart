@@ -24,18 +24,20 @@ class ObtenerDashboardNegocioV2Negocio {
   final String nombre;
   final EnumValue<TipoNegocio> tipoNegocio;
   final EnumValue<FormatoEntrega> formatoEntrega;
-  final String numeroWhatsapp;
+  final String? numeroWhatsapp;
   final int minutosGraciaSla;
   final String zonaHoraria;
+  final String monedaIso;
   ObtenerDashboardNegocioV2Negocio.fromJson(dynamic json):
   
   id = nativeFromJson<String>(json['id']),
   nombre = nativeFromJson<String>(json['nombre']),
   tipoNegocio = tipoNegocioDeserializer(json['tipoNegocio']),
   formatoEntrega = formatoEntregaDeserializer(json['formatoEntrega']),
-  numeroWhatsapp = nativeFromJson<String>(json['numeroWhatsapp']),
+  numeroWhatsapp = json['numeroWhatsapp'] == null ? null : nativeFromJson<String>(json['numeroWhatsapp']),
   minutosGraciaSla = nativeFromJson<int>(json['minutosGraciaSla']),
-  zonaHoraria = nativeFromJson<String>(json['zonaHoraria']);
+  zonaHoraria = nativeFromJson<String>(json['zonaHoraria']),
+  monedaIso = nativeFromJson<String>(json['monedaIso']);
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) {
@@ -52,11 +54,12 @@ class ObtenerDashboardNegocioV2Negocio {
     formatoEntrega == otherTyped.formatoEntrega && 
     numeroWhatsapp == otherTyped.numeroWhatsapp && 
     minutosGraciaSla == otherTyped.minutosGraciaSla && 
-    zonaHoraria == otherTyped.zonaHoraria;
+    zonaHoraria == otherTyped.zonaHoraria && 
+    monedaIso == otherTyped.monedaIso;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, nombre.hashCode, tipoNegocio.hashCode, formatoEntrega.hashCode, numeroWhatsapp.hashCode, minutosGraciaSla.hashCode, zonaHoraria.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, nombre.hashCode, tipoNegocio.hashCode, formatoEntrega.hashCode, numeroWhatsapp.hashCode, minutosGraciaSla.hashCode, zonaHoraria.hashCode, monedaIso.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -69,9 +72,12 @@ class ObtenerDashboardNegocioV2Negocio {
     json['formatoEntrega'] = 
     formatoEntregaSerializer(formatoEntrega)
     ;
-    json['numeroWhatsapp'] = nativeToJson<String>(numeroWhatsapp);
+    if (numeroWhatsapp != null) {
+      json['numeroWhatsapp'] = nativeToJson<String?>(numeroWhatsapp);
+    }
     json['minutosGraciaSla'] = nativeToJson<int>(minutosGraciaSla);
     json['zonaHoraria'] = nativeToJson<String>(zonaHoraria);
+    json['monedaIso'] = nativeToJson<String>(monedaIso);
     return json;
   }
 
@@ -80,9 +86,10 @@ class ObtenerDashboardNegocioV2Negocio {
     required this.nombre,
     required this.tipoNegocio,
     required this.formatoEntrega,
-    required this.numeroWhatsapp,
+    this.numeroWhatsapp,
     required this.minutosGraciaSla,
     required this.zonaHoraria,
+    required this.monedaIso,
   });
 }
 
@@ -91,24 +98,30 @@ class ObtenerDashboardNegocioV2Pedidos {
   final String id;
   final String codigoPedido;
   final EnumValue<EstadoPedido> estado;
+  final EnumValue<EstadoPago> estadoPago;
   final double total;
   final EnumValue<CanalPedido> canal;
+  final EnumValue<CanalOperacion> origenCanal;
+  final EnumValue<ActorOperacion> origenActor;
   final String? clienteNombreSnapshot;
   final String? clienteWhatsappSnapshot;
-  final Timestamp fechaHora;
-  final Timestamp fechaActualizacion;
+  final Timestamp creadoEn;
+  final Timestamp actualizadoEn;
   final ObtenerDashboardNegocioV2PedidosUsuarioAsignado? usuarioAsignado;
   ObtenerDashboardNegocioV2Pedidos.fromJson(dynamic json):
   
   id = nativeFromJson<String>(json['id']),
   codigoPedido = nativeFromJson<String>(json['codigoPedido']),
   estado = estadoPedidoDeserializer(json['estado']),
+  estadoPago = estadoPagoDeserializer(json['estadoPago']),
   total = nativeFromJson<double>(json['total']),
   canal = canalPedidoDeserializer(json['canal']),
+  origenCanal = canalOperacionDeserializer(json['origenCanal']),
+  origenActor = actorOperacionDeserializer(json['origenActor']),
   clienteNombreSnapshot = json['clienteNombreSnapshot'] == null ? null : nativeFromJson<String>(json['clienteNombreSnapshot']),
   clienteWhatsappSnapshot = json['clienteWhatsappSnapshot'] == null ? null : nativeFromJson<String>(json['clienteWhatsappSnapshot']),
-  fechaHora = Timestamp.fromJson(json['fechaHora']),
-  fechaActualizacion = Timestamp.fromJson(json['fechaActualizacion']),
+  creadoEn = Timestamp.fromJson(json['creadoEn']),
+  actualizadoEn = Timestamp.fromJson(json['actualizadoEn']),
   usuarioAsignado = json['usuarioAsignado'] == null ? null : ObtenerDashboardNegocioV2PedidosUsuarioAsignado.fromJson(json['usuarioAsignado']);
   @override
   bool operator ==(Object other) {
@@ -123,17 +136,20 @@ class ObtenerDashboardNegocioV2Pedidos {
     return id == otherTyped.id && 
     codigoPedido == otherTyped.codigoPedido && 
     estado == otherTyped.estado && 
+    estadoPago == otherTyped.estadoPago && 
     total == otherTyped.total && 
     canal == otherTyped.canal && 
+    origenCanal == otherTyped.origenCanal && 
+    origenActor == otherTyped.origenActor && 
     clienteNombreSnapshot == otherTyped.clienteNombreSnapshot && 
     clienteWhatsappSnapshot == otherTyped.clienteWhatsappSnapshot && 
-    fechaHora == otherTyped.fechaHora && 
-    fechaActualizacion == otherTyped.fechaActualizacion && 
+    creadoEn == otherTyped.creadoEn && 
+    actualizadoEn == otherTyped.actualizadoEn && 
     usuarioAsignado == otherTyped.usuarioAsignado;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, codigoPedido.hashCode, estado.hashCode, total.hashCode, canal.hashCode, clienteNombreSnapshot.hashCode, clienteWhatsappSnapshot.hashCode, fechaHora.hashCode, fechaActualizacion.hashCode, usuarioAsignado.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, codigoPedido.hashCode, estado.hashCode, estadoPago.hashCode, total.hashCode, canal.hashCode, origenCanal.hashCode, origenActor.hashCode, clienteNombreSnapshot.hashCode, clienteWhatsappSnapshot.hashCode, creadoEn.hashCode, actualizadoEn.hashCode, usuarioAsignado.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -143,9 +159,18 @@ class ObtenerDashboardNegocioV2Pedidos {
     json['estado'] = 
     estadoPedidoSerializer(estado)
     ;
+    json['estadoPago'] = 
+    estadoPagoSerializer(estadoPago)
+    ;
     json['total'] = nativeToJson<double>(total);
     json['canal'] = 
     canalPedidoSerializer(canal)
+    ;
+    json['origenCanal'] = 
+    canalOperacionSerializer(origenCanal)
+    ;
+    json['origenActor'] = 
+    actorOperacionSerializer(origenActor)
     ;
     if (clienteNombreSnapshot != null) {
       json['clienteNombreSnapshot'] = nativeToJson<String?>(clienteNombreSnapshot);
@@ -153,8 +178,8 @@ class ObtenerDashboardNegocioV2Pedidos {
     if (clienteWhatsappSnapshot != null) {
       json['clienteWhatsappSnapshot'] = nativeToJson<String?>(clienteWhatsappSnapshot);
     }
-    json['fechaHora'] = fechaHora.toJson();
-    json['fechaActualizacion'] = fechaActualizacion.toJson();
+    json['creadoEn'] = creadoEn.toJson();
+    json['actualizadoEn'] = actualizadoEn.toJson();
     if (usuarioAsignado != null) {
       json['usuarioAsignado'] = usuarioAsignado!.toJson();
     }
@@ -165,12 +190,15 @@ class ObtenerDashboardNegocioV2Pedidos {
     required this.id,
     required this.codigoPedido,
     required this.estado,
+    required this.estadoPago,
     required this.total,
     required this.canal,
+    required this.origenCanal,
+    required this.origenActor,
     this.clienteNombreSnapshot,
     this.clienteWhatsappSnapshot,
-    required this.fechaHora,
-    required this.fechaActualizacion,
+    required this.creadoEn,
+    required this.actualizadoEn,
     this.usuarioAsignado,
   });
 }

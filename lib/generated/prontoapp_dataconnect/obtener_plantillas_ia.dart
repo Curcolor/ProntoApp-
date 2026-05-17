@@ -22,17 +22,31 @@ class ObtenerPlantillasIaVariablesBuilder {
 class ObtenerPlantillasIaPlantillasIa {
   final String id;
   final String codigo;
-  final String prompt;
   final EnumValue<CasoUsoPlantilla> casoUso;
   final int version;
+  final EnumValue<ProveedorLlm> proveedor;
+  final String modelo;
+  final String promptSistema;
+  final String? promptUsuarioTemplate;
+  final double? temperatura;
+  final int? maxTokens;
+  final String? idioma;
+  final AnyValue? herramientasHabilitadas;
   final Timestamp actualizadoEn;
   ObtenerPlantillasIaPlantillasIa.fromJson(dynamic json):
   
   id = nativeFromJson<String>(json['id']),
   codigo = nativeFromJson<String>(json['codigo']),
-  prompt = nativeFromJson<String>(json['prompt']),
   casoUso = casoUsoPlantillaDeserializer(json['casoUso']),
   version = nativeFromJson<int>(json['version']),
+  proveedor = proveedorLlmDeserializer(json['proveedor']),
+  modelo = nativeFromJson<String>(json['modelo']),
+  promptSistema = nativeFromJson<String>(json['promptSistema']),
+  promptUsuarioTemplate = json['promptUsuarioTemplate'] == null ? null : nativeFromJson<String>(json['promptUsuarioTemplate']),
+  temperatura = json['temperatura'] == null ? null : nativeFromJson<double>(json['temperatura']),
+  maxTokens = json['maxTokens'] == null ? null : nativeFromJson<int>(json['maxTokens']),
+  idioma = json['idioma'] == null ? null : nativeFromJson<String>(json['idioma']),
+  herramientasHabilitadas = json['herramientasHabilitadas'] == null ? null : AnyValue.fromJson(json['herramientasHabilitadas']),
   actualizadoEn = Timestamp.fromJson(json['actualizadoEn']);
   @override
   bool operator ==(Object other) {
@@ -46,25 +60,51 @@ class ObtenerPlantillasIaPlantillasIa {
     final ObtenerPlantillasIaPlantillasIa otherTyped = other as ObtenerPlantillasIaPlantillasIa;
     return id == otherTyped.id && 
     codigo == otherTyped.codigo && 
-    prompt == otherTyped.prompt && 
     casoUso == otherTyped.casoUso && 
     version == otherTyped.version && 
+    proveedor == otherTyped.proveedor && 
+    modelo == otherTyped.modelo && 
+    promptSistema == otherTyped.promptSistema && 
+    promptUsuarioTemplate == otherTyped.promptUsuarioTemplate && 
+    temperatura == otherTyped.temperatura && 
+    maxTokens == otherTyped.maxTokens && 
+    idioma == otherTyped.idioma && 
+    herramientasHabilitadas == otherTyped.herramientasHabilitadas && 
     actualizadoEn == otherTyped.actualizadoEn;
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, codigo.hashCode, prompt.hashCode, casoUso.hashCode, version.hashCode, actualizadoEn.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, codigo.hashCode, casoUso.hashCode, version.hashCode, proveedor.hashCode, modelo.hashCode, promptSistema.hashCode, promptUsuarioTemplate.hashCode, temperatura.hashCode, maxTokens.hashCode, idioma.hashCode, herramientasHabilitadas.hashCode, actualizadoEn.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['id'] = nativeToJson<String>(id);
     json['codigo'] = nativeToJson<String>(codigo);
-    json['prompt'] = nativeToJson<String>(prompt);
     json['casoUso'] = 
     casoUsoPlantillaSerializer(casoUso)
     ;
     json['version'] = nativeToJson<int>(version);
+    json['proveedor'] = 
+    proveedorLlmSerializer(proveedor)
+    ;
+    json['modelo'] = nativeToJson<String>(modelo);
+    json['promptSistema'] = nativeToJson<String>(promptSistema);
+    if (promptUsuarioTemplate != null) {
+      json['promptUsuarioTemplate'] = nativeToJson<String?>(promptUsuarioTemplate);
+    }
+    if (temperatura != null) {
+      json['temperatura'] = nativeToJson<double?>(temperatura);
+    }
+    if (maxTokens != null) {
+      json['maxTokens'] = nativeToJson<int?>(maxTokens);
+    }
+    if (idioma != null) {
+      json['idioma'] = nativeToJson<String?>(idioma);
+    }
+    if (herramientasHabilitadas != null) {
+      json['herramientasHabilitadas'] = herramientasHabilitadas!.toJson();
+    }
     json['actualizadoEn'] = actualizadoEn.toJson();
     return json;
   }
@@ -72,9 +112,16 @@ class ObtenerPlantillasIaPlantillasIa {
   ObtenerPlantillasIaPlantillasIa({
     required this.id,
     required this.codigo,
-    required this.prompt,
     required this.casoUso,
     required this.version,
+    required this.proveedor,
+    required this.modelo,
+    required this.promptSistema,
+    this.promptUsuarioTemplate,
+    this.temperatura,
+    this.maxTokens,
+    this.idioma,
+    this.herramientasHabilitadas,
     required this.actualizadoEn,
   });
 }
