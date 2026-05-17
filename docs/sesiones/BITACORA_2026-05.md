@@ -50,3 +50,14 @@ Entradas cortas por día/hito. El agente en `/goal` mode debe agregar entrada ca
 - **Bloqueos nuevos:** Codex cuota agotada hasta 21:50 hora Bogotá — F4.2 + F4.3 + F5 los hago Claude solo o esperar reset.
 - **Próximo turno:** F4.2 (RAG tool `buscar_conocimiento` + endpoint reindex + graph atencion_cliente) por Claude. F5 luego.
 - **Métricas:** ~22 turnos; 7/7 tasks pipeline completadas; 8 commits hechos esta sesión.
+
+### 2026-05-17 — F4.2 cerrada + F6.2 parcial + Codex paralelo F4.3 + F5
+
+- **Hecho:**
+  - F4.2 completo: tool buscar_conocimiento + ReindexarConocimiento use case + graph atencion_cliente (run_in_memory + build_graph), use case ResponderMensaje, repos pg (producto_lookup + sesion), endpoints POST /v1/conocimiento/reindexar y /v1/sesiones/{id}/mensajes. **24 tests verdes, 95% cobertura domain+application.** Docs RAG_PIPELINE.md + GRAPH_ATENCION_CLIENTE.md. Commit `9ec56a5` (20 archivos +1676).
+  - F6.2 parcial: nueva query `ObtenerMiPerfilUsuarioAdmin` (commit back `34188e1`), SDK Dart regenerado, FirebaseAuthService + PerfilUsuarioAdminService + AuthGuard widget. `flutter analyze` limpio. Doc FIREBASE_AUTH_REAL.md. Commit front `b146cd8` (16 archivos +1102). NO se tocó main.dart todavía (espera rotación secret).
+  - Codex F4.3 (webhooks WA+TG + ingesta_pedido) y F5 (persistencia orders+inventory) delegados paralelos background.
+- **Fase:** 4.2 ✅, 6.2 parcial, 4.3+5 in-progress Codex.
+- **Bloqueos nuevos:** ninguno propio. Pendiente Junior: rotar secret backend + aplicar seeds 003+004.
+- **Próximo turno:** review outputs Codex F4.3 + F5 cuando notifiquen; F6.3 (providers SDK SQL Connect) tras ello; F6.4 vistas configuración faltantes (perfil_negocio, integraciones_mensajeria).
+- **Métricas:** ~32 turnos acumulados; 8 tasks completadas + 2 in-progress Codex; 13 commits totales.
