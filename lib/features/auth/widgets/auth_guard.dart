@@ -49,6 +49,7 @@ class AuthGuard extends StatefulWidget {
 class _AuthGuardState extends State<AuthGuard> {
   PerfilUsuarioAdmin? _perfil;
   bool _cargando = false;
+  bool _cargado = false;
   Object? _error;
 
   Future<void> _cargarPerfil() async {
@@ -63,12 +64,14 @@ class _AuthGuardState extends State<AuthGuard> {
       setState(() {
         _perfil = perfil;
         _cargando = false;
+        _cargado = true;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _error = e;
         _cargando = false;
+        _cargado = true;
       });
     }
   }
@@ -84,7 +87,7 @@ class _AuthGuardState extends State<AuthGuard> {
       return widget.fallbackLogin?.call(context) ?? const _LoginRequerido();
     }
 
-    if (_perfil == null && !_cargando && _error == null) {
+    if (!_cargado && !_cargando && _error == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _cargarPerfil());
       return const _Cargando();
     }
