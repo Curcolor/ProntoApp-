@@ -114,6 +114,19 @@ Features que NO pueden probarse end-to-end hasta configurar algo externo (Fireba
 - **Qué falta:** misma config Cloud Run que ai-agent.
 - **Workaround:** dev local con ngrok + Flutter apunta a ngrok URL via dart-define.
 
+### 2026-05-16 — Aplicar seeds plantillas IA + herramientas (migrations 003 + 004)
+
+- **Bloqueo:** seeds 003_seed_plantillas_globales.sql + 004_seed_herramientas.sql escritas pero NO aplicadas a Cloud SQL. Claude no tiene la password de postgres (rotada externa).
+- **Qué falta:**
+  1. Conectarse a Cloud SQL via `gcloud sql connect test-firestore-c77ab-instance --user=postgres --database=test-firestore-c77ab-2-database` (pide password).
+  2. Ejecutar: `\i dataconnect/migrations/003_seed_plantillas_globales.sql` y `\i 004_seed_herramientas.sql`.
+  3. Verificar: `SELECT codigo FROM plantillas_ia WHERE id_negocio IS NULL;` debe devolver 4 filas. `SELECT nombre FROM herramientas_ia WHERE id_negocio IS NULL;` debe devolver 5 filas.
+- **Quién:** Junior (tiene password).
+- **Costo:** $0.
+- **Prioridad:** P0 — bloquea Fase 4.2 (service-ai-agent necesita plantilla + herramientas configuradas para arrancar).
+- **Workaround:** `service-ai-agent` puede arrancar con plantillas hardcoded de fallback hasta que se apliquen los seeds; pero rompe principio multi-tenant.
+- **Test:** `service-ai-agent` carga `global_atencion_cliente_v1` por `codigo` y arranca graph atencion_cliente sin errores.
+
 ---
 
 ## Entradas resueltas
