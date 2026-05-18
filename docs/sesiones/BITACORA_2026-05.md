@@ -160,3 +160,63 @@ Entradas cortas por día/hito. El agente en `/goal` mode debe agregar entrada ca
   (4 completadas hoy: F6.3, F6.4, F6.5, F7), 2 pending Codex; 6 commits
   hoy entre backend y frontend; 3 tags fase (`f6.3-completed-`,
   `f6.4-completed-`, `f7-otel-completed-`).
+
+### 2026-05-17 — Resume turno: merge 4 Codex deliverables + relanzar 2
+
+- **Hecho:**
+  - Backend (3 commits + 2 tags):
+    - `1018ade` F4.3 webhooks WA+TG + graph ingesta_pedido (Codex
+      `b87w8xmjd`). HMAC-SHA256 X-Hub-Signature-256 + Telegram
+      X-Telegram-Bot-Api-Secret-Token, 403 negativos cubiertos en tests.
+      4 tools (buscar_producto, crear_pedido, consultar_pedido,
+      cambiar_estado_pedido), ports IntegracionMensajeriaRepository +
+      OutboundMessageSender + ServiceAuthTokenProvider, repo Pg, clients
+      WA/TG HTTP. Docs WEBHOOKS.md + GRAPH_INGESTA_PEDIDO.md. Tag
+      `f4.3-completed-20260517`.
+    - `8f308b9` F5 WIP — entidades Pedido/Outbox + transaction marker
+      + estados V2 transition_policy. Falta repo + publisher + endpoints
+      (re-delegado).
+    - `620b08a` F7c Cloud SQL IAM (Codex `task-mpa66jp5-w5yn6a`).
+      Script `setup_cloud_sql_iam.sh` idempotente, 3 service accounts,
+      connection.py factory por servicio con fallback dev, 9 tests
+      database_connection (3 por servicio). Docs CLOUD_SQL_IAM_MIGRATION.md.
+      Tag `f7c-cloud-sql-iam-completed-20260517`.
+    - BLOCKERS.md transitorio Codex eliminado (pytest no en PATH del
+      sandbox Codex — no es blocker proyecto).
+  - Frontend (1 commit + 1 tag):
+    - `0b8fd6e` F6.5b refactor god widgets batch 1 + F7b widget tests
+      (Codex `bibd4kw6r` + `b5iv62yxy`). -3036 LOC en 5 screens originales
+      (editar_perfil_modals 1066→105, login_screen 393→147, dashboard_screen
+      646→137, inventario_screen 633→140, preparacion_screen 625→36).
+      23 componentes extraídos a `lib/ui/components/{auth,kitchen,manager}/`.
+      23 widget tests bajo `test/ui/components/`. devDeps mockito +
+      build_runner + fake_async añadidas. Tag `f6.5b-f7b-completed-20260517`.
+  - GATE checks pasados:
+    - F4.3: `hmac.compare_digest` en WA, secret_token compare en TG, tests
+      403 firma_invalida + secret_token_invalido presentes.
+      Nota: Telegram usa `!=` (no `hmac.compare_digest`) — minor timing,
+      no crítico porque token compartido fijo, no HMAC.
+    - F7c: fallback password si IAM=False, tests 3+3+3 cubren ambos paths.
+    - F6.5b: ratio reducción LOC promedio ~80%.
+    - F7b: 23 tests UI cubren todos los componentes extraídos.
+  - Codex re-lanzados background (2):
+    - F5 completion (`b6zgueio2`): PedidoRepositoryPg + OutboxPublisher
+      + CrearPedidoUseCase + endpoints + service-inventory repos
+      + 12+ tests. GATE: outbox INSERT en misma tx que pedido INSERT
+      verificable con mock conn registrando orden ops.
+    - F6.5c batch 2 (`task-mpakjy6p-dqhk8a`): siguientes 5 god widgets
+      6-10 (equipo, profile, pedidos kitchen/delivery, agregar_editar_producto
+      probables). ≥30 tests widget. Reducción ≥60% LOC promedio.
+- **Fase:** 4.3 ✅, 7c ✅, 6.5b ✅, 7b ✅, 5 WIP, 6.5c in-progress.
+- **Bloqueos nuevos:** ninguno. F5 segunda intentona — si falla otra vez,
+  Claude completa solo (security gate outbox transaccional).
+- **Próximo turno:** esperar notifs F5 + F6.5c. Si pasan GATE → commit
+  + tag. Si F5 falla → Claude completa solo. Cierra goal cuando 6/6
+  merged.
+- **Métricas:** 4 commits hoy en este turno (3 backend + 1 frontend);
+  3 tags nuevos; 4 tasks pipeline completadas (F4.3, F7c, F6.5b, F7b);
+  2 Codex in-flight; ~10 turnos consumidos este turno post-resume.
+- **Acción manual Junior pendiente (no bloquea):**
+  - Aplicar seeds 003+004 a Cloud SQL.
+  - Habilitar Email/Password en Firebase Console.
+  - (Documentado en `CONFIG_PENDIENTE.md`).
