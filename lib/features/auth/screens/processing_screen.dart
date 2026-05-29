@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:prontoapp/main.dart';
 import 'package:prontoapp/features/manager/screens/dashboard_screen.dart';
 
 class ProcessingScreen extends StatefulWidget {

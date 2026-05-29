@@ -23,6 +23,7 @@ class EditarPerfilModals {
         infoText: 'Te enviaremos un enlace de verificación al nuevo correo antes de aplicar el cambio.',
         submitText: 'Enviar verificación',
         submitIcon: FontAwesomeIcons.paperPlane,
+        obscureText: false,
       ),
     );
   }
@@ -47,6 +48,7 @@ class EditarPerfilModals {
         infoText: 'Se requerirá confirmación vía SMS.',
         submitText: 'Guardar cambios',
         submitIcon: FontAwesomeIcons.save,
+        obscureText: false,
       ),
     );
   }
@@ -82,6 +84,7 @@ class EditarPerfilModals {
         infoText: 'Esta dirección será visible para tus repartidores.',
         submitText: 'Guardar ubicación',
         submitIcon: FontAwesomeIcons.locationDot,
+        obscureText: false,
       ),
     );
   }
@@ -140,7 +143,7 @@ class _BaseEditBottomSheet extends StatelessWidget {
     required this.infoText,
     required this.submitText,
     required this.submitIcon,
-    this.obscureText = false,
+    required this.obscureText
   });
 
   @override

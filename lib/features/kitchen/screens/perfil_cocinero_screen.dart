@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
-import 'package:prontoapp/features/auth/screens/login_screen.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
 
 /// Pantalla de perfil del cocinero con datos dinámicos.
