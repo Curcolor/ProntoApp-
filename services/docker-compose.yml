@@ -1,0 +1,24 @@
+# Postgres dedicado para la app MÓVIL (separado del contenedor del web).
+# Web usa 5432; móvil usa 5433 para no chocar.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: prontoapp-movil-db
+    environment:
+      POSTGRES_DB: prontoapp
+      POSTGRES_USER: prontoapp
+      POSTGRES_PASSWORD: prontoapp
+    ports:
+      - "5433:5432"
+    volumes:
+      - prontoapp_movil_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prontoapp -d prontoapp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  prontoapp_movil_data:
+    driver: local
