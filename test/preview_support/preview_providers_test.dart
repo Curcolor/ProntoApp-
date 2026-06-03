@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prontoapp/data/models/category_model.dart';
+import 'package:prontoapp/data/models/order_model.dart';
 import 'package:prontoapp/data/models/product_model.dart';
 import 'package:prontoapp/data/providers/inventory_provider.dart';
+import 'package:prontoapp/data/providers/order_provider.dart';
 
 void main() {
   test('InventoryProvider.preview seeds data and starts no timer', () {
@@ -19,6 +21,21 @@ void main() {
     expect(p.products, hasLength(1));
     expect(p.categories, hasLength(1));
     // No debe lanzar: dispose sin timer activo.
+    p.dispose();
+  });
+
+  test('OrderProvider.preview seeds orders and starts no timer', () {
+    final p = OrderProvider.preview(
+      pedidos: [
+        OrderModel(
+          id: 'P-1', cliente: 'Ana', telefono: 'tg:1', items: const [],
+          total: 1000, estado: EstadoPedido.recibido,
+          tipo: TipoPedido.recoger, creadoEn: DateTime(2026, 6, 3),
+        ),
+      ],
+    );
+
+    expect(p.pedidos, hasLength(1));
     p.dispose();
   });
 }

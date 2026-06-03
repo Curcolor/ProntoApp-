@@ -14,7 +14,7 @@ import 'notification_provider.dart';
 /// y notifica a los listeners cuando cambia la lista de pedidos.
 /// Si el servidor no responde, usa el cache local de SharedPreferences.
 class OrderProvider extends ChangeNotifier {
-  final OrderRepository _repositorio;
+  final OrderRepository? _repositorio;
 
   /// URL base del servidor FastAPI.
   final String _baseUrl;
@@ -41,10 +41,19 @@ class OrderProvider extends ChangeNotifier {
         _baseUrl = baseUrl,
         _secreto = secreto {
     // Cargar cache inmediatamente para que la UI no quede en blanco
-    _pedidos = _repositorio.obtenerCache();
+    _pedidos = repositorio.obtenerCache();
 
     // Iniciar polling al FastAPI
     _iniciarPolling();
+  }
+
+  /// Constructor solo para widget previews: siembra pedidos en memoria y NO
+  /// arranca polling ni red.
+  OrderProvider.preview({List<OrderModel>? pedidos})
+      : _repositorio = null,
+        _baseUrl = '',
+        _secreto = '' {
+    _pedidos = pedidos ?? <OrderModel>[];
   }
 
   // ─── Getters públicos ──────────────────────────────────────────────────────
@@ -187,7 +196,7 @@ class OrderProvider extends ChangeNotifier {
         _pedidos.sort((a, b) => b.creadoEn.compareTo(a.creadoEn));
 
         // Persistir en cache local
-        await _repositorio.guardarCache(_pedidos);
+        await _repositorio!.guardarCache(_pedidos);
 
         if (!_estaConectado) {
           _estaConectado = true;
@@ -197,8 +206,8 @@ class OrderProvider extends ChangeNotifier {
       // Sin conexión: usar cache local
       if (_estaConectado) {
         _estaConectado = false;
-        _pedidos = _repositorio.obtenerCache();
-        
+        _pedidos = _repositorio!.obtenerCache();
+
         onNewNotification?.call(
           NotificationModel(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -236,14 +245,14 @@ class OrderProvider extends ChangeNotifier {
 
       if (respuesta.statusCode == 200) {
         _pedidos[index] = pedido.copyWith(estado: siguiente);
-        await _repositorio.guardarCache(_pedidos);
+        await _repositorio!.guardarCache(_pedidos);
         notifyListeners();
         return true;
       }
     } catch (_) {
       // Actualización optimista: cambia localmente aunque falle la red
       _pedidos[index] = pedido.copyWith(estado: siguiente);
-      await _repositorio.guardarCache(_pedidos);
+      await _repositorio!.guardarCache(_pedidos);
       notifyListeners();
     }
 
@@ -264,7 +273,7 @@ class OrderProvider extends ChangeNotifier {
     }
 
     _pedidos.removeWhere((p) => p.id == id);
-    await _repositorio.guardarCache(_pedidos);
+    await _repositorio!.guardarCache(_pedidos);
     notifyListeners();
     return true;
   }
