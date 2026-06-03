@@ -4,9 +4,10 @@ import 'package:prontoapp/preview_support/preview_theme.dart';
 import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/data/models/user_model.dart';
-import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/data/repositories/usuario_repository.dart';
 import 'perfil_empleado_screen.dart';
 import 'invitar_empleado_screen.dart';
 
@@ -23,7 +24,13 @@ class _EquipoScreenState extends State<EquipoScreen> {
   @override
   void initState() {
     super.initState();
-    _futureUsuarios = AuthService().obtenerTodosLosUsuarios();
+    _futureUsuarios = context.read<UsuarioRepository>().listar();
+  }
+
+  void _recargar() {
+    setState(() {
+      _futureUsuarios = context.read<UsuarioRepository>().listar();
+    });
   }
 
   /// Configura los metadatos visuales según el rol del usuario.
@@ -184,10 +191,10 @@ class _EquipoScreenState extends State<EquipoScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const InvitarEmpleadoScreen(),
-                ),
-              );
+                MaterialPageRoute(builder: (context) => const InvitarEmpleadoScreen()),
+              ).then((creado) {
+                if (creado == true) _recargar();
+              });
             },
             child: Container(
               height: 40,
@@ -303,12 +310,11 @@ class _EquipoScreenState extends State<EquipoScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PerfilEmpleadoScreen(
-              usuario: usuario,
-              meta: meta,
-            ),
+            builder: (context) => PerfilEmpleadoScreen(usuario: usuario, meta: meta),
           ),
-        );
+        ).then((cambiado) {
+          if (cambiado == true) _recargar();
+        });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 15),
