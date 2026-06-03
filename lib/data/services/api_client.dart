@@ -43,6 +43,9 @@ class ApiClient {
   Future<dynamic> patch(String path, Object body) async => _parse(
       await _client.patch(_uri(path), headers: _headers, body: jsonEncode(body)), 'PATCH', path);
 
+  Future<dynamic> put(String path, Object body) async => _parse(
+      await _client.put(_uri(path), headers: _headers, body: jsonEncode(body)), 'PUT', path);
+
   Future<void> delete(String path) async =>
       _parse(await _client.delete(_uri(path), headers: _headers), 'DELETE', path);
 }
