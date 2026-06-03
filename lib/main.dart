@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prontoapp/app/routes.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
+import 'package:prontoapp/data/services/api_client.dart';
 import 'package:prontoapp/data/repositories/inventory_repository.dart';
 import 'package:prontoapp/data/providers/inventory_provider.dart';
 import 'package:prontoapp/data/repositories/order_repository.dart';
@@ -25,27 +26,21 @@ void main() async {
   await AuthService().initialize();
 
   final prefs = await SharedPreferences.getInstance();
-  final inventoryRepo = InventoryRepository(prefs);
-  final orderRepo = OrderRepository(prefs);
+  final apiClient = ApiClient(
+    baseUrl: 'http://localhost:5050',
+    secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
+  );
+  final inventoryRepo = InventoryRepository(apiClient, prefs);
+  final orderRepo = OrderRepository(apiClient, prefs);
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: AuthService()),
-        ChangeNotifierProvider(
-          create: (_) => InventoryProvider(
-            inventoryRepo,
-            baseUrl: 'http://localhost:5050',
-            secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
-          ),
-        ),
+        ChangeNotifierProvider(create: (_) => InventoryProvider(inventoryRepo)),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProxyProvider<NotificationProvider, OrderProvider>(
-          create: (_) => OrderProvider(
-            repositorio: orderRepo,
-            baseUrl: 'http://localhost:5050',
-            secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
-          ),
+          create: (_) => OrderProvider(repositorio: orderRepo),
           update: (_, notifProvider, orderProvider) {
             orderProvider!.onNewNotification = notifProvider.addNotification;
             return orderProvider;
@@ -55,7 +50,6 @@ void main() async {
       child: const ProntoApp(),
     ),
   );
-
 }
 
 class ProntoApp extends StatelessWidget {
