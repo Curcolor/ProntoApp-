@@ -245,6 +245,29 @@ def eliminar_categoria(cat_id: str, x_secret: Optional[str] = Header(default=Non
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Categoría {cat_id} no encontrada")
 
 
+class UsuarioIn(BaseModel):
+    nombre: str
+    email: str
+    password: str
+    rol: str
+    telefono: Optional[str] = None
+
+
+@app.post("/usuarios", status_code=status.HTTP_201_CREATED)
+def crear_usuario_endpoint(body: UsuarioIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    try:
+        return crud.crear_usuario(db, body.model_dump())
+    except crud.EmailDuplicadoError:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El email ya está registrado")
+
+
+@app.get("/usuarios")
+def listar_usuarios_endpoint(x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    return crud.listar_usuarios(db)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api_pedidos:app", host="0.0.0.0", port=5050, reload=True)

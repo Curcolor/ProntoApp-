@@ -3,6 +3,7 @@ la versión basada en archivos, para no romper Flutter ni el bot."""
 import uuid
 from typing import Optional
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from . import models
 
@@ -164,6 +165,10 @@ def _usuario_a_dict(u: "models.Usuario") -> dict:
             "telefono": u.telefono, "rol": u.rol}
 
 
+class EmailDuplicadoError(Exception):
+    """El email del usuario ya está registrado."""
+
+
 def crear_usuario(db: Session, datos: dict) -> dict:
     user = models.Usuario(
         id=datos.get("id") or _nuevo_id("U"), nombre=datos["nombre"],
@@ -171,8 +176,16 @@ def crear_usuario(db: Session, datos: dict) -> dict:
         telefono=datos.get("telefono"), rol=datos["rol"],
     )
     db.add(user)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise EmailDuplicadoError(datos["email"])
     return _usuario_a_dict(user)
+
+
+def listar_usuarios(db: Session) -> list[dict]:
+    return [_usuario_a_dict(u) for u in db.scalars(select(models.Usuario)).all()]
 
 
 def login(db: Session, email: str, password: str) -> Optional[dict]:
