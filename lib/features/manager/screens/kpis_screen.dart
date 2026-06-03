@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
+import 'package:prontoapp/preview_support/preview_theme.dart';
+import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/data/models/order_model.dart';
@@ -505,3 +508,7 @@ class _KpisScreenState extends State<KpisScreen> {
     return '\$${valor.toStringAsFixed(0)}';
   }
 }
+
+@Preview(name: 'KPIs', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+Widget kpisScreenPreview() => const KpisScreen();
+

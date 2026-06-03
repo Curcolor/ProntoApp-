@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
+import 'package:prontoapp/preview_support/preview_theme.dart';
+import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -501,3 +504,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 }
+
+@Preview(name: 'Pedidos', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+Widget ordersScreenPreview() => const OrdersScreen();
+
