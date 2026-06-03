@@ -268,6 +268,47 @@ def listar_usuarios_endpoint(x_secret: Optional[str] = Header(default=None), db:
     return crud.listar_usuarios(db)
 
 
+class NegocioIn(BaseModel):
+    tipoNegocio: Optional[str] = None
+    nombre: Optional[str] = None
+    direccion: Optional[str] = None
+    horaApertura: Optional[str] = None
+    horaCierre: Optional[str] = None
+    formatoEntrega: Optional[str] = None
+    terminosEntrega: Optional[str] = None
+    numeroWhatsapp: Optional[str] = None
+
+
+class UsuarioPatch(BaseModel):
+    nombre: Optional[str] = None
+    telefono: Optional[str] = None
+    rol: Optional[str] = None
+
+
+@app.put("/negocio")
+def actualizar_negocio_endpoint(body: NegocioIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    datos = {k: v for k, v in body.model_dump().items() if v is not None}
+    return crud.actualizar_negocio(db, datos)
+
+
+@app.patch("/usuarios/{usuario_id}")
+def actualizar_usuario_endpoint(usuario_id: str, body: UsuarioPatch, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    datos = {k: v for k, v in body.model_dump().items() if v is not None}
+    actualizado = crud.actualizar_usuario(db, usuario_id, datos)
+    if actualizado is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Usuario {usuario_id} no encontrado")
+    return actualizado
+
+
+@app.delete("/usuarios/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
+def eliminar_usuario_endpoint(usuario_id: str, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    if not crud.eliminar_usuario(db, usuario_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Usuario {usuario_id} no encontrado")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api_pedidos:app", host="0.0.0.0", port=5050, reload=True)

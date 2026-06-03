@@ -289,3 +289,46 @@ def eliminar_producto(db: Session, prod_id: str) -> bool:
     db.delete(prod)
     db.commit()
     return True
+
+
+_CAMPOS_NEGOCIO = {
+    "tipoNegocio": "tipo_negocio", "nombre": "nombre", "direccion": "direccion",
+    "horaApertura": "hora_apertura", "horaCierre": "hora_cierre",
+    "formatoEntrega": "formato_entrega", "terminosEntrega": "terminos_entrega",
+    "numeroWhatsapp": "numero_whatsapp",
+}
+
+
+def actualizar_negocio(db: Session, datos: dict) -> dict:
+    negocio = db.scalars(select(models.Negocio)).first()
+    if negocio is None:
+        negocio = models.Negocio(id="main", nombre=datos.get("nombre", "ProntoApp"))
+        db.add(negocio)
+    for clave_json, attr in _CAMPOS_NEGOCIO.items():
+        if clave_json in datos:
+            setattr(negocio, attr, datos[clave_json])
+    db.commit()
+    return leer_negocio(db)
+
+
+_CAMPOS_USUARIO = {"nombre": "nombre", "telefono": "telefono", "rol": "rol"}
+
+
+def actualizar_usuario(db: Session, usuario_id: str, datos: dict) -> Optional[dict]:
+    user = db.get(models.Usuario, usuario_id)
+    if user is None:
+        return None
+    for clave_json, attr in _CAMPOS_USUARIO.items():
+        if clave_json in datos:
+            setattr(user, attr, datos[clave_json])
+    db.commit()
+    return _usuario_a_dict(user)
+
+
+def eliminar_usuario(db: Session, usuario_id: str) -> bool:
+    user = db.get(models.Usuario, usuario_id)
+    if user is None:
+        return False
+    db.delete(user)
+    db.commit()
+    return True
