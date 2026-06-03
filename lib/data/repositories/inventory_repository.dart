@@ -26,13 +26,17 @@ class InventoryRepository {
   }
 
   Inventario readCache() {
-    final cs = _prefs.getString(_categoriesKey);
-    final ps = _prefs.getString(_productsKey);
-    final cats = cs == null ? <Category>[]
-        : (jsonDecode(cs) as List).map((e) => Category.fromJson(e)).toList();
-    final prods = ps == null ? <Product>[]
-        : (jsonDecode(ps) as List).map((e) => Product.fromJson(e)).toList();
-    return (categorias: cats, productos: prods);
+    try {
+      final cs = _prefs.getString(_categoriesKey);
+      final ps = _prefs.getString(_productsKey);
+      final cats = cs == null ? <Category>[]
+          : (jsonDecode(cs) as List).map((e) => Category.fromJson(e)).toList();
+      final prods = ps == null ? <Product>[]
+          : (jsonDecode(ps) as List).map((e) => Product.fromJson(e)).toList();
+      return (categorias: cats, productos: prods);
+    } catch (_) {
+      return (categorias: <Category>[], productos: <Product>[]);
+    }
   }
 
   Future<void> _saveCache(List<Category> categorias, List<Product> productos) async {
