@@ -69,16 +69,4 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('prontoapp_session'), isNull);
   });
-
-  test('obtenerTodosLosUsuarios mapea la lista', () async {
-    final mock = MockClient((req) async => http.Response(
-        jsonEncode([
-          {'id': '1', 'nombre': 'Carlos', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente'},
-          {'id': '2', 'nombre': 'Ana', 'email': 'c@p.com', 'telefono': null, 'rol': 'cocinero'},
-        ]), 200, headers: _utf8));
-    await AuthService().initialize(_api(mock));
-    final us = await AuthService().obtenerTodosLosUsuarios();
-    expect(us.length, 2);
-    expect(us[1].role, RoleType.cocinero);
-  });
 }

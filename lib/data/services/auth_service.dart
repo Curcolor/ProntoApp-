@@ -86,15 +86,6 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<List<UserModel>> obtenerTodosLosUsuarios() async {
-    try {
-      final lista = await _api!.get('/usuarios') as List<dynamic>;
-      return lista.map((e) => _userFromServer(e as Map<String, dynamic>)).toList();
-    } catch (_) {
-      return [];
-    }
-  }
-
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_sessionKey);
