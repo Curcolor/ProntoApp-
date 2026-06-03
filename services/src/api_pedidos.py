@@ -153,6 +153,98 @@ def obtener_negocio(db: Session = Depends(get_db)):
     return crud.leer_negocio(db)
 
 
+class ProductoIn(BaseModel):
+    id: Optional[str] = None
+    name: str
+    categoryId: str
+    price: float
+    stock: int = 0
+    minStock: int = 0
+    prepTimeMinutes: int = 0
+    isAvailable: bool = True
+    description: str = ""
+    aiContext: str = ""
+    aiActive: bool = True
+    imageUrl: Optional[str] = None
+    emoji: str = "📦"
+
+
+class ProductoPatch(BaseModel):
+    name: Optional[str] = None
+    categoryId: Optional[str] = None
+    price: Optional[float] = None
+    stock: Optional[int] = None
+    minStock: Optional[int] = None
+    prepTimeMinutes: Optional[int] = None
+    isAvailable: Optional[bool] = None
+    description: Optional[str] = None
+    aiContext: Optional[str] = None
+    aiActive: Optional[bool] = None
+    imageUrl: Optional[str] = None
+    emoji: Optional[str] = None
+
+
+class CategoriaIn(BaseModel):
+    id: Optional[str] = None
+    name: str
+    emoji: str = ""
+
+
+class CategoriaPatch(BaseModel):
+    name: Optional[str] = None
+    emoji: Optional[str] = None
+
+
+@app.post("/productos", status_code=status.HTTP_201_CREATED)
+def crear_producto(body: ProductoIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    return crud.crear_producto(db, body.model_dump())
+
+
+@app.patch("/productos/{prod_id}")
+def actualizar_producto(prod_id: str, body: ProductoPatch, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    datos = {k: v for k, v in body.model_dump().items() if v is not None}
+    actualizado = crud.actualizar_producto(db, prod_id, datos)
+    if actualizado is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto {prod_id} no encontrado")
+    return actualizado
+
+
+@app.delete("/productos/{prod_id}", status_code=status.HTTP_204_NO_CONTENT)
+def eliminar_producto(prod_id: str, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    if not crud.eliminar_producto(db, prod_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto {prod_id} no encontrado")
+
+
+@app.post("/categorias", status_code=status.HTTP_201_CREATED)
+def crear_categoria(body: CategoriaIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    return crud.crear_categoria(db, body.model_dump())
+
+
+@app.patch("/categorias/{cat_id}")
+def actualizar_categoria(cat_id: str, body: CategoriaPatch, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    datos = {k: v for k, v in body.model_dump().items() if v is not None}
+    actualizado = crud.actualizar_categoria(db, cat_id, datos)
+    if actualizado is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Categoría {cat_id} no encontrada")
+    return actualizado
+
+
+@app.delete("/categorias/{cat_id}", status_code=status.HTTP_204_NO_CONTENT)
+def eliminar_categoria(cat_id: str, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    try:
+        ok = crud.eliminar_categoria(db, cat_id)
+    except crud.CategoriaConProductosError:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="La categoría tiene productos asociados")
+    if not ok:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Categoría {cat_id} no encontrada")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api_pedidos:app", host="0.0.0.0", port=5050, reload=True)
