@@ -4,7 +4,8 @@ import 'package:prontoapp/preview_support/preview_theme.dart';
 import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../widgets/invitacion_enviada_modal.dart';
+import 'package:provider/provider.dart';
+import 'package:prontoapp/data/repositories/usuario_repository.dart';
 
 class InvitarEmpleadoScreen extends StatefulWidget {
   const InvitarEmpleadoScreen({super.key});
@@ -42,6 +43,48 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
       'bgIcono': const Color(0xFFEDE9FE),
     },
   ];
+
+  static const _rolesApi = ['cocinero', 'repartidor', 'gerente'];
+  static const _passwordTemporal = 'prontoa123';
+  bool _enviando = false;
+
+  Future<void> _enviar() async {
+    final nombre = _controladorNombre.text.trim();
+    final correo = _controladorCorreo.text.trim();
+    final telefono = _controladorTelefono.text.trim();
+    if (nombre.isEmpty || correo.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nombre y correo son obligatorios')));
+      return;
+    }
+    setState(() => _enviando = true);
+    try {
+      await context.read<UsuarioRepository>().crear(
+            nombre: nombre,
+            email: correo,
+            telefono: '+57 $telefono',
+            rol: _rolesApi[_rolSeleccionado],
+            password: _passwordTemporal,
+          );
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Empleado creado'),
+          content: Text('Comparte estas credenciales:\n\nCorreo: $correo\nContraseña temporal: $_passwordTemporal'),
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+        ),
+      );
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo crear (¿correo ya registrado?)')));
+    } finally {
+      if (mounted) setState(() => _enviando = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -302,7 +345,7 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
         child: SafeArea(
           top: false,
           child: GestureDetector(
-            onTap: () => InvitacionEnviadaModal.show(context),
+            onTap: _enviando ? null : _enviar,
             child: Container(
               height: 52,
               decoration: BoxDecoration(
