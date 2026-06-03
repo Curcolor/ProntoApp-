@@ -1,45 +1,36 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/order_model.dart';
+import '../services/api_client.dart';
 
-/// Repositorio de pedidos: cache local en SharedPreferences.
-/// Los pedidos reales vienen del FastAPI; este repositorio los guarda
-/// offline para que la app funcione aunque el servidor esté caído.
+/// Acceso a pedidos: remoto (ApiClient) + cache de solo-lectura.
 class OrderRepository {
+  final ApiClient _api;
   final SharedPreferences _prefs;
   static const String _claveCache = 'prontoapp_orders_cache';
 
-  const OrderRepository(this._prefs);
+  OrderRepository(this._api, this._prefs);
 
-  // ─── Lectura ───────────────────────────────────────────────────────────────
+  Future<List<OrderModel>> fetchPedidos() async {
+    final lista = await _api.get('/pedidos') as List<dynamic>;
+    final pedidos = lista.map((e) => OrderModel.fromJson(e as Map<String, dynamic>)).toList();
+    await _prefs.setString(_claveCache, jsonEncode(pedidos.map((p) => p.toJson()).toList()));
+    return pedidos;
+  }
 
-  /// Obtiene los pedidos del cache local.
-  List<OrderModel> obtenerCache() {
+  List<OrderModel> readCache() {
     final jsonStr = _prefs.getString(_claveCache);
     if (jsonStr == null) return [];
-
     try {
-      final lista = jsonDecode(jsonStr) as List<dynamic>;
-      return lista
-          .map((e) => OrderModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      return (jsonDecode(jsonStr) as List)
+          .map((e) => OrderModel.fromJson(e as Map<String, dynamic>)).toList();
     } catch (_) {
       return [];
     }
   }
 
-  // ─── Escritura ─────────────────────────────────────────────────────────────
+  Future<void> avanzarEstado(String id, String estado) =>
+      _api.patch('/pedidos/$id/estado', {'estado': estado});
 
-  /// Persiste la lista completa de pedidos en el cache local.
-  Future<void> guardarCache(List<OrderModel> pedidos) async {
-    final jsonStr = jsonEncode(pedidos.map((p) => p.toJson()).toList());
-    await _prefs.setString(_claveCache, jsonStr);
-  }
-
-  /// Limpia el cache local.
-  Future<void> limpiarCache() async {
-    await _prefs.remove(_claveCache);
-  }
+  Future<void> eliminarPedido(String id) => _api.delete('/pedidos/$id');
 }
