@@ -546,6 +546,6 @@ class PerfilCocineroScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Perfil cocinero', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Perfil cocinero', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget perfilCocineroScreenPreview() => const PerfilCocineroScreen();
 

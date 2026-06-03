@@ -105,6 +105,6 @@ class _ManagerMainScreenState extends State<ManagerMainScreen> {
   }
 }
 
-@Preview(name: 'Manager — Home', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Manager — Home', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget managerMainScreenPreview() => const ManagerMainScreen();
 

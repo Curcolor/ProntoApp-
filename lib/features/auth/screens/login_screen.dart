@@ -395,5 +395,5 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-@Preview(name: 'Login', group: 'Auth', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Login', group: 'Auth', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget loginScreenPreview() => const LoginScreen();

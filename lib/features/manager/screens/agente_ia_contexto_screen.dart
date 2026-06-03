@@ -287,6 +287,6 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
   }
 }
 
-@Preview(name: 'Agente IA — Contexto', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Agente IA — Contexto', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget agenteIaContextoScreenPreview() => const AgenteIaContextoScreen();
 

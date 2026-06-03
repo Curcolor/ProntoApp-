@@ -354,6 +354,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-@Preview(name: 'Ajustes', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Ajustes', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget settingsScreenPreview() => const SettingsScreen();
 

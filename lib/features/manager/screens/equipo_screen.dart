@@ -442,6 +442,6 @@ class _EquipoScreenState extends State<EquipoScreen> {
   }
 }
 
-@Preview(name: 'Equipo', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Equipo', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget equipoScreenPreview() => const EquipoScreen();
 

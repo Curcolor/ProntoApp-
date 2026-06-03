@@ -509,6 +509,6 @@ class _KpisScreenState extends State<KpisScreen> {
   }
 }
 
-@Preview(name: 'KPIs', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'KPIs', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget kpisScreenPreview() => const KpisScreen();
 

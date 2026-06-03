@@ -516,6 +516,6 @@ class PedidosListosScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Pedidos listos', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Pedidos listos', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget pedidosListosScreenPreview() => const PedidosListosScreen();
 

@@ -647,6 +647,6 @@ class _TabInfo {
   const _TabInfo(this.label, this.estado);
 }
 
-@Preview(name: 'Dashboard', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Dashboard', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget dashboardScreenPreview() => const DashboardScreen();
 

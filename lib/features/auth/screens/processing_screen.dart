@@ -160,6 +160,6 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
   }
 }
 
-@Preview(name: 'Procesando', group: 'Auth', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Procesando', group: 'Auth', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget processingScreenPreview() => const ProcessingScreen();
 

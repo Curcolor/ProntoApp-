@@ -505,6 +505,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 }
 
-@Preview(name: 'Pedidos', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Pedidos', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget ordersScreenPreview() => const OrdersScreen();
 

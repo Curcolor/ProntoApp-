@@ -462,5 +462,5 @@ class LandingPage extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Landing', group: 'Auth', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Landing', group: 'Auth', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget landingPagePreview() => const LandingPage();

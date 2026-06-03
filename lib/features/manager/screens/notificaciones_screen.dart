@@ -274,6 +274,6 @@ class _NotificacionesScreenState extends State<NotificacionesScreen> {
   }
 }
 
-@Preview(name: 'Notificaciones', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Notificaciones', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget notificacionesScreenPreview() => const NotificacionesScreen();
 

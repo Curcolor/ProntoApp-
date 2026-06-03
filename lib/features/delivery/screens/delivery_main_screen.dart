@@ -83,5 +83,5 @@ class _DeliveryMainScreenState extends State<DeliveryMainScreen> {
   }
 }
 
-@Preview(name: 'Delivery — Home', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Delivery — Home', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget deliveryMainScreenPreview() => const DeliveryMainScreen();

@@ -889,6 +889,6 @@ class _AgregarEditarProductoScreenState extends State<AgregarEditarProductoScree
   }
 }
 
-@Preview(name: 'Agregar producto', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Agregar producto', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget agregarEditarProductoScreenPreview() => const AgregarEditarProductoScreen();
 

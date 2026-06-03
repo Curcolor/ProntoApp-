@@ -634,6 +634,6 @@ class _InventarioScreenState extends State<InventarioScreen> {
   }
 }
 
-@Preview(name: 'Inventario', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Inventario', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget inventarioScreenPreview() => const InventarioScreen();
 

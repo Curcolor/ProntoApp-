@@ -607,7 +607,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
   }
 }
 
-@Preview(name: 'Perfil empleado', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Perfil empleado', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget perfilEmpleadoScreenPreview() =>
     PerfilEmpleadoScreen(usuario: sampleUser(), meta: sampleMeta());
 

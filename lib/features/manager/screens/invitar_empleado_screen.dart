@@ -323,6 +323,6 @@ class _InvitarEmpleadoScreenState extends State<InvitarEmpleadoScreen> {
   }
 }
 
-@Preview(name: 'Invitar empleado', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Invitar empleado', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget invitarEmpleadoScreenPreview() => const InvitarEmpleadoScreen();
 

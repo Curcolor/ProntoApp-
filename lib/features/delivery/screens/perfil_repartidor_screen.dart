@@ -546,6 +546,6 @@ class PerfilRepartidorScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Perfil repartidor', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Perfil repartidor', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget perfilRepartidorScreenPreview() => const PerfilRepartidorScreen();
 

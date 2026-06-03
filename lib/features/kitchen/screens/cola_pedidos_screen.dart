@@ -313,6 +313,6 @@ class ColaPedidosScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Cola de pedidos', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Cola de pedidos', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget colaPedidosScreenPreview() => const ColaPedidosScreen();
 

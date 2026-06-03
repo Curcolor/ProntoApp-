@@ -652,5 +652,5 @@ class DetalleEntregaScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Detalle entrega', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Detalle entrega', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget detalleEntregaScreenPreview() => DetalleEntregaScreen(pedido: sampleOrder());

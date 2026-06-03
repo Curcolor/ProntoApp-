@@ -592,5 +592,5 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
-@Preview(name: 'Registro', group: 'Auth', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Registro', group: 'Auth', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget registerScreenPreview() => const RegisterScreen();

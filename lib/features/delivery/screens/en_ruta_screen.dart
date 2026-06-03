@@ -472,6 +472,6 @@ class EnRutaScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'En ruta', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'En ruta', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget enRutaScreenPreview() => EnRutaScreen(pedido: sampleOrder());
 

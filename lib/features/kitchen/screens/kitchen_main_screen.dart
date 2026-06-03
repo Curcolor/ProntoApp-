@@ -78,6 +78,6 @@ class _KitchenMainScreenState extends State<KitchenMainScreen> {
   }
 }
 
-@Preview(name: 'Cocina — Home', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Cocina — Home', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget kitchenMainScreenPreview() => const KitchenMainScreen();
 

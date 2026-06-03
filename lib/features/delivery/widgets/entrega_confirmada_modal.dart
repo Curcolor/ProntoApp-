@@ -304,6 +304,6 @@ class EntregaConfirmadaModal extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Entrega confirmada', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Entrega confirmada', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget entregaConfirmadaModalPreview() => const EntregaConfirmadaModal();
 

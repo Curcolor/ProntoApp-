@@ -381,6 +381,6 @@ class _AjustarStockModalState extends State<AjustarStockModal> {
   }
 }
 
-@Preview(name: 'Ajustar stock', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Ajustar stock', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget ajustarStockModalPreview() => AjustarStockModal(product: sampleProduct());
 

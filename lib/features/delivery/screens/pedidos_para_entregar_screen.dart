@@ -499,6 +499,6 @@ class PedidosParaEntregarScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Pedidos para entregar', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Pedidos para entregar', group: 'Delivery', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget pedidosParaEntregarScreenPreview() => const PedidosParaEntregarScreen();
 

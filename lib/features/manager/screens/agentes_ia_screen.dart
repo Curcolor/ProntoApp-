@@ -376,6 +376,6 @@ class _AgentesIaScreenState extends State<AgentesIaScreen> {
   }
 }
 
-@Preview(name: 'Agentes IA', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Agentes IA', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget agentesIaScreenPreview() => const AgentesIaScreen();
 

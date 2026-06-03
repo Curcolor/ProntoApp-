@@ -183,6 +183,6 @@ class RecoverPasswordScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Recuperar contraseña', group: 'Auth', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Recuperar contraseña', group: 'Auth', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget recoverPasswordScreenPreview() => const RecoverPasswordScreen();
 

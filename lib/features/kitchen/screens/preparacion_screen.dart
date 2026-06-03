@@ -627,6 +627,6 @@ class _PedidoPreparacionCardState extends State<_PedidoPreparacionCard> {
   }
 }
 
-@Preview(name: 'Preparación', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Preparación', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget preparacionScreenPreview() => const PreparacionScreen();
 

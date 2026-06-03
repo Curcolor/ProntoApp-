@@ -356,6 +356,6 @@ class _ConfigurarAgenteModalState extends State<ConfigurarAgenteModal> {
   }
 }
 
-@Preview(name: 'Configurar agente', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Configurar agente', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget configurarAgenteModalPreview() => const ConfigurarAgenteModal();
 

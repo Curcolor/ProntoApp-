@@ -339,6 +339,6 @@ class InvitacionEnviadaModal extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Invitación enviada', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Invitación enviada', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget invitacionEnviadaModalPreview() => const InvitacionEnviadaModal();
 

@@ -594,6 +594,6 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-@Preview(name: 'Perfil', group: 'Manager', wrapper: previewWrapper, theme: previewTheme)
+@Preview(name: 'Perfil', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
 Widget profileScreenPreview() => const ProfileScreen();
 
