@@ -105,8 +105,9 @@ class InventoryProvider extends ChangeNotifier {
   List<Product> get products => _products;
 
   void _loadData() {
-    _categories = _repository!.getCategories();
-    _products = _repository.getProducts();
+    final repository = _repository!;
+    _categories = repository.getCategories();
+    _products = repository.getProducts();
     notifyListeners();
   }
 

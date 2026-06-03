@@ -10,6 +10,10 @@ class AuthService extends ChangeNotifier {
 
   /// Constructor solo para widget previews: deja el singleton con un usuario
   /// de ejemplo, sin tocar SharedPreferences ni la red.
+  ///
+  /// Nota: muta el singleton compartido. No usar en tests que también ejerciten
+  /// el flujo de autenticación real; el previewer corre en un proceso aparte,
+  /// así que no contamina una ejecución normal de la app.
   factory AuthService.preview({UserModel? user}) {
     _instance._currentUser = user ??
         UserModel(
