@@ -192,3 +192,87 @@ def leer_negocio(db: Session) -> Optional[dict]:
         "horaCierre": n.hora_cierre, "formatoEntrega": n.formato_entrega,
         "terminosEntrega": n.terminos_entrega, "numeroWhatsapp": n.numero_whatsapp,
     }
+
+
+class CategoriaConProductosError(Exception):
+    """Se intentó borrar una categoría que aún tiene productos."""
+
+
+def crear_categoria(db: Session, datos: dict) -> dict:
+    cat = models.Categoria(
+        id=datos.get("id") or _nuevo_id("cat"),
+        name=datos["name"], emoji=datos.get("emoji", ""),
+    )
+    db.add(cat)
+    db.commit()
+    return _categoria_a_dict(cat)
+
+
+def actualizar_categoria(db: Session, cat_id: str, datos: dict) -> Optional[dict]:
+    cat = db.get(models.Categoria, cat_id)
+    if cat is None:
+        return None
+    if "name" in datos:
+        cat.name = datos["name"]
+    if "emoji" in datos:
+        cat.emoji = datos["emoji"]
+    db.commit()
+    return _categoria_a_dict(cat)
+
+
+def eliminar_categoria(db: Session, cat_id: str) -> bool:
+    cat = db.get(models.Categoria, cat_id)
+    if cat is None:
+        return False
+    tiene = db.scalars(
+        select(models.Producto).where(models.Producto.categoria_id == cat_id)
+    ).first()
+    if tiene is not None:
+        raise CategoriaConProductosError(cat_id)
+    db.delete(cat)
+    db.commit()
+    return True
+
+
+def crear_producto(db: Session, datos: dict) -> dict:
+    prod = models.Producto(
+        id=datos.get("id") or _nuevo_id("prod"),
+        categoria_id=datos["categoryId"], name=datos["name"], price=datos["price"],
+        stock=datos.get("stock", 0), min_stock=datos.get("minStock", 0),
+        prep_time_minutes=datos.get("prepTimeMinutes", 0),
+        is_available=datos.get("isAvailable", True), description=datos.get("description", ""),
+        ai_context=datos.get("aiContext", ""), ai_active=datos.get("aiActive", True),
+        image_url=datos.get("imageUrl"), emoji=datos.get("emoji", "📦"),
+    )
+    db.add(prod)
+    db.commit()
+    return _producto_a_dict(prod)
+
+
+_CAMPOS_PRODUCTO = {
+    "categoryId": "categoria_id", "name": "name", "price": "price", "stock": "stock",
+    "minStock": "min_stock", "prepTimeMinutes": "prep_time_minutes",
+    "isAvailable": "is_available", "description": "description",
+    "aiContext": "ai_context", "aiActive": "ai_active", "imageUrl": "image_url",
+    "emoji": "emoji",
+}
+
+
+def actualizar_producto(db: Session, prod_id: str, datos: dict) -> Optional[dict]:
+    prod = db.get(models.Producto, prod_id)
+    if prod is None:
+        return None
+    for clave_json, attr in _CAMPOS_PRODUCTO.items():
+        if clave_json in datos:
+            setattr(prod, attr, datos[clave_json])
+    db.commit()
+    return _producto_a_dict(prod)
+
+
+def eliminar_producto(db: Session, prod_id: str) -> bool:
+    prod = db.get(models.Producto, prod_id)
+    if prod is None:
+        return False
+    db.delete(prod)
+    db.commit()
+    return True
