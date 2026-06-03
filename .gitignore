@@ -60,6 +60,7 @@ app.*.map.json
 /android/app/release
 
 .env
+.env.example
 .venv/
 __pycache__/
 *.pyc
