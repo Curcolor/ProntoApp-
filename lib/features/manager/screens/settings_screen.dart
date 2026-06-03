@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
+import 'package:prontoapp/data/repositories/negocio_repository.dart';
 import 'package:prontoapp/features/manager/widgets/configurar_agente_modal.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -27,6 +28,88 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _sortByRecent = true;
   bool _darkMode = false;
 
+  final _nombre = TextEditingController();
+  final _direccion = TextEditingController();
+  final _horaApertura = TextEditingController();
+  final _horaCierre = TextEditingController();
+  final _whatsapp = TextEditingController();
+  bool _guardando = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarNegocio();
+  }
+
+  Future<void> _cargarNegocio() async {
+    final n = await context.read<NegocioRepository>().fetchNegocio();
+    if (!mounted) return;
+    setState(() {
+      _nombre.text = n.nombre;
+      _direccion.text = n.direccion ?? '';
+      _horaApertura.text = n.horaApertura ?? '';
+      _horaCierre.text = n.horaCierre ?? '';
+      _whatsapp.text = n.numeroWhatsapp ?? '';
+    });
+  }
+
+  Future<void> _guardarNegocio() async {
+    setState(() => _guardando = true);
+    try {
+      await context.read<NegocioRepository>().updateNegocio({
+        'nombre': _nombre.text.trim(),
+        'direccion': _direccion.text.trim(),
+        'horaApertura': _horaApertura.text.trim(),
+        'horaCierre': _horaCierre.text.trim(),
+        'numeroWhatsapp': _whatsapp.text.trim(),
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Negocio actualizado')));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo guardar')));
+    } finally {
+      if (mounted) setState(() => _guardando = false);
+    }
+  }
+
+  Widget _campoNegocio(String label, TextEditingController c) => Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: TextField(
+          controller: c,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            isDense: true,
+          ),
+        ),
+      );
+
+  Widget _buildNegocioSection() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle('NEGOCIO'),
+          const SizedBox(height: 8),
+          _campoNegocio('Nombre', _nombre),
+          _campoNegocio('Dirección', _direccion),
+          Row(children: [
+            Expanded(child: _campoNegocio('Apertura', _horaApertura)),
+            const SizedBox(width: 10),
+            Expanded(child: _campoNegocio('Cierre', _horaCierre)),
+          ]),
+          _campoNegocio('WhatsApp', _whatsapp),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _guardando ? null : _guardarNegocio,
+              child: Text(_guardando ? 'Guardando...' : 'Guardar negocio'),
+            ),
+          ),
+        ],
+      );
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -44,7 +127,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
+          _buildNegocioSection(),
+          const SizedBox(height: 24),
           _buildSectionTitle('NOTIFICACIONES'),
           const SizedBox(height: 8),
           _buildSettingsGroup([
