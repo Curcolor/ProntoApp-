@@ -23,13 +23,13 @@ class AppScrollBehavior extends MaterialScrollBehavior {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AuthService().initialize();
 
   final prefs = await SharedPreferences.getInstance();
   final apiClient = ApiClient(
     baseUrl: 'http://localhost:5050',
     secreto: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43',
   );
+  await AuthService().initialize(apiClient);
   final inventoryRepo = InventoryRepository(apiClient, prefs);
   final orderRepo = OrderRepository(apiClient, prefs);
 
