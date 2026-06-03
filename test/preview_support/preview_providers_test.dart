@@ -3,7 +3,9 @@ import 'package:prontoapp/data/models/category_model.dart';
 import 'package:prontoapp/data/models/order_model.dart';
 import 'package:prontoapp/data/models/product_model.dart';
 import 'package:prontoapp/data/providers/inventory_provider.dart';
+import 'package:prontoapp/data/providers/notification_provider.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
+import 'package:prontoapp/data/services/auth_service.dart';
 
 void main() {
   test('InventoryProvider.preview seeds data and starts no timer', () {
@@ -37,5 +39,16 @@ void main() {
 
     expect(p.pedidos, hasLength(1));
     p.dispose();
+  });
+
+  test('NotificationProvider.preview seeds sample notifications', () {
+    final p = NotificationProvider.preview();
+    expect(p.notifications, isNotEmpty);
+  });
+
+  test('AuthService.preview sets a current user', () {
+    final auth = AuthService.preview();
+    expect(auth.currentUser, isNotNull);
+    expect(auth.isInitialized, isTrue);
   });
 }

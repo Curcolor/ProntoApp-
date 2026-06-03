@@ -66,6 +66,26 @@ class NotificationProvider extends ChangeNotifier {
     _initializeDefaultData();
   }
 
+  /// Constructor solo para widget previews: siembra notificaciones de ejemplo.
+  factory NotificationProvider.preview() {
+    final p = NotificationProvider();
+    p.addNotification(NotificationModel(
+      id: 'n1',
+      title: 'Nuevo pedido recibido',
+      description: 'Ana Gómez · \$36000',
+      timestamp: DateTime.now(),
+      type: NotificationType.pedido,
+    ));
+    p.addNotification(NotificationModel(
+      id: 'n2',
+      title: 'Agente IA actualizado',
+      description: 'El bot respondió 12 mensajes hoy',
+      timestamp: DateTime.now(),
+      type: NotificationType.ia,
+    ));
+    return p;
+  }
+
   void _initializeDefaultData() {
     // Inicialmente vacío, se llena dinámicamente con eventos reales.
   }

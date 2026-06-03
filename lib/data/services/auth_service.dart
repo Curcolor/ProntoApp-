@@ -8,6 +8,20 @@ class AuthService extends ChangeNotifier {
   factory AuthService() => _instance;
   AuthService._internal();
 
+  /// Constructor solo para widget previews: deja el singleton con un usuario
+  /// de ejemplo, sin tocar SharedPreferences ni la red.
+  factory AuthService.preview({UserModel? user}) {
+    _instance._currentUser = user ??
+        UserModel(
+          id: 'preview',
+          email: 'ana@pronto.co',
+          name: 'Ana Gómez',
+          role: RoleType.gerente,
+        );
+    _instance._isInitialized = true;
+    return _instance;
+  }
+
   UserModel? _currentUser;
   UserModel? get currentUser => _currentUser;
 
