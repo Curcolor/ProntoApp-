@@ -135,6 +135,24 @@ def actualizar_inventario(body: InventarioIn, x_secret: Optional[str] = Header(d
     return {"ok": True}
 
 
+class LoginIn(BaseModel):
+    email: str
+    password: str
+
+
+@app.post("/auth/login")
+def auth_login(body: LoginIn, db: Session = Depends(get_db)):
+    user = crud.login(db, body.email, body.password)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
+    return user
+
+
+@app.get("/negocio")
+def obtener_negocio(db: Session = Depends(get_db)):
+    return crud.leer_negocio(db)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api_pedidos:app", host="0.0.0.0", port=5050, reload=True)

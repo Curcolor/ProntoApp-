@@ -154,3 +154,41 @@ def eliminar_pedido(db: Session, pedido_id: str) -> bool:
     db.delete(pedido)
     db.commit()
     return True
+
+
+from passlib.hash import bcrypt
+
+
+def _usuario_a_dict(u: "models.Usuario") -> dict:
+    return {"id": u.id, "nombre": u.nombre, "email": u.email,
+            "telefono": u.telefono, "rol": u.rol}
+
+
+def crear_usuario(db: Session, datos: dict) -> dict:
+    user = models.Usuario(
+        id=datos.get("id") or _nuevo_id("U"), nombre=datos["nombre"],
+        email=datos["email"], contrasena_hash=bcrypt.hash(datos["password"]),
+        telefono=datos.get("telefono"), rol=datos["rol"],
+    )
+    db.add(user)
+    db.commit()
+    return _usuario_a_dict(user)
+
+
+def login(db: Session, email: str, password: str) -> Optional[dict]:
+    user = db.scalars(select(models.Usuario).where(models.Usuario.email == email)).first()
+    if user is None or not bcrypt.verify(password, user.contrasena_hash):
+        return None
+    return _usuario_a_dict(user)
+
+
+def leer_negocio(db: Session) -> Optional[dict]:
+    n = db.scalars(select(models.Negocio)).first()
+    if n is None:
+        return None
+    return {
+        "id": n.id, "tipoNegocio": n.tipo_negocio, "nombre": n.nombre,
+        "direccion": n.direccion, "horaApertura": n.hora_apertura,
+        "horaCierre": n.hora_cierre, "formatoEntrega": n.formato_entrega,
+        "terminosEntrega": n.terminos_entrega, "numeroWhatsapp": n.numero_whatsapp,
+    }
