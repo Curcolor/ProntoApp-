@@ -1,0 +1,74 @@
+# Esquema ProntoApp — single restaurant. Columnas pinneadas con @col para que
+# coincidan exactamente con los modelos SQLAlchemy de FastAPI.
+
+type Negocio @table(name: "negocio", key: ["id"]) {
+  id: String!
+  tipoNegocio: String @col(name: "tipo_negocio")
+  nombre: String!
+  direccion: String
+  horaApertura: String @col(name: "hora_apertura")
+  horaCierre: String @col(name: "hora_cierre")
+  formatoEntrega: String @col(name: "formato_entrega")
+  terminosEntrega: String @col(name: "terminos_entrega")
+  numeroWhatsapp: String @col(name: "numero_whatsapp")
+}
+
+type Usuario @table(name: "usuario", key: ["id"]) {
+  id: String!
+  nombre: String!
+  email: String! @unique
+  contrasenaHash: String! @col(name: "contrasena_hash")
+  telefono: String
+  rol: String!   # gerente | cocinero | repartidor (validado en FastAPI)
+}
+
+type Categoria @table(name: "categoria", key: ["id"]) {
+  id: String!
+  name: String!
+  emoji: String!
+}
+
+type Producto @table(name: "producto", key: ["id"]) {
+  id: String!
+  categoria: Categoria!                       # genera columna categoria_id
+  name: String!
+  price: Float!
+  stock: Int!
+  minStock: Int! @col(name: "min_stock")
+  prepTimeMinutes: Int! @col(name: "prep_time_minutes")
+  isAvailable: Boolean! @col(name: "is_available")
+  description: String!
+  aiContext: String! @col(name: "ai_context")
+  aiActive: Boolean! @col(name: "ai_active")
+  imageUrl: String @col(name: "image_url")
+  emoji: String!
+}
+
+type Cliente @table(name: "cliente", key: ["id"]) {
+  id: String!
+  nombre: String!
+  numeroWhatsapp: String! @unique @col(name: "numero_whatsapp")
+  email: String
+}
+
+type Pedido @table(name: "pedido", key: ["id"]) {
+  id: String!
+  cliente: Cliente!                           # genera columna cliente_id
+  total: Float!
+  estado: String!                             # recibido|en_preparacion|listo|en_camino|entregado
+  tipo: String!                               # domicilio|recoger
+  direccion: String
+  canal: String! @default(value: "whatsapp")
+  usuarioAsignado: Usuario
+  creadoEn: Timestamp! @col(name: "creado_en") @default(expr: "request.time")
+  actualizadoEn: Timestamp! @col(name: "actualizado_en") @default(expr: "request.time")
+}
+
+type DetallePedido @table(name: "detalle_pedido", key: ["id"]) {
+  id: String!
+  pedido: Pedido!                             # genera columna pedido_id
+  producto: Producto                          # nullable; el bot manda nombre libre
+  nombre: String!
+  cantidad: Int!
+  precioUnitario: Float! @col(name: "precio_unitario")
+}

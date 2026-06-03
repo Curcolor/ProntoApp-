@@ -1,0 +1,10 @@
+# Operación mínima para satisfacer el compilador (el connector exige al menos
+# una query/mutation). El CRUD real lo hace FastAPI; esto solo valida el schema.
+query ListProductos @auth(level: PUBLIC, insecureReason: "Operación de validación de schema; el CRUD real lo hace FastAPI, no este connector.") {
+  productos {
+    id
+    name
+    price
+    stock
+  }
+}
