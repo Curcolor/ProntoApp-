@@ -13,7 +13,7 @@ import '../repositories/inventory_repository.dart';
 /// servidor FastAPI cada vez que hay un cambio, para que el bot de Telegram
 /// pueda responder con el menú real actualizado.
 class InventoryProvider extends ChangeNotifier {
-  final InventoryRepository _repository;
+  final InventoryRepository? _repository;
 
   List<Category> _categories = [];
   List<Product> _products = [];
@@ -25,13 +25,26 @@ class InventoryProvider extends ChangeNotifier {
   Timer? _timer;
 
   InventoryProvider(
-    this._repository, {
+    InventoryRepository repository, {
     String baseUrl = 'http://localhost:5050',
     String secreto = '',
-  })  : _baseUrl = baseUrl,
+  })  : _repository = repository,
+        _baseUrl = baseUrl,
         _secreto = secreto {
     _loadData();
     _iniciarPolling();
+  }
+
+  /// Constructor solo para widget previews: siembra datos en memoria y NO
+  /// arranca polling ni red.
+  InventoryProvider.preview({
+    List<Product>? products,
+    List<Category>? categories,
+  })  : _repository = null,
+        _baseUrl = '',
+        _secreto = '' {
+    _products = products ?? <Product>[];
+    _categories = categories ?? <Category>[];
   }
 
   void _iniciarPolling() {
@@ -73,7 +86,7 @@ class InventoryProvider extends ChangeNotifier {
           _categories = newCategories;
           _products = newProducts;
           // Guardar en cache local
-          await _repository.saveAllData(newCategories, newProducts);
+          await _repository!.saveAllData(newCategories, newProducts);
           notifyListeners();
         }
       }
@@ -92,7 +105,7 @@ class InventoryProvider extends ChangeNotifier {
   List<Product> get products => _products;
 
   void _loadData() {
-    _categories = _repository.getCategories();
+    _categories = _repository!.getCategories();
     _products = _repository.getProducts();
     notifyListeners();
   }
@@ -117,25 +130,25 @@ class InventoryProvider extends ChangeNotifier {
   }
 
   Future<void> addCategory(String name, String emoji) async {
-    await _repository.addCategory(name, emoji);
+    await _repository!.addCategory(name, emoji);
     _loadData();
     await _sincronizarConApi();
   }
 
   Future<void> addProduct(Product product) async {
-    await _repository.addProduct(product);
+    await _repository!.addProduct(product);
     _loadData();
     await _sincronizarConApi();
   }
 
   Future<void> updateProduct(Product product) async {
-    await _repository.updateProduct(product);
+    await _repository!.updateProduct(product);
     _loadData();
     await _sincronizarConApi();
   }
 
   Future<void> deleteProduct(String id) async {
-    await _repository.deleteProduct(id);
+    await _repository!.deleteProduct(id);
     _loadData();
     await _sincronizarConApi();
   }
