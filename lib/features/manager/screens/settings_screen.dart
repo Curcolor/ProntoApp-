@@ -41,16 +41,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _cargarNegocio();
   }
 
+  @override
+  void dispose() {
+    _nombre.dispose();
+    _direccion.dispose();
+    _horaApertura.dispose();
+    _horaCierre.dispose();
+    _whatsapp.dispose();
+    super.dispose();
+  }
+
   Future<void> _cargarNegocio() async {
-    final n = await context.read<NegocioRepository>().fetchNegocio();
-    if (!mounted) return;
-    setState(() {
-      _nombre.text = n.nombre;
-      _direccion.text = n.direccion ?? '';
-      _horaApertura.text = n.horaApertura ?? '';
-      _horaCierre.text = n.horaCierre ?? '';
-      _whatsapp.text = n.numeroWhatsapp ?? '';
-    });
+    try {
+      final n = await context.read<NegocioRepository>().fetchNegocio();
+      if (!mounted) return;
+      setState(() {
+        _nombre.text = n.nombre;
+        _direccion.text = n.direccion ?? '';
+        _horaApertura.text = n.horaApertura ?? '';
+        _horaCierre.text = n.horaCierre ?? '';
+        _whatsapp.text = n.numeroWhatsapp ?? '';
+      });
+    } catch (_) {
+      // Offline/preview: deja los campos vacíos.
+    }
   }
 
   Future<void> _guardarNegocio() async {

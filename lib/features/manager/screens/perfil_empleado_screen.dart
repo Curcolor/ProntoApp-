@@ -32,6 +32,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
   bool _iaConfig = false;
 
   Future<void> _cambiarRol() async {
+    final repo = context.read<UsuarioRepository>();
     final actual = widget.usuario.role;
     final nuevo = await showDialog<RoleType>(
       context: context,
@@ -47,7 +48,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
     );
     if (nuevo == null || nuevo == actual) return;
     try {
-      await context.read<UsuarioRepository>().actualizar(widget.usuario.id, {'rol': nuevo.name});
+      await repo.actualizar(widget.usuario.id, {'rol': nuevo.name});
       if (!mounted) return;
       Navigator.pop(context, true);
     } catch (_) {
@@ -58,6 +59,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
   }
 
   Future<void> _eliminar() async {
+    final repo = context.read<UsuarioRepository>();
     final confirma = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
@@ -71,7 +73,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
     );
     if (confirma != true) return;
     try {
-      await context.read<UsuarioRepository>().eliminar(widget.usuario.id);
+      await repo.eliminar(widget.usuario.id);
       if (!mounted) return;
       Navigator.pop(context, true);
     } catch (_) {
