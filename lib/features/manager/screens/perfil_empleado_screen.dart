@@ -5,7 +5,9 @@ import 'package:prontoapp/preview_support/preview_theme.dart';
 import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:prontoapp/data/models/user_model.dart';
+import 'package:prontoapp/data/repositories/usuario_repository.dart';
 
 class PerfilEmpleadoScreen extends StatefulWidget {
   final UserModel usuario;
@@ -28,6 +30,56 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
   bool _editarInventario = true;
   bool _verReportes = false;
   bool _iaConfig = false;
+
+  Future<void> _cambiarRol() async {
+    final actual = widget.usuario.role;
+    final nuevo = await showDialog<RoleType>(
+      context: context,
+      builder: (_) => SimpleDialog(
+        title: const Text('Cambiar rol'),
+        children: RoleType.values
+            .map((r) => SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, r),
+                  child: Text(r.name + (r == actual ? ' (actual)' : '')),
+                ))
+            .toList(),
+      ),
+    );
+    if (nuevo == null || nuevo == actual) return;
+    try {
+      await context.read<UsuarioRepository>().actualizar(widget.usuario.id, {'rol': nuevo.name});
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo cambiar el rol')));
+    }
+  }
+
+  Future<void> _eliminar() async {
+    final confirma = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Eliminar empleado'),
+        content: Text('¿Eliminar a ${widget.usuario.name}?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Eliminar')),
+        ],
+      ),
+    );
+    if (confirma != true) return;
+    try {
+      await context.read<UsuarioRepository>().eliminar(widget.usuario.id);
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo eliminar')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -545,9 +597,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              // Action
-            },
+            onTap: _cambiarRol,
             child: Container(
               height: 46,
               decoration: BoxDecoration(
@@ -575,9 +625,7 @@ class _PerfilEmpleadoScreenState extends State<PerfilEmpleadoScreen> {
         const SizedBox(width: 10),
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              // Action
-            },
+            onTap: _eliminar,
             child: Container(
               height: 46,
               decoration: BoxDecoration(
