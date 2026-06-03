@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
+import 'package:prontoapp/preview_support/preview_theme.dart';
+import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:prontoapp/features/auth/widgets/auth_popup_dialogs.dart';
@@ -179,4 +182,7 @@ class RecoverPasswordScreen extends StatelessWidget {
     );
   }
 }
+
+@Preview(name: 'Recuperar contraseña', group: 'Auth', wrapper: previewWrapper, theme: previewTheme)
+Widget recoverPasswordScreenPreview() => const RecoverPasswordScreen();
 
