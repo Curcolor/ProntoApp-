@@ -1,4 +1,10 @@
 import os
+
+# Tests deterministas: neutraliza cualquier TELEGRAM_WEBHOOK_SECRET del entorno o
+# del .env raíz ANTES de que api_pedidos haga load_dotenv() / lea SECRETO, para
+# que las peticiones de test sin header x-secret no reciban 403.
+os.environ["TELEGRAM_WEBHOOK_SECRET"] = ""
+
 import pytest
 from sqlalchemy.orm import sessionmaker
 from src.db import Base, make_engine
