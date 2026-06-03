@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
+import 'package:prontoapp/preview_support/preview_theme.dart';
+import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'cola_pedidos_screen.dart';
 import 'preparacion_screen.dart';
@@ -74,3 +77,7 @@ class _KitchenMainScreenState extends State<KitchenMainScreen> {
     );
   }
 }
+
+@Preview(name: 'Cocina — Home', group: 'Kitchen', wrapper: previewWrapper, theme: previewTheme)
+Widget kitchenMainScreenPreview() => const KitchenMainScreen();
+
