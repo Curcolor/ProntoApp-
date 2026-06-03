@@ -11,6 +11,8 @@ import 'package:prontoapp/data/providers/inventory_provider.dart';
 import 'package:prontoapp/data/repositories/order_repository.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
 import 'package:prontoapp/data/providers/notification_provider.dart';
+import 'package:prontoapp/data/repositories/negocio_repository.dart';
+import 'package:prontoapp/data/repositories/usuario_repository.dart';
 
 class AppScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -32,6 +34,8 @@ void main() async {
   await AuthService().initialize(apiClient);
   final inventoryRepo = InventoryRepository(apiClient, prefs);
   final orderRepo = OrderRepository(apiClient, prefs);
+  final negocioRepo = NegocioRepository(apiClient);
+  final usuarioRepo = UsuarioRepository(apiClient);
 
   runApp(
     MultiProvider(
@@ -46,6 +50,8 @@ void main() async {
             return orderProvider;
           },
         ),
+        Provider<NegocioRepository>.value(value: negocioRepo),
+        Provider<UsuarioRepository>.value(value: usuarioRepo),
       ],
       child: const ProntoApp(),
     ),
