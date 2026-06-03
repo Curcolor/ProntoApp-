@@ -9,7 +9,7 @@ class OrderProvider extends ChangeNotifier {
   final OrderRepository? _repositorio;
   List<OrderModel> _pedidos = [];
   bool _estaConectado = false;
-  bool _cargando = false;
+  final bool _cargando = false;
   Timer? _timer;
   void Function(NotificationModel)? onNewNotification;
   static const Duration _intervaloPoll = Duration(seconds: 5);
