@@ -50,7 +50,9 @@ type Producto @table(name: "producto", key: ["id"]) {
 type Cliente @table(name: "cliente", key: ["id"]) {
   id: String!
   nombre: String!
-  numeroWhatsapp: String! @unique @col(name: "numero_whatsapp")
+  # Sin @unique global: en multi-tenant la unicidad es (negocio_id, numero_whatsapp).
+  # El índice compuesto se crea en la migración SQL de prod; SQLAlchemy lo enforce en local/test.
+  numeroWhatsapp: String! @col(name: "numero_whatsapp")
   email: String
   negocio: Negocio!
 }
