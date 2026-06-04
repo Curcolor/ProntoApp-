@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:prontoapp/data/repositories/negocio_repository.dart';
 
 class EditarPerfilModals {
   static void showEditarCorreo(BuildContext context) {
@@ -814,10 +816,8 @@ class _EditarNegocioSheet extends StatefulWidget {
 }
 
 class _EditarNegocioSheetState extends State<_EditarNegocioSheet> {
-  final _nombreCtrl = TextEditingController(text: 'Panadería El Trigo Dorado');
-  final _descripCtrl = TextEditingController(
-    text: 'Panadería artesanal con los mejores productos de la región, abiertos desde 1998.',
-  );
+  final _nombreCtrl = TextEditingController();
+  final _descripCtrl = TextEditingController();
 
   String _tipoNegocio = '🥐 Panadería';
   final List<String> _tiposNegocio = [
@@ -832,6 +832,49 @@ class _EditarNegocioSheetState extends State<_EditarNegocioSheet> {
   /// Días de la semana: índice 0=L, 1=Ma, 2=Mi, 3=J, 4=V, 5=S, 6=D
   final List<bool> _diasActivos = [true, true, true, true, true, true, false];
   final List<String> _diasLabel = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'];
+
+  bool _guardando = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarNegocio();
+  }
+
+  Future<void> _cargarNegocio() async {
+    try {
+      final n = await context.read<NegocioRepository>().fetchNegocio();
+      if (!mounted) return;
+      setState(() {
+        _nombreCtrl.text = n.nombre;
+        if (n.tipoNegocio != null && _tiposNegocio.contains(n.tipoNegocio)) {
+          _tipoNegocio = n.tipoNegocio!;
+        }
+      });
+    } catch (_) {
+      // Offline/preview: deja los valores por defecto.
+    }
+  }
+
+  Future<void> _guardar() async {
+    final repo = context.read<NegocioRepository>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    setState(() => _guardando = true);
+    try {
+      await repo.updateNegocio({
+        'nombre': _nombreCtrl.text.trim(),
+        'tipoNegocio': _tipoNegocio,
+      });
+      navigator.pop();
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Negocio actualizado')));
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('No se pudo guardar')));
+      if (mounted) setState(() => _guardando = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -1008,9 +1051,9 @@ class _EditarNegocioSheetState extends State<_EditarNegocioSheet> {
                       boxShadow: const [BoxShadow(color: Color(0x5925D366), offset: Offset(0, 4), blurRadius: 14)],
                     ),
                     child: ElevatedButton.icon(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: _guardando ? null : _guardar,
                       icon: const FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 15, color: Colors.white),
-                      label: Text('Guardar', style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+                      label: Text(_guardando ? 'Guardando...' : 'Guardar', style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
