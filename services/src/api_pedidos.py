@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from .db import SessionLocal
-from . import crud
+from . import auth, crud
 
 load_dotenv()
 
@@ -151,7 +151,7 @@ def auth_login(body: LoginIn, db: Session = Depends(get_db)):
     user = crud.login(db, body.email, body.password)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
-    return user
+    return {**user, "token": auth.crear_token(user)}
 
 
 class RegistroIn(BaseModel):
@@ -165,9 +165,10 @@ class RegistroIn(BaseModel):
 @app.post("/registro", status_code=status.HTTP_201_CREATED)
 def registro_endpoint(body: RegistroIn, db: Session = Depends(get_db)):
     try:
-        return crud.registrar(db, body.model_dump())
+        user = crud.registrar(db, body.model_dump())
     except crud.EmailDuplicadoError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El email ya está registrado")
+    return {**user, "token": auth.crear_token(user)}
 
 
 @app.get("/negocio")
