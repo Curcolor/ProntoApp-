@@ -41,16 +41,14 @@ def test_token_invalido_da_401(db):
 
 
 def test_sin_auth_con_secreto_seteado_da_401(db, monkeypatch):
-    from src import api_pedidos
-    monkeypatch.setattr(api_pedidos, "SECRETO", "s3cr3t")
+    monkeypatch.setattr("src.infrastructure.web.deps.SECRETO", "s3cr3t")
     c = _client(db)
     r = c.get("/inventario", headers={"X-Negocio-Id": "A"})
     assert r.status_code == 401
 
 
 def test_ruta_servicio_con_secreto_correcto(db, monkeypatch):
-    from src import api_pedidos
-    monkeypatch.setattr(api_pedidos, "SECRETO", "s3cr3t")
+    monkeypatch.setattr("src.infrastructure.web.deps.SECRETO", "s3cr3t")
     c = _client(db)
     hdr = {"X-Secret": "s3cr3t", "X-Negocio-Id": "A"}
     c.post("/categorias", json={"id": "c1", "name": "C", "emoji": "x"}, headers=hdr)

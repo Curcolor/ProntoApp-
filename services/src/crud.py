@@ -2,7 +2,7 @@
 la versión basada en archivos, para no romper Flutter ni el bot."""
 import uuid
 from typing import Optional
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from . import models
@@ -15,20 +15,8 @@ def _nuevo_id(prefijo: str) -> str:
 
 
 # ─── Serialización (contrato) ─────────────────────────────────────────────────
-
-def _producto_a_dict(p: "models.Producto") -> dict:
-    return {
-        "id": p.id, "name": p.name, "categoryId": p.categoria_id,
-        "price": p.price, "stock": p.stock, "minStock": p.min_stock,
-        "prepTimeMinutes": p.prep_time_minutes, "isAvailable": p.is_available,
-        "description": p.description, "aiContext": p.ai_context,
-        "aiActive": p.ai_active, "imageUrl": p.image_url, "emoji": p.emoji,
-    }
-
-
-def _categoria_a_dict(c: "models.Categoria") -> dict:
-    return {"id": c.id, "name": c.name, "emoji": c.emoji}
-
+# Los serializadores de inventario (producto/categoría) viven ahora en
+# src/infrastructure/web/presenters.py; aquí solo quedan los de pedidos.
 
 def _limpiar_telefono(telefono: str) -> str:
     """tg:chat_id|telefono_real -> telefono_real (igual que la versión JSON)."""
@@ -55,48 +43,48 @@ def _pedido_a_dict(p: "models.Pedido") -> dict:
     }
 
 
-# ─── Inventario ───────────────────────────────────────────────────────────────
+# ─── Inventario (fachadas finas sobre los casos de uso hexagonales) ───────────
+# Estas funciones conservan su firma y su retorno de dict para no romper a quien
+# importe `crud.*`. La lógica vive ahora en src/application/inventario.py.
+
+def _cat_repo(db: Session):
+    from src.infrastructure.persistence.repositories import SqlAlchemyCategoriaRepository
+    return SqlAlchemyCategoriaRepository(db)
+
+
+def _prod_repo(db: Session):
+    from src.infrastructure.persistence.repositories import SqlAlchemyProductoRepository
+    return SqlAlchemyProductoRepository(db)
+
+
+def _categoria_a_dict_dom(c) -> dict:
+    from src.infrastructure.web.presenters import categoria_a_dict
+    return categoria_a_dict(c)
+
+
+def _producto_a_dict_dom(p) -> dict:
+    from src.infrastructure.web.presenters import producto_a_dict
+    return producto_a_dict(p)
+
 
 def leer_inventario(db: Session, negocio_id: str) -> dict:
-    cats = db.scalars(select(models.Categoria).where(models.Categoria.negocio_id == negocio_id)).all()
-    prods = db.scalars(select(models.Producto).where(models.Producto.negocio_id == negocio_id)).all()
+    from src.application.inventario import LeerInventario
+    cats, prods = LeerInventario(_cat_repo(db), _prod_repo(db)).execute(negocio_id)
     return {
-        "categorias": [_categoria_a_dict(c) for c in cats],
-        "productos": [_producto_a_dict(p) for p in prods],
+        "categorias": [_categoria_a_dict_dom(c) for c in cats],
+        "productos": [_producto_a_dict_dom(p) for p in prods],
     }
 
 
 def reemplazar_inventario(db: Session, categorias: list[dict], productos: list[dict], negocio_id: str) -> None:
     """Reemplaza todo el inventario (PUT /inventario)."""
-    db.query(models.Producto).filter(models.Producto.negocio_id == negocio_id).delete()
-    db.query(models.Categoria).filter(models.Categoria.negocio_id == negocio_id).delete()
-    db.flush()
-    for c in categorias:
-        db.add(models.Categoria(id=c["id"], name=c["name"], emoji=c.get("emoji", ""), negocio_id=negocio_id))
-    db.flush()
-    for p in productos:
-        db.add(models.Producto(
-            id=p["id"], categoria_id=p["categoryId"], name=p["name"],
-            price=p["price"], stock=p.get("stock", 0), min_stock=p.get("minStock", 0),
-            prep_time_minutes=p.get("prepTimeMinutes", 0),
-            is_available=p.get("isAvailable", True), description=p.get("description", ""),
-            ai_context=p.get("aiContext", ""), ai_active=p.get("aiActive", True),
-            image_url=p.get("imageUrl"), emoji=p.get("emoji", "📦"), negocio_id=negocio_id,
-        ))
-    db.commit()
+    from src.application.inventario import ReemplazarInventario
+    ReemplazarInventario(_cat_repo(db), _prod_repo(db)).execute(categorias, productos, negocio_id)
 
 
 def descontar_stock(db: Session, items: list[dict], negocio_id: str) -> None:
     """Descuenta stock por nombre de producto (case-insensitive), sin bajar de 0."""
-    for item in items:
-        nombre = str(item.get("nombre", "")).lower()
-        prod = db.scalars(select(models.Producto).where(
-            models.Producto.negocio_id == negocio_id,
-            func.lower(models.Producto.name) == nombre,
-        )).first()
-        if prod is not None:
-            prod.stock = max(0, prod.stock - int(item.get("cantidad", 0)))
-    db.commit()
+    _prod_repo(db).descontar_stock(items, negocio_id)
 
 
 # ─── Clientes ─────────────────────────────────────────────────────────────────
@@ -171,9 +159,6 @@ def _usuario_a_dict(u: "models.Usuario") -> dict:
             "telefono": u.telefono, "rol": u.rol, "negocioId": u.negocio_id}
 
 
-class EmailDuplicadoError(Exception):
-    """El email del usuario ya está registrado."""
-
 
 def crear_usuario(db: Session, datos: dict, negocio_id: str) -> dict:
     user = models.Usuario(
@@ -232,88 +217,58 @@ def leer_negocio(db: Session, negocio_id: str) -> Optional[dict]:
     }
 
 
-class CategoriaConProductosError(Exception):
-    """Se intentó borrar una categoría que aún tiene productos."""
+from src.domain.errors import CategoriaConProductosError, EmailDuplicadoError  # noqa: E402  (alias de errores de dominio)
 
 
 def crear_categoria(db: Session, datos: dict, negocio_id: str) -> dict:
-    cat = models.Categoria(id=datos.get("id") or _nuevo_id("cat"),
-                           name=datos["name"], emoji=datos.get("emoji", ""), negocio_id=negocio_id)
-    db.add(cat)
-    db.commit()
-    return _categoria_a_dict(cat)
+    from src.application.inventario import CrearCategoria
+    cat = CrearCategoria(_cat_repo(db)).execute(datos, negocio_id)
+    return _categoria_a_dict_dom(cat)
 
 
 def actualizar_categoria(db: Session, cat_id: str, datos: dict, negocio_id: str) -> Optional[dict]:
-    cat = db.scalars(select(models.Categoria).where(
-        models.Categoria.id == cat_id, models.Categoria.negocio_id == negocio_id)).first()
-    if cat is None:
+    from src.application.inventario import ActualizarCategoria
+    from src.domain.errors import NoEncontradoError
+    try:
+        cat = ActualizarCategoria(_cat_repo(db)).execute(cat_id, datos, negocio_id)
+    except NoEncontradoError:
         return None
-    if "name" in datos:
-        cat.name = datos["name"]
-    if "emoji" in datos:
-        cat.emoji = datos["emoji"]
-    db.commit()
-    return _categoria_a_dict(cat)
+    return _categoria_a_dict_dom(cat)
 
 
 def eliminar_categoria(db: Session, cat_id: str, negocio_id: str) -> bool:
-    cat = db.scalars(select(models.Categoria).where(
-        models.Categoria.id == cat_id, models.Categoria.negocio_id == negocio_id)).first()
-    if cat is None:
+    from src.application.inventario import EliminarCategoria
+    from src.domain.errors import NoEncontradoError
+    try:
+        EliminarCategoria(_cat_repo(db), _prod_repo(db)).execute(cat_id, negocio_id)
+    except NoEncontradoError:
         return False
-    tiene = db.scalars(select(models.Producto).where(
-        models.Producto.categoria_id == cat_id, models.Producto.negocio_id == negocio_id)).first()
-    if tiene is not None:
-        raise CategoriaConProductosError(cat_id)
-    db.delete(cat)
-    db.commit()
     return True
 
 
 def crear_producto(db: Session, datos: dict, negocio_id: str) -> dict:
-    prod = models.Producto(
-        id=datos.get("id") or _nuevo_id("prod"),
-        categoria_id=datos["categoryId"], name=datos["name"], price=datos["price"],
-        stock=datos.get("stock", 0), min_stock=datos.get("minStock", 0),
-        prep_time_minutes=datos.get("prepTimeMinutes", 0),
-        is_available=datos.get("isAvailable", True), description=datos.get("description", ""),
-        ai_context=datos.get("aiContext", ""), ai_active=datos.get("aiActive", True),
-        image_url=datos.get("imageUrl"), emoji=datos.get("emoji", "📦"), negocio_id=negocio_id,
-    )
-    db.add(prod)
-    db.commit()
-    return _producto_a_dict(prod)
-
-
-_CAMPOS_PRODUCTO = {
-    "categoryId": "categoria_id", "name": "name", "price": "price", "stock": "stock",
-    "minStock": "min_stock", "prepTimeMinutes": "prep_time_minutes",
-    "isAvailable": "is_available", "description": "description",
-    "aiContext": "ai_context", "aiActive": "ai_active", "imageUrl": "image_url",
-    "emoji": "emoji",
-}
+    from src.application.inventario import CrearProducto
+    prod = CrearProducto(_prod_repo(db)).execute(datos, negocio_id)
+    return _producto_a_dict_dom(prod)
 
 
 def actualizar_producto(db: Session, prod_id: str, datos: dict, negocio_id: str) -> Optional[dict]:
-    prod = db.scalars(select(models.Producto).where(
-        models.Producto.id == prod_id, models.Producto.negocio_id == negocio_id)).first()
-    if prod is None:
+    from src.application.inventario import ActualizarProducto
+    from src.domain.errors import NoEncontradoError
+    try:
+        prod = ActualizarProducto(_prod_repo(db)).execute(prod_id, datos, negocio_id)
+    except NoEncontradoError:
         return None
-    for clave_json, attr in _CAMPOS_PRODUCTO.items():
-        if clave_json in datos:
-            setattr(prod, attr, datos[clave_json])
-    db.commit()
-    return _producto_a_dict(prod)
+    return _producto_a_dict_dom(prod)
 
 
 def eliminar_producto(db: Session, prod_id: str, negocio_id: str) -> bool:
-    prod = db.scalars(select(models.Producto).where(
-        models.Producto.id == prod_id, models.Producto.negocio_id == negocio_id)).first()
-    if prod is None:
+    from src.application.inventario import EliminarProducto
+    from src.domain.errors import NoEncontradoError
+    try:
+        EliminarProducto(_prod_repo(db)).execute(prod_id, negocio_id)
+    except NoEncontradoError:
         return False
-    db.delete(prod)
-    db.commit()
     return True
 
 
