@@ -200,7 +200,11 @@ class SqlAlchemyClienteRepository:
                 numero_whatsapp=numero_whatsapp, negocio_id=negocio_id,
             )
             self._db.add(cliente)
-            self._db.flush()
+        elif nombre and nombre not in ("Cliente", "Cliente Telegram") and cliente.nombre != nombre:
+            # No dejar el nombre pegado del primer pedido: usar el último que dio
+            # el cliente en el chat (solo si es un nombre real, no el genérico).
+            cliente.nombre = nombre
+        self._db.flush()
         return _a_cliente(cliente)
 
 

@@ -56,6 +56,20 @@ def test_listar_pedidos_limpia_telefono(db):
     assert d["items"][0]["nombre"] == "Café"
 
 
+def test_upsert_actualiza_nombre_del_cliente(db):
+    _crear_pedido(db, _payload())  # cliente "Ana"
+    _crear_pedido(db, {**_payload(), "cliente": "Ana María"})  # mismo telefono, nuevo nombre
+    clientes = db.query(models.Cliente).all()
+    assert len(clientes) == 1                  # no duplica el cliente
+    assert clientes[0].nombre == "Ana María"   # usa el último nombre dado en el chat
+
+
+def test_upsert_no_pisa_nombre_real_con_generico(db):
+    _crear_pedido(db, {**_payload(), "cliente": "Ana María"})
+    _crear_pedido(db, {**_payload(), "cliente": "Cliente"})  # genérico no debe pisar
+    assert db.query(models.Cliente).one().nombre == "Ana María"
+
+
 def test_actualizar_estado(db):
     pedido = _crear_pedido(db)
     actualizado = SqlAlchemyPedidoRepository(db).cambiar_estado(pedido.id, "listo", "main")

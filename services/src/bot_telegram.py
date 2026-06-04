@@ -183,7 +183,7 @@ Reglas importantes:
 
 # ─── Procesamiento con DeepSeek ───────────────────────────────────────────────
 
-def _procesar_con_deepseek(chat_id: int, texto_usuario: str, nombre_usuario: str) -> str:
+def _procesar_con_deepseek(chat_id: int, texto_usuario: str) -> str:
     """
     Envía el mensaje al modelo DeepSeek y devuelve la respuesta.
     Mantiene el historial de conversación por chat_id.
@@ -338,7 +338,7 @@ def manejar_mensaje(update: Update, context: CallbackContext) -> None:
     # Enviar "escribiendo..." mientras procesa
     context.bot.send_chat_action(chat_id=chat_id, action="typing")
 
-    respuesta = _procesar_con_deepseek(chat_id, texto, nombre)
+    respuesta = _procesar_con_deepseek(chat_id, texto)
 
     # Detectar si la respuesta contiene un pedido confirmado
     pedido = _extraer_pedido_confirmado(respuesta)
