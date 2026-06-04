@@ -34,8 +34,11 @@ def crear_token(user: dict) -> str:
 
 
 def decodificar_token(token: str) -> dict:
-    """Valida firma + expiración y devuelve los claims. Lanza TokenInvalidoError si no."""
+    """Valida firma + expiración + claims requeridos; devuelve los claims. Lanza TokenInvalidoError si no."""
     try:
-        return jwt.decode(token, _secret(), algorithms=[_ALG])
+        return jwt.decode(
+            token, _secret(), algorithms=[_ALG],
+            options={"require": ["exp", "negocio_id"]},
+        )
     except jwt.PyJWTError as e:
         raise TokenInvalidoError(str(e))

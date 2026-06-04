@@ -34,3 +34,9 @@ def test_secret_corto_o_ausente_falla(monkeypatch):
     monkeypatch.setenv("JWT_SECRET", "corta")
     with pytest.raises(RuntimeError):
         auth.crear_token(USER)
+
+
+def test_token_sin_exp_es_rechazado():
+    tok = jwt.encode({"sub": "x", "negocio_id": "N1"}, os.environ["JWT_SECRET"], algorithm="HS256")
+    with pytest.raises(auth.TokenInvalidoError):
+        auth.decodificar_token(tok)
