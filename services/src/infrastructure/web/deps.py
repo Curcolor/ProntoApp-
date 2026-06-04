@@ -9,7 +9,7 @@ from typing import Optional
 from fastapi import Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.auth import TokenInvalidoError, decodificar_token
+from src.infrastructure.security.jwt import TokenInvalidoError
 from src.db import SessionLocal
 from src.application.inventario import (
     ActualizarCategoria, ActualizarProducto, CrearCategoria, CrearProducto,
@@ -36,7 +36,6 @@ from src.infrastructure.persistence.repositories import (
     SqlAlchemyPlantillaIaRepository, SqlAlchemyProductoRepository,
     SqlAlchemyUsuarioRepository,
 )
-from src.infrastructure.security.jwt_service import JwtTokenService
 from src.infrastructure.security.password import BcryptPasswordHasher
 
 SECRETO = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
@@ -50,15 +49,21 @@ def get_db():
         db.close()
 
 
+def get_token_service() -> TokenService:
+    from src.infrastructure.security.jwt_service import JwtTokenService
+    return JwtTokenService()
+
+
 def requerir_tenant(
     authorization: Optional[str] = Header(default=None),
     x_secret: Optional[str] = Header(default=None),
     x_negocio_id: Optional[str] = Header(default=None),
+    token_service: TokenService = Depends(get_token_service),
 ) -> str:
     """Resuelve el negocio del request. App: del JWT. Bot/servicio: del header."""
     if authorization and authorization.lower().startswith("bearer "):
         try:
-            claims = decodificar_token(authorization.split(" ", 1)[1].strip())
+            claims = token_service.verificar(authorization.split(" ", 1)[1].strip())
         except TokenInvalidoError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido o expirado")
         negocio = claims.get("negocio_id")
@@ -167,10 +172,6 @@ def _usuario_repo(db: Session = Depends(get_db)) -> UsuarioRepository:
 
 def _negocio_repo(db: Session = Depends(get_db)) -> NegocioRepository:
     return SqlAlchemyNegocioRepository(db)
-
-
-def get_token_service() -> TokenService:
-    return JwtTokenService()
 
 
 def get_password_hasher() -> PasswordHasher:

@@ -52,6 +52,7 @@ class PasswordHasher(Protocol):
 
 class TokenService(Protocol):
     def emitir(self, usuario: Usuario) -> str: ...
+    def verificar(self, token: str) -> dict: ...
 
 
 class UsuarioRepository(Protocol):

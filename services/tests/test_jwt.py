@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 import jwt
 import pytest
 
-from src import auth
+from src.infrastructure.security import jwt as auth
 
 USER = {"id": "U1", "negocioId": "N1", "rol": "gerente", "email": "g@p.com"}
 

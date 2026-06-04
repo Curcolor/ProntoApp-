@@ -21,7 +21,7 @@ def _client(db):
 
 
 def test_login_ok_devuelve_token_y_fallo(db):
-    from src import auth
+    from src.infrastructure.security import jwt as auth
     CrearUsuario(SqlAlchemyUsuarioRepository(db), BcryptPasswordHasher()).execute(
         {"id": "1", "nombre": "Carlos", "email": "g@p.com",
          "password": "password123", "rol": "gerente"},
@@ -39,7 +39,7 @@ def test_login_ok_devuelve_token_y_fallo(db):
 
 
 def test_registro_devuelve_token(db):
-    from src import auth
+    from src.infrastructure.security import jwt as auth
     client = _client(db)
     r = client.post("/registro", json={"nombre": "Ana", "email": "a@p.com",
                                        "password": "x", "businessName": "Café"})
