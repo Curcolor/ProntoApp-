@@ -284,6 +284,9 @@ def _a_usuario(u: "models.Usuario") -> Usuario:
     )
 
 
+_CAMPOS_USUARIO = {"nombre": "nombre", "telefono": "telefono", "rol": "rol"}
+
+
 class SqlAlchemyUsuarioRepository:
     def __init__(self, db: Session):
         self._db = db
@@ -313,6 +316,36 @@ class SqlAlchemyUsuarioRepository:
             self._db.rollback()
             raise EmailDuplicadoError(datos["email"])
         return _a_usuario(user)
+
+    def listar(self, negocio_id: str) -> list[Usuario]:
+        rows = self._db.scalars(
+            select(models.Usuario).where(models.Usuario.negocio_id == negocio_id)
+        ).all()
+        return [_a_usuario(u) for u in rows]
+
+    def actualizar(self, usuario_id: str, datos: dict, negocio_id: str) -> Usuario | None:
+        user = self._db.scalars(select(models.Usuario).where(
+            models.Usuario.id == usuario_id,
+            models.Usuario.negocio_id == negocio_id,
+        )).first()
+        if user is None:
+            return None
+        for clave_json, attr in _CAMPOS_USUARIO.items():
+            if clave_json in datos:
+                setattr(user, attr, datos[clave_json])
+        self._db.commit()
+        return _a_usuario(user)
+
+    def eliminar(self, usuario_id: str, negocio_id: str) -> bool:
+        user = self._db.scalars(select(models.Usuario).where(
+            models.Usuario.id == usuario_id,
+            models.Usuario.negocio_id == negocio_id,
+        )).first()
+        if user is None:
+            return False
+        self._db.delete(user)
+        self._db.commit()
+        return True
 
 
 class SqlAlchemyNegocioRepository:

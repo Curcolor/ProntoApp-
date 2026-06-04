@@ -19,10 +19,13 @@ from src.application.pedidos import (
     ActualizarEstadoPedido, CrearPedido, EliminarPedido, ListarPedidos,
 )
 from src.domain.ports import (
-    CategoriaRepository, ClienteRepository, PedidoRepository, ProductoRepository,
-    TokenService,
+    CategoriaRepository, ClienteRepository, PedidoRepository, PasswordHasher,
+    ProductoRepository, TokenService, UsuarioRepository,
 )
 from src.application.auth import Login, RegistrarNegocio
+from src.application.usuarios import (
+    ActualizarUsuario, CrearUsuario, EliminarUsuario, ListarUsuarios,
+)
 from src.infrastructure.notifications.telegram import TelegramNotificador
 from src.infrastructure.persistence.repositories import (
     SqlAlchemyCategoriaRepository, SqlAlchemyClienteRepository,
@@ -154,17 +157,54 @@ def eliminar_pedido_uc(
 
 # ─── Auth ─────────────────────────────────────────────────────────────────────
 
+def _usuario_repo(db: Session = Depends(get_db)) -> UsuarioRepository:
+    return SqlAlchemyUsuarioRepository(db)
+
+
+def _negocio_repo(db: Session = Depends(get_db)) -> SqlAlchemyNegocioRepository:
+    return SqlAlchemyNegocioRepository(db)
+
+
 def get_token_service() -> TokenService:
     return JwtTokenService()
 
 
-def login_uc(db: Session = Depends(get_db)) -> Login:
-    return Login(SqlAlchemyUsuarioRepository(db), BcryptPasswordHasher())
+def get_password_hasher() -> PasswordHasher:
+    return BcryptPasswordHasher()
 
 
-def registrar_negocio_uc(db: Session = Depends(get_db)) -> RegistrarNegocio:
-    return RegistrarNegocio(
-        SqlAlchemyNegocioRepository(db),
-        SqlAlchemyUsuarioRepository(db),
-        BcryptPasswordHasher(),
-    )
+def login_uc(
+    usuario_repo: UsuarioRepository = Depends(_usuario_repo),
+    hasher: PasswordHasher = Depends(get_password_hasher),
+) -> Login:
+    return Login(usuario_repo, hasher)
+
+
+def registrar_negocio_uc(
+    negocio_repo: SqlAlchemyNegocioRepository = Depends(_negocio_repo),
+    usuario_repo: UsuarioRepository = Depends(_usuario_repo),
+    hasher: PasswordHasher = Depends(get_password_hasher),
+) -> RegistrarNegocio:
+    return RegistrarNegocio(negocio_repo, usuario_repo, hasher)
+
+
+# ─── Usuarios ─────────────────────────────────────────────────────────────────
+
+
+def listar_usuarios_uc(repo: UsuarioRepository = Depends(_usuario_repo)) -> ListarUsuarios:
+    return ListarUsuarios(repo)
+
+
+def crear_usuario_uc(
+    repo: UsuarioRepository = Depends(_usuario_repo),
+    hasher: PasswordHasher = Depends(get_password_hasher),
+) -> CrearUsuario:
+    return CrearUsuario(repo, hasher)
+
+
+def actualizar_usuario_uc(repo: UsuarioRepository = Depends(_usuario_repo)) -> ActualizarUsuario:
+    return ActualizarUsuario(repo)
+
+
+def eliminar_usuario_uc(repo: UsuarioRepository = Depends(_usuario_repo)) -> EliminarUsuario:
+    return EliminarUsuario(repo)

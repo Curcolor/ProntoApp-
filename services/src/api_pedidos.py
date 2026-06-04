@@ -12,6 +12,7 @@ from .infrastructure.web.deps import get_db, requerir_tenant
 from .infrastructure.web.routers import inventario as inventario_router
 from .infrastructure.web.routers import pedidos as pedidos_router
 from .infrastructure.web.routers import auth as auth_router
+from .infrastructure.web.routers import usuarios as usuarios_router
 
 load_dotenv()
 
@@ -22,6 +23,7 @@ app.add_middleware(
 app.include_router(inventario_router.router)
 app.include_router(pedidos_router.router)
 app.include_router(auth_router.router)
+app.include_router(usuarios_router.router)
 
 
 def get_negocio_id(x_negocio_id: Optional[str] = Header(default=None)) -> str:
@@ -42,26 +44,6 @@ def obtener_negocio(db: Session = Depends(get_db), negocio_id: str = Depends(req
     return crud.leer_negocio(db, negocio_id)
 
 
-class UsuarioIn(BaseModel):
-    nombre: str
-    email: str
-    password: str
-    rol: str
-    telefono: Optional[str] = None
-
-
-@app.post("/usuarios", status_code=status.HTTP_201_CREATED)
-def crear_usuario_endpoint(body: UsuarioIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    try:
-        return crud.crear_usuario(db, body.model_dump(), negocio_id)
-    except crud.EmailDuplicadoError:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El email ya está registrado")
-
-
-@app.get("/usuarios")
-def listar_usuarios_endpoint(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    return crud.listar_usuarios(db, negocio_id)
-
 
 class NegocioIn(BaseModel):
     tipoNegocio: Optional[str] = None
@@ -74,31 +56,11 @@ class NegocioIn(BaseModel):
     numeroWhatsapp: Optional[str] = None
 
 
-class UsuarioPatch(BaseModel):
-    nombre: Optional[str] = None
-    telefono: Optional[str] = None
-    rol: Optional[str] = None
-
-
 @app.put("/negocio")
 def actualizar_negocio_endpoint(body: NegocioIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     datos = {k: v for k, v in body.model_dump().items() if v is not None}
     return crud.actualizar_negocio(db, datos, negocio_id)
 
-
-@app.patch("/usuarios/{usuario_id}")
-def actualizar_usuario_endpoint(usuario_id: str, body: UsuarioPatch, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    datos = {k: v for k, v in body.model_dump().items() if v is not None}
-    actualizado = crud.actualizar_usuario(db, usuario_id, datos, negocio_id)
-    if actualizado is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Usuario {usuario_id} no encontrado")
-    return actualizado
-
-
-@app.delete("/usuarios/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
-def eliminar_usuario_endpoint(usuario_id: str, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    if not crud.eliminar_usuario(db, usuario_id, negocio_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Usuario {usuario_id} no encontrado")
 
 
 class PlantillaIaIn(BaseModel):

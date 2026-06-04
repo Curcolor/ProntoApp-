@@ -57,6 +57,9 @@ class TokenService(Protocol):
 class UsuarioRepository(Protocol):
     def por_email(self, email: str) -> tuple[Usuario, str] | None: ...  # (usuario, contrasena_hash)
     def crear(self, datos: dict, contrasena_hash: str, negocio_id: str) -> Usuario: ...  # raise EmailDuplicadoError on conflict
+    def listar(self, negocio_id: str) -> list[Usuario]: ...
+    def actualizar(self, usuario_id: str, datos: dict, negocio_id: str) -> Usuario | None: ...
+    def eliminar(self, usuario_id: str, negocio_id: str) -> bool: ...
 
 
 class NegocioRepository(Protocol):

@@ -3,7 +3,6 @@ la versión basada en archivos, para no romper Flutter ni el bot."""
 import uuid
 from typing import Optional
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from . import models
 
@@ -109,28 +108,17 @@ def eliminar_pedido(db: Session, pedido_id: str, negocio_id: str) -> bool:
     return _pedido_repo_inst(db).eliminar(pedido_id, negocio_id)
 
 
-from passlib.hash import bcrypt
-
-
-def _usuario_a_dict(u: "models.Usuario") -> dict:
-    return {"id": u.id, "nombre": u.nombre, "email": u.email,
-            "telefono": u.telefono, "rol": u.rol, "negocioId": u.negocio_id}
-
+def _usuario_repo_inst(db: Session):
+    from src.infrastructure.persistence.repositories import SqlAlchemyUsuarioRepository
+    return SqlAlchemyUsuarioRepository(db)
 
 
 def crear_usuario(db: Session, datos: dict, negocio_id: str) -> dict:
-    user = models.Usuario(
-        id=datos.get("id") or _nuevo_id("U"), nombre=datos["nombre"],
-        email=datos["email"], contrasena_hash=bcrypt.hash(datos["password"]),
-        telefono=datos.get("telefono"), rol=datos["rol"], negocio_id=negocio_id,
-    )
-    db.add(user)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise EmailDuplicadoError(datos["email"])
-    return _usuario_a_dict(user)
+    from src.application.usuarios import CrearUsuario
+    from src.infrastructure.security.password import BcryptPasswordHasher
+    from src.infrastructure.web.presenters import usuario_a_dict as _ua_dict
+    usuario = CrearUsuario(_usuario_repo_inst(db), BcryptPasswordHasher()).execute(datos, negocio_id)
+    return _ua_dict(usuario)
 
 
 def registrar(db: Session, datos: dict) -> dict:
@@ -149,8 +137,10 @@ def registrar(db: Session, datos: dict) -> dict:
 
 
 def listar_usuarios(db: Session, negocio_id: str) -> list[dict]:
-    return [_usuario_a_dict(u) for u in db.scalars(
-        select(models.Usuario).where(models.Usuario.negocio_id == negocio_id)).all()]
+    from src.application.usuarios import ListarUsuarios
+    from src.infrastructure.web.presenters import usuario_a_dict as _ua_dict
+    usuarios = ListarUsuarios(_usuario_repo_inst(db)).execute(negocio_id)
+    return [_ua_dict(u) for u in usuarios]
 
 
 def login(db: Session, email: str, password: str) -> Optional[dict]:
@@ -251,28 +241,24 @@ def actualizar_negocio(db: Session, datos: dict, negocio_id: str) -> dict:
     return leer_negocio(db, negocio_id)
 
 
-_CAMPOS_USUARIO = {"nombre": "nombre", "telefono": "telefono", "rol": "rol"}
-
-
 def actualizar_usuario(db: Session, usuario_id: str, datos: dict, negocio_id: str) -> Optional[dict]:
-    user = db.scalars(select(models.Usuario).where(
-        models.Usuario.id == usuario_id, models.Usuario.negocio_id == negocio_id)).first()
-    if user is None:
+    from src.application.usuarios import ActualizarUsuario
+    from src.domain.errors import NoEncontradoError
+    from src.infrastructure.web.presenters import usuario_a_dict as _ua_dict
+    try:
+        usuario = ActualizarUsuario(_usuario_repo_inst(db)).execute(usuario_id, datos, negocio_id)
+    except NoEncontradoError:
         return None
-    for clave_json, attr in _CAMPOS_USUARIO.items():
-        if clave_json in datos:
-            setattr(user, attr, datos[clave_json])
-    db.commit()
-    return _usuario_a_dict(user)
+    return _ua_dict(usuario)
 
 
 def eliminar_usuario(db: Session, usuario_id: str, negocio_id: str) -> bool:
-    user = db.scalars(select(models.Usuario).where(
-        models.Usuario.id == usuario_id, models.Usuario.negocio_id == negocio_id)).first()
-    if user is None:
+    from src.application.usuarios import EliminarUsuario
+    from src.domain.errors import NoEncontradoError
+    try:
+        EliminarUsuario(_usuario_repo_inst(db)).execute(usuario_id, negocio_id)
+    except NoEncontradoError:
         return False
-    db.delete(user)
-    db.commit()
     return True
 
 
