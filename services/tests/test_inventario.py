@@ -1,5 +1,10 @@
 import pytest
-from src import crud, models
+from src import models
+from src.application.inventario import LeerInventario, ReemplazarInventario
+from src.infrastructure.persistence.repositories import (
+    SqlAlchemyCategoriaRepository,
+    SqlAlchemyProductoRepository,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -10,8 +15,10 @@ def _negocio_main(db):
 
 
 def test_reemplazar_y_leer_inventario(db):
-    crud.reemplazar_inventario(
-        db,
+    ReemplazarInventario(
+        SqlAlchemyCategoriaRepository(db),
+        SqlAlchemyProductoRepository(db),
+    ).execute(
         categorias=[{"id": "cat_1", "name": "Bebidas", "emoji": "☕"}],
         productos=[{
             "id": "prod_1", "name": "Café", "categoryId": "cat_1", "price": 5000,
@@ -21,15 +28,21 @@ def test_reemplazar_y_leer_inventario(db):
         }],
         negocio_id="main",
     )
-    inv = crud.leer_inventario(db, "main")
-    assert inv["categorias"][0]["id"] == "cat_1"
-    assert inv["productos"][0]["categoryId"] == "cat_1"
-    assert inv["productos"][0]["price"] == 5000
+    cats, prods = LeerInventario(
+        SqlAlchemyCategoriaRepository(db),
+        SqlAlchemyProductoRepository(db),
+    ).execute("main")
+    assert cats[0].id == "cat_1"
+    assert prods[0].categoryId == "cat_1"
+    assert prods[0].price == 5000
 
 
 def test_descontar_stock_por_nombre(db):
-    crud.reemplazar_inventario(
-        db, categorias=[{"id": "c", "name": "x", "emoji": "x"}],
+    ReemplazarInventario(
+        SqlAlchemyCategoriaRepository(db),
+        SqlAlchemyProductoRepository(db),
+    ).execute(
+        categorias=[{"id": "c", "name": "x", "emoji": "x"}],
         productos=[{
             "id": "p", "name": "Café", "categoryId": "c", "price": 1,
             "stock": 5, "minStock": 0, "prepTimeMinutes": 0, "isAvailable": True,
@@ -38,5 +51,5 @@ def test_descontar_stock_por_nombre(db):
         }],
         negocio_id="main",
     )
-    crud.descontar_stock(db, [{"nombre": "café", "cantidad": 2}], "main")
+    SqlAlchemyProductoRepository(db).descontar_stock([{"nombre": "café", "cantidad": 2}], "main")
     assert db.get(models.Producto, "p").stock == 3

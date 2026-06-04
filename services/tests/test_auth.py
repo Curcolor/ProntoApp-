@@ -2,6 +2,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src import models
+from src.application.usuarios import CrearUsuario
+from src.infrastructure.persistence.repositories import SqlAlchemyUsuarioRepository
+from src.infrastructure.security.password import BcryptPasswordHasher
 
 
 @pytest.fixture(autouse=True)
@@ -18,9 +21,12 @@ def _client(db):
 
 
 def test_login_ok_devuelve_token_y_fallo(db):
-    from src import auth, crud
-    crud.crear_usuario(db, {"id": "1", "nombre": "Carlos", "email": "g@p.com",
-                            "password": "password123", "rol": "gerente"}, "main")
+    from src import auth
+    CrearUsuario(SqlAlchemyUsuarioRepository(db), BcryptPasswordHasher()).execute(
+        {"id": "1", "nombre": "Carlos", "email": "g@p.com",
+         "password": "password123", "rol": "gerente"},
+        "main",
+    )
     client = _client(db)
     ok = client.post("/auth/login", json={"email": "g@p.com", "password": "password123"})
     assert ok.status_code == 200

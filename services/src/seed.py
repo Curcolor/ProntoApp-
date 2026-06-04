@@ -4,9 +4,10 @@ import json
 from pathlib import Path
 from passlib.hash import bcrypt
 from sqlalchemy.orm import Session
-from . import models, crud
+from . import models
 from .db import SessionLocal
 from .domain.ids import nuevo_id
+from .infrastructure.persistence.repositories import SqlAlchemyClienteRepository
 
 _BASE = Path(__file__).resolve().parent.parent / "data"
 _USUARIOS_DEFAULT = [
@@ -65,7 +66,7 @@ def run(db: Session, inventario_path: str | None = None, pedidos_path: str | Non
     if ped_path.exists():
         pedidos = json.loads(ped_path.read_text(encoding="utf-8"))
         for ped in pedidos:
-            cliente = crud._upsert_cliente(db, ped.get("cliente", "Cliente"), ped.get("telefono", ""), "main")
+            cliente = SqlAlchemyClienteRepository(db).upsert(ped.get("cliente", "Cliente"), ped.get("telefono", ""), "main")
             _upsert(db, models.Pedido(
                 id=ped["id"], cliente_id=cliente.id, total=ped.get("total", 0),
                 estado=ped.get("estado", "recibido"), tipo=ped.get("tipo", "recoger"),

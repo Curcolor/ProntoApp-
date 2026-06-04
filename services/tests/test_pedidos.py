@@ -1,5 +1,13 @@
 import pytest
-from src import crud, models
+from src import models
+from src.application.pedidos import CrearPedido, EliminarPedido, ListarPedidos
+from src.domain.errors import NoEncontradoError
+from src.infrastructure.persistence.repositories import (
+    SqlAlchemyClienteRepository,
+    SqlAlchemyPedidoRepository,
+    SqlAlchemyProductoRepository,
+)
+from src.infrastructure.web.presenters import pedido_a_dict
 
 
 @pytest.fixture(autouse=True)
@@ -17,35 +25,47 @@ def _payload():
     }
 
 
+def _crear_pedido(db, datos=None):
+    return CrearPedido(
+        SqlAlchemyPedidoRepository(db),
+        SqlAlchemyClienteRepository(db),
+        SqlAlchemyProductoRepository(db),
+    ).execute(datos or _payload(), "main")
+
+
 def test_crear_pedido_upsert_cliente_y_detalle(db):
-    pedido = crud.crear_pedido(db, _payload(), "main")
-    assert pedido["id"].startswith("P-")
-    assert pedido["estado"] == "recibido"
+    pedido = _crear_pedido(db)
+    d = pedido_a_dict(pedido)
+    assert d["id"].startswith("P-")
+    assert d["estado"] == "recibido"
     # cliente upsert por numero_whatsapp
     clientes = db.query(models.Cliente).all()
     assert len(clientes) == 1
     # segundo pedido del mismo telefono no duplica cliente
-    crud.crear_pedido(db, _payload(), "main")
+    _crear_pedido(db)
     assert db.query(models.Cliente).count() == 1
     assert db.query(models.DetallePedido).count() == 2
 
 
 def test_listar_pedidos_limpia_telefono(db):
-    crud.crear_pedido(db, _payload(), "main")
-    pedidos = crud.listar_pedidos(db, "main")
-    assert pedidos[0]["telefono"] == "3001234567"
-    assert pedidos[0]["cliente"] == "Ana"
-    assert pedidos[0]["items"][0]["nombre"] == "Café"
+    _crear_pedido(db)
+    pedidos = ListarPedidos(SqlAlchemyPedidoRepository(db)).execute("main")
+    d = pedido_a_dict(pedidos[0])
+    assert d["telefono"] == "3001234567"
+    assert d["cliente"] == "Ana"
+    assert d["items"][0]["nombre"] == "Café"
 
 
 def test_actualizar_estado(db):
-    p = crud.crear_pedido(db, _payload(), "main")
-    ok = crud.actualizar_estado(db, p["id"], "listo", "main")
-    assert ok is not None
-    assert db.get(models.Pedido, p["id"]).estado == "listo"
+    pedido = _crear_pedido(db)
+    actualizado = SqlAlchemyPedidoRepository(db).cambiar_estado(pedido.id, "listo", "main")
+    assert actualizado is not None
+    assert db.get(models.Pedido, pedido.id).estado == "listo"
 
 
 def test_eliminar_pedido_cascade(db):
-    p = crud.crear_pedido(db, _payload(), "main")
-    assert crud.eliminar_pedido(db, p["id"], "main") is True
+    pedido = _crear_pedido(db)
+    # First delete succeeds
+    EliminarPedido(SqlAlchemyPedidoRepository(db)).execute(pedido.id, "main")
+    assert db.get(models.Pedido, pedido.id) is None
     assert db.query(models.DetallePedido).count() == 0
