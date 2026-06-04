@@ -30,7 +30,11 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   const baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:5050');
   const apiSecret = String.fromEnvironment('API_SECRET', defaultValue: '83c58120a0a140ade0282b37ff64731f3fdd3f7dc306be3151ec62e967b43f43');
-  final apiClient = ApiClient(baseUrl: baseUrl, secreto: apiSecret);
+  final apiClient = ApiClient(
+    baseUrl: baseUrl,
+    secreto: apiSecret,
+    negocioId: () => AuthService().currentUser?.negocioId ?? 'main',
+  );
   await AuthService().initialize(apiClient);
   final inventoryRepo = InventoryRepository(apiClient, prefs);
   final orderRepo = OrderRepository(apiClient, prefs);
