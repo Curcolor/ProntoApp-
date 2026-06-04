@@ -20,12 +20,14 @@ type Usuario @table(name: "usuario", key: ["id"]) {
   contrasenaHash: String! @col(name: "contrasena_hash")
   telefono: String
   rol: String!   # gerente | cocinero | repartidor (validado en FastAPI)
+  negocio: Negocio!
 }
 
 type Categoria @table(name: "categoria", key: ["id"]) {
   id: String!
   name: String!
   emoji: String!
+  negocio: Negocio!
 }
 
 type Producto @table(name: "producto", key: ["id"]) {
@@ -42,6 +44,7 @@ type Producto @table(name: "producto", key: ["id"]) {
   aiActive: Boolean! @col(name: "ai_active")
   imageUrl: String @col(name: "image_url")
   emoji: String!
+  negocio: Negocio!
 }
 
 type Cliente @table(name: "cliente", key: ["id"]) {
@@ -49,6 +52,7 @@ type Cliente @table(name: "cliente", key: ["id"]) {
   nombre: String!
   numeroWhatsapp: String! @unique @col(name: "numero_whatsapp")
   email: String
+  negocio: Negocio!
 }
 
 type Pedido @table(name: "pedido", key: ["id"]) {
@@ -62,6 +66,7 @@ type Pedido @table(name: "pedido", key: ["id"]) {
   usuarioAsignado: Usuario
   creadoEn: Timestamp! @col(name: "creado_en") @default(expr: "request.time")
   actualizadoEn: Timestamp! @col(name: "actualizado_en") @default(expr: "request.time")
+  negocio: Negocio!
 }
 
 type DetallePedido @table(name: "detalle_pedido", key: ["id"]) {
@@ -77,4 +82,5 @@ type PlantillaIa @table(name: "plantilla_ia", key: ["id"]) {
   id: String!
   prompt: String!
   contexto: String!
+  negocio: Negocio!
 }

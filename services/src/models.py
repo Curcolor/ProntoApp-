@@ -2,7 +2,7 @@
 Mantener en sync con el .gql (mismos nombres de columna)."""
 from datetime import datetime, timezone
 from sqlalchemy import (
-    Boolean, DateTime, Float, ForeignKey, Integer, String,
+    Boolean, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .db import Base
@@ -29,6 +29,7 @@ class Usuario(Base):
     contrasena_hash: Mapped[str] = mapped_column(String, nullable=False)
     telefono: Mapped[str | None] = mapped_column(String)
     rol: Mapped[str] = mapped_column(String, nullable=False)
+    negocio_id: Mapped[str] = mapped_column(ForeignKey("negocio.id"), nullable=False, default="main")
 
 
 class Categoria(Base):
@@ -36,6 +37,7 @@ class Categoria(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     emoji: Mapped[str] = mapped_column(String, nullable=False)
+    negocio_id: Mapped[str] = mapped_column(ForeignKey("negocio.id"), nullable=False, default="main")
 
 
 class Producto(Base):
@@ -53,6 +55,7 @@ class Producto(Base):
     ai_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     image_url: Mapped[str | None] = mapped_column(String)
     emoji: Mapped[str] = mapped_column(String, nullable=False, default="📦")
+    negocio_id: Mapped[str] = mapped_column(ForeignKey("negocio.id"), nullable=False, default="main")
     categoria: Mapped["Categoria"] = relationship()
 
 
@@ -60,8 +63,10 @@ class Cliente(Base):
     __tablename__ = "cliente"
     id: Mapped[str] = mapped_column(String, primary_key=True)
     nombre: Mapped[str] = mapped_column(String, nullable=False)
-    numero_whatsapp: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    numero_whatsapp: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str | None] = mapped_column(String)
+    negocio_id: Mapped[str] = mapped_column(ForeignKey("negocio.id"), nullable=False, default="main")
+    __table_args__ = (UniqueConstraint("negocio_id", "numero_whatsapp", name="cliente_negocio_whatsapp_uidx"),)
 
 
 class Pedido(Base):
@@ -82,6 +87,7 @@ class Pedido(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+    negocio_id: Mapped[str] = mapped_column(ForeignKey("negocio.id"), nullable=False, default="main")
     cliente: Mapped["Cliente"] = relationship()
     items: Mapped[list["DetallePedido"]] = relationship(
         back_populates="pedido", cascade="all, delete-orphan"
@@ -104,3 +110,4 @@ class PlantillaIa(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True)
     prompt: Mapped[str] = mapped_column(String, nullable=False, default="")
     contexto: Mapped[str] = mapped_column(String, nullable=False, default="[]")
+    negocio_id: Mapped[str] = mapped_column(ForeignKey("negocio.id"), nullable=False, default="main")
