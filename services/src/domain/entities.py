@@ -1,5 +1,7 @@
-"""Entidades de dominio del inventario. Dataclasses puras (sin SQLAlchemy ni
-Pydantic). Los nombres de atributo coinciden con el contrato JSON."""
+"""Entidades de dominio del inventario y pedidos. Dataclasses puras (sin
+SQLAlchemy ni Pydantic). Los nombres de atributo coinciden con el contrato JSON."""
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 
@@ -25,3 +27,33 @@ class Producto:
     aiActive: bool = True
     imageUrl: str | None = None
     emoji: str = "📦"
+
+
+# ─── Pedidos ──────────────────────────────────────────────────────────────────
+
+@dataclass
+class Cliente:
+    id: str
+    nombre: str
+    numeroWhatsapp: str
+    email: str | None = None
+
+
+@dataclass
+class DetallePedido:
+    nombre: str
+    cantidad: int
+    precioUnitario: float
+    productoId: str | None = None
+
+
+@dataclass
+class Pedido:
+    id: str
+    cliente: Cliente
+    items: list[DetallePedido]
+    total: float
+    estado: str
+    tipo: str
+    direccion: str | None
+    creadoEn: object | None  # datetime; el presenter hace .isoformat()

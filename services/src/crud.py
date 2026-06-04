@@ -18,31 +18,6 @@ def _nuevo_id(prefijo: str) -> str:
 # Los serializadores de inventario (producto/categoría) viven ahora en
 # src/infrastructure/web/presenters.py; aquí solo quedan los de pedidos.
 
-def _limpiar_telefono(telefono: str) -> str:
-    """tg:chat_id|telefono_real -> telefono_real (igual que la versión JSON)."""
-    if telefono.startswith("tg:"):
-        partes = telefono.split("|", 1)
-        return partes[1] if len(partes) > 1 else ""
-    return telefono
-
-
-def _pedido_a_dict(p: "models.Pedido") -> dict:
-    return {
-        "id": p.id,
-        "cliente": p.cliente.nombre,
-        "telefono": _limpiar_telefono(p.cliente.numero_whatsapp),
-        "items": [
-            {"nombre": d.nombre, "cantidad": d.cantidad, "precio": d.precio_unitario}
-            for d in p.items
-        ],
-        "total": p.total,
-        "tipo": p.tipo,
-        "direccion": p.direccion,
-        "estado": p.estado,
-        "creado_en": p.creado_en.isoformat() if p.creado_en else None,
-    }
-
-
 # ─── Inventario (fachadas finas sobre los casos de uso hexagonales) ───────────
 # Estas funciones conservan su firma y su retorno de dict para no romper a quien
 # importe `crud.*`. La lógica vive ahora en src/application/inventario.py.
@@ -89,66 +64,49 @@ def descontar_stock(db: Session, items: list[dict], negocio_id: str) -> None:
 
 # ─── Clientes ─────────────────────────────────────────────────────────────────
 
-def _upsert_cliente(db: Session, nombre: str, numero_whatsapp: str, negocio_id: str) -> "models.Cliente":
-    cliente = db.scalars(select(models.Cliente).where(
-        models.Cliente.negocio_id == negocio_id,
-        models.Cliente.numero_whatsapp == numero_whatsapp)).first()
-    if cliente is None:
-        cliente = models.Cliente(id=_nuevo_id("C"), nombre=nombre,
-                                 numero_whatsapp=numero_whatsapp, negocio_id=negocio_id)
-        db.add(cliente)
-        db.flush()
-    return cliente
+def _cliente_repo_inst(db: Session):
+    from src.infrastructure.persistence.repositories import SqlAlchemyClienteRepository
+    return SqlAlchemyClienteRepository(db)
+
+
+def _pedido_repo_inst(db: Session):
+    from src.infrastructure.persistence.repositories import SqlAlchemyPedidoRepository
+    return SqlAlchemyPedidoRepository(db)
+
+
+def _upsert_cliente(db: Session, nombre: str, numero_whatsapp: str, negocio_id: str):
+    """Fachada fina: delega al repositorio hexagonal."""
+    return _cliente_repo_inst(db).upsert(nombre, numero_whatsapp, negocio_id)
 
 
 # ─── Pedidos ──────────────────────────────────────────────────────────────────
 
 def listar_pedidos(db: Session, negocio_id: str) -> list[dict]:
-    pedidos = db.scalars(select(models.Pedido).where(
-        models.Pedido.negocio_id == negocio_id).order_by(models.Pedido.creado_en.desc())).all()
-    return [_pedido_a_dict(p) for p in pedidos]
+    from src.application.pedidos import ListarPedidos
+    from src.infrastructure.web.presenters import pedido_a_dict
+    pedidos = ListarPedidos(_pedido_repo_inst(db)).execute(negocio_id)
+    return [pedido_a_dict(p) for p in pedidos]
 
 
 def crear_pedido(db: Session, datos: dict, negocio_id: str) -> dict:
-    cliente = _upsert_cliente(db, datos["cliente"], datos["telefono"], negocio_id)
-    pedido = models.Pedido(
-        id=_nuevo_id("P"), cliente_id=cliente.id, total=datos["total"],
-        estado="recibido", tipo=datos["tipo"], direccion=datos.get("direccion"),
-        negocio_id=negocio_id,
-    )
-    db.add(pedido)
-    db.flush()
-    for it in datos["items"]:
-        db.add(models.DetallePedido(
-            id=_nuevo_id("D"), pedido_id=pedido.id, producto_id=None,
-            nombre=it["nombre"], cantidad=it["cantidad"], precio_unitario=it["precio"],
-        ))
-    db.flush()
-    descontar_stock(db, datos["items"], negocio_id)
-    db.commit()
-    db.refresh(pedido)
-    return _pedido_a_dict(pedido)
+    from src.application.pedidos import CrearPedido
+    from src.infrastructure.web.presenters import pedido_a_dict
+    pedido = CrearPedido(
+        _pedido_repo_inst(db), _cliente_repo_inst(db), _prod_repo(db),
+    ).execute(datos, negocio_id)
+    return pedido_a_dict(pedido)
 
 
 def actualizar_estado(db: Session, pedido_id: str, estado: str, negocio_id: str) -> Optional[dict]:
-    pedido = db.scalars(select(models.Pedido).where(
-        models.Pedido.id == pedido_id, models.Pedido.negocio_id == negocio_id)).first()
-    if pedido is None:
+    from src.infrastructure.web.presenters import pedido_a_dict
+    actualizado = _pedido_repo_inst(db).cambiar_estado(pedido_id, estado, negocio_id)
+    if actualizado is None:
         return None
-    pedido.estado = estado
-    db.commit()
-    db.refresh(pedido)
-    return _pedido_a_dict(pedido)
+    return pedido_a_dict(actualizado)
 
 
 def eliminar_pedido(db: Session, pedido_id: str, negocio_id: str) -> bool:
-    pedido = db.scalars(select(models.Pedido).where(
-        models.Pedido.id == pedido_id, models.Pedido.negocio_id == negocio_id)).first()
-    if pedido is None:
-        return False
-    db.delete(pedido)
-    db.commit()
-    return True
+    return _pedido_repo_inst(db).eliminar(pedido_id, negocio_id)
 
 
 from passlib.hash import bcrypt

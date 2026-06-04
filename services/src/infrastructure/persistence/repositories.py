@@ -1,4 +1,4 @@
-"""Adaptadores SQLAlchemy de los puertos del inventario.
+"""Adaptadores SQLAlchemy de los puertos del inventario y pedidos.
 
 Replican las consultas de `crud` (filtro por negocio_id, reemplazo = borrar e
 insertar, descuento de stock por nombre case-insensitive sin bajar de 0). Cada
@@ -6,7 +6,8 @@ método mutador hace commit, igual que el `crud` original."""
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from src.domain.entities import Categoria, Producto
+from src.domain.entities import Categoria, Cliente, DetallePedido, Pedido, Producto
+from src.domain.ids import nuevo_id
 from src.infrastructure.persistence import models
 
 
@@ -151,3 +152,118 @@ class SqlAlchemyProductoRepository:
             ai_active=p.aiActive, image_url=p.imageUrl, emoji=p.emoji,
             negocio_id=negocio_id,
         )
+
+
+# ─── Pedidos ──────────────────────────────────────────────────────────────────
+
+def _a_cliente(c: "models.Cliente") -> Cliente:
+    return Cliente(
+        id=c.id, nombre=c.nombre, numeroWhatsapp=c.numero_whatsapp, email=c.email,
+    )
+
+
+def _a_pedido(p: "models.Pedido") -> Pedido:
+    return Pedido(
+        id=p.id,
+        cliente=_a_cliente(p.cliente),
+        items=[
+            DetallePedido(
+                nombre=d.nombre,
+                cantidad=d.cantidad,
+                precioUnitario=d.precio_unitario,
+                productoId=d.producto_id,
+            )
+            for d in p.items
+        ],
+        total=p.total,
+        estado=p.estado,
+        tipo=p.tipo,
+        direccion=p.direccion,
+        creadoEn=p.creado_en,
+    )
+
+
+class SqlAlchemyClienteRepository:
+    def __init__(self, db: Session):
+        self._db = db
+
+    def upsert(self, nombre: str, numero_whatsapp: str, negocio_id: str) -> Cliente:
+        cliente = self._db.scalars(select(models.Cliente).where(
+            models.Cliente.negocio_id == negocio_id,
+            models.Cliente.numero_whatsapp == numero_whatsapp,
+        )).first()
+        if cliente is None:
+            cliente = models.Cliente(
+                id=nuevo_id("C"), nombre=nombre,
+                numero_whatsapp=numero_whatsapp, negocio_id=negocio_id,
+            )
+            self._db.add(cliente)
+            self._db.flush()
+        return _a_cliente(cliente)
+
+
+class SqlAlchemyPedidoRepository:
+    def __init__(self, db: Session):
+        self._db = db
+
+    def listar(self, negocio_id: str) -> list[Pedido]:
+        rows = self._db.scalars(select(models.Pedido).where(
+            models.Pedido.negocio_id == negocio_id,
+        ).order_by(models.Pedido.creado_en.desc())).all()
+        return [_a_pedido(p) for p in rows]
+
+    def obtener(self, pedido_id: str, negocio_id: str) -> Pedido | None:
+        row = self._db.scalars(select(models.Pedido).where(
+            models.Pedido.id == pedido_id,
+            models.Pedido.negocio_id == negocio_id,
+        )).first()
+        return _a_pedido(row) if row is not None else None
+
+    def crear(self, cliente: Cliente, items: list[dict], datos: dict, negocio_id: str) -> Pedido:
+        # Necesitamos el ORM Cliente para la FK; lo re-obtenemos por id.
+        pedido = models.Pedido(
+            id=nuevo_id("P"),
+            cliente_id=cliente.id,
+            total=datos["total"],
+            estado="recibido",
+            tipo=datos["tipo"],
+            direccion=datos.get("direccion"),
+            negocio_id=negocio_id,
+        )
+        self._db.add(pedido)
+        self._db.flush()
+        for it in items:
+            self._db.add(models.DetallePedido(
+                id=nuevo_id("D"),
+                pedido_id=pedido.id,
+                producto_id=None,
+                nombre=it["nombre"],
+                cantidad=it["cantidad"],
+                precio_unitario=it["precio"],
+            ))
+        self._db.flush()  # el commit lo da descontar_stock (mismo unit-of-work que el crud original)
+        self._db.refresh(pedido)
+        return _a_pedido(pedido)
+
+    def cambiar_estado(self, pedido_id: str, estado: str, negocio_id: str) -> Pedido | None:
+        row = self._db.scalars(select(models.Pedido).where(
+            models.Pedido.id == pedido_id,
+            models.Pedido.negocio_id == negocio_id,
+        )).first()
+        if row is None:
+            return None
+        row.estado = estado
+        self._db.commit()
+        self._db.refresh(row)
+        return _a_pedido(row)
+
+    def eliminar(self, pedido_id: str, negocio_id: str) -> bool:
+        row = self._db.scalars(select(models.Pedido).where(
+            models.Pedido.id == pedido_id,
+            models.Pedido.negocio_id == negocio_id,
+        )).first()
+        if row is None:
+            return False
+        self._db.delete(row)
+        self._db.commit()
+        return True

@@ -15,9 +15,16 @@ from src.application.inventario import (
     ActualizarCategoria, ActualizarProducto, CrearCategoria, CrearProducto,
     EliminarCategoria, EliminarProducto, LeerInventario, ReemplazarInventario,
 )
-from src.domain.ports import CategoriaRepository, ProductoRepository
+from src.application.pedidos import (
+    ActualizarEstadoPedido, CrearPedido, EliminarPedido, ListarPedidos,
+)
+from src.domain.ports import (
+    CategoriaRepository, ClienteRepository, PedidoRepository, ProductoRepository,
+)
+from src.infrastructure.notifications.telegram import TelegramNotificador
 from src.infrastructure.persistence.repositories import (
-    SqlAlchemyCategoriaRepository, SqlAlchemyProductoRepository,
+    SqlAlchemyCategoriaRepository, SqlAlchemyClienteRepository,
+    SqlAlchemyPedidoRepository, SqlAlchemyProductoRepository,
 )
 
 SECRETO = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
@@ -102,3 +109,39 @@ def eliminar_categoria_uc(
     prod: ProductoRepository = Depends(_prod_repo),
 ) -> EliminarCategoria:
     return EliminarCategoria(cat, prod)
+
+
+# ─── Pedidos ──────────────────────────────────────────────────────────────────
+
+def _cliente_repo(db: Session = Depends(get_db)) -> ClienteRepository:
+    return SqlAlchemyClienteRepository(db)
+
+
+def _pedido_repo(db: Session = Depends(get_db)) -> PedidoRepository:
+    return SqlAlchemyPedidoRepository(db)
+
+
+def listar_pedidos_uc(
+    pedido: PedidoRepository = Depends(_pedido_repo),
+) -> ListarPedidos:
+    return ListarPedidos(pedido)
+
+
+def crear_pedido_uc(
+    pedido: PedidoRepository = Depends(_pedido_repo),
+    cliente: ClienteRepository = Depends(_cliente_repo),
+    prod: ProductoRepository = Depends(_prod_repo),
+) -> CrearPedido:
+    return CrearPedido(pedido, cliente, prod)
+
+
+def actualizar_estado_pedido_uc(
+    pedido: PedidoRepository = Depends(_pedido_repo),
+) -> ActualizarEstadoPedido:
+    return ActualizarEstadoPedido(pedido, TelegramNotificador())
+
+
+def eliminar_pedido_uc(
+    pedido: PedidoRepository = Depends(_pedido_repo),
+) -> EliminarPedido:
+    return EliminarPedido(pedido)
