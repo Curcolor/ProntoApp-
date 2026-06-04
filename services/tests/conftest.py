@@ -4,6 +4,8 @@ import os
 # del .env raíz ANTES de que api_pedidos haga load_dotenv() / lea SECRETO, para
 # que las peticiones de test sin header x-secret no reciban 403.
 os.environ["TELEGRAM_WEBHOOK_SECRET"] = ""
+# JWT determinista para tests (auth.crear_token / decodificar_token).
+os.environ["JWT_SECRET"] = "clave-de-pruebas-jwt-hs256-0123456789"
 
 import pytest
 from sqlalchemy.orm import sessionmaker
