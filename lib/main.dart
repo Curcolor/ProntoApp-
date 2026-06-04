@@ -33,7 +33,8 @@ void main() async {
   final apiClient = ApiClient(
     baseUrl: baseUrl,
     secreto: apiSecret,
-    negocioId: () => AuthService().currentUser?.negocioId ?? 'main',
+    token: () => AuthService().currentToken,
+    onUnauthorized: () => AuthService().logout(),
   );
   await AuthService().initialize(apiClient);
   final inventoryRepo = InventoryRepository(apiClient, prefs);
