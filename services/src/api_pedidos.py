@@ -309,6 +309,27 @@ def eliminar_usuario_endpoint(usuario_id: str, x_secret: Optional[str] = Header(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Usuario {usuario_id} no encontrado")
 
 
+class PlantillaIaIn(BaseModel):
+    prompt: Optional[str] = None
+    contexto: Optional[str] = None
+
+
+@app.get("/plantilla-ia")
+def obtener_plantilla_ia(x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    p = crud.leer_plantilla_ia(db)
+    if p is None:
+        return {"id": "main", "prompt": "", "contexto": "[]"}
+    return p
+
+
+@app.put("/plantilla-ia")
+def actualizar_plantilla_ia_endpoint(body: PlantillaIaIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+    _verificar_secreto(x_secret)
+    datos = {k: v for k, v in body.model_dump().items() if v is not None}
+    return crud.actualizar_plantilla_ia(db, datos)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api_pedidos:app", host="0.0.0.0", port=5050, reload=True)

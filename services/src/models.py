@@ -97,3 +97,10 @@ class DetallePedido(Base):
     cantidad: Mapped[int] = mapped_column(Integer, nullable=False)
     precio_unitario: Mapped[float] = mapped_column(Float, nullable=False)
     pedido: Mapped["Pedido"] = relationship(back_populates="items")
+
+
+class PlantillaIa(Base):
+    __tablename__ = "plantilla_ia"
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    prompt: Mapped[str] = mapped_column(String, nullable=False, default="")
+    contexto: Mapped[str] = mapped_column(String, nullable=False, default="[]")

@@ -72,3 +72,9 @@ type DetallePedido @table(name: "detalle_pedido", key: ["id"]) {
   cantidad: Int!
   precioUnitario: Float! @col(name: "precio_unitario")
 }
+
+type PlantillaIa @table(name: "plantilla_ia", key: ["id"]) {
+  id: String!
+  prompt: String!
+  contexto: String!
+}

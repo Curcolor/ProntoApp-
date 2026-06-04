@@ -332,3 +332,26 @@ def eliminar_usuario(db: Session, usuario_id: str) -> bool:
     db.delete(user)
     db.commit()
     return True
+
+
+_CAMPOS_PLANTILLA_IA = {"prompt": "prompt", "contexto": "contexto"}
+
+
+def leer_plantilla_ia(db: Session) -> Optional[dict]:
+    p = db.scalars(select(models.PlantillaIa)).first()
+    if p is None:
+        return None
+    return {"id": p.id, "prompt": p.prompt, "contexto": p.contexto}
+
+
+def actualizar_plantilla_ia(db: Session, datos: dict) -> dict:
+    p = db.scalars(select(models.PlantillaIa)).first()
+    if p is None:
+        p = models.PlantillaIa(id="main", prompt=datos.get("prompt", ""),
+                               contexto=datos.get("contexto", "[]"))
+        db.add(p)
+    for clave, attr in _CAMPOS_PLANTILLA_IA.items():
+        if clave in datos:
+            setattr(p, attr, datos[clave])
+    db.commit()
+    return {"id": p.id, "prompt": p.prompt, "contexto": p.contexto}
