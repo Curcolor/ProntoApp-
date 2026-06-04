@@ -2,7 +2,7 @@
 
 Reproducen exactamente `crud._categoria_a_dict` / `crud._producto_a_dict` /
 `crud._pedido_a_dict` / `crud._limpiar_telefono` / `crud._usuario_a_dict`."""
-from src.domain.entities import Categoria, Pedido, Producto, Usuario
+from src.domain.entities import Categoria, Negocio, Pedido, PlantillaIa, Producto, Usuario
 
 
 def categoria_a_dict(c: Categoria) -> dict:
@@ -37,6 +37,21 @@ def usuario_a_dict(u: Usuario) -> dict:
         "rol": u.rol,
         "negocioId": u.negocioId,
     }
+
+
+# ─── Negocio / Plantilla ──────────────────────────────────────────────────────
+
+def negocio_a_dict(n: Negocio) -> dict:
+    return {
+        "id": n.id, "tipoNegocio": n.tipoNegocio, "nombre": n.nombre,
+        "direccion": n.direccion, "horaApertura": n.horaApertura,
+        "horaCierre": n.horaCierre, "formatoEntrega": n.formatoEntrega,
+        "terminosEntrega": n.terminosEntrega, "numeroWhatsapp": n.numeroWhatsapp,
+    }
+
+
+def plantilla_a_dict(p: PlantillaIa) -> dict:
+    return {"id": p.id, "prompt": p.prompt, "contexto": p.contexto}
 
 
 def pedido_a_dict(p: Pedido) -> dict:

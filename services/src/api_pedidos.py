@@ -1,18 +1,16 @@
 """Servidor FastAPI para ProntoApp. Persiste en Postgres vía SQLAlchemy."""
-import os
 from typing import Optional
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, Header, HTTPException, status
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
 
-from . import crud
 from .infrastructure.web.deps import get_db, requerir_tenant
 from .infrastructure.web.routers import inventario as inventario_router
 from .infrastructure.web.routers import pedidos as pedidos_router
 from .infrastructure.web.routers import auth as auth_router
 from .infrastructure.web.routers import usuarios as usuarios_router
+from .infrastructure.web.routers import negocio as negocio_router
+from .infrastructure.web.routers import plantilla as plantilla_router
 
 load_dotenv()
 
@@ -24,6 +22,8 @@ app.include_router(inventario_router.router)
 app.include_router(pedidos_router.router)
 app.include_router(auth_router.router)
 app.include_router(usuarios_router.router)
+app.include_router(negocio_router.router)
+app.include_router(plantilla_router.router)
 
 
 def get_negocio_id(x_negocio_id: Optional[str] = Header(default=None)) -> str:
@@ -37,49 +37,6 @@ def get_negocio_id(x_negocio_id: Optional[str] = Header(default=None)) -> str:
 def health_check():
     from datetime import datetime
     return {"ok": True, "timestamp": datetime.now().isoformat()}
-
-
-@app.get("/negocio")
-def obtener_negocio(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    return crud.leer_negocio(db, negocio_id)
-
-
-
-class NegocioIn(BaseModel):
-    tipoNegocio: Optional[str] = None
-    nombre: Optional[str] = None
-    direccion: Optional[str] = None
-    horaApertura: Optional[str] = None
-    horaCierre: Optional[str] = None
-    formatoEntrega: Optional[str] = None
-    terminosEntrega: Optional[str] = None
-    numeroWhatsapp: Optional[str] = None
-
-
-@app.put("/negocio")
-def actualizar_negocio_endpoint(body: NegocioIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    datos = {k: v for k, v in body.model_dump().items() if v is not None}
-    return crud.actualizar_negocio(db, datos, negocio_id)
-
-
-
-class PlantillaIaIn(BaseModel):
-    prompt: Optional[str] = None
-    contexto: Optional[str] = None
-
-
-@app.get("/plantilla-ia")
-def obtener_plantilla_ia(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    p = crud.leer_plantilla_ia(db, negocio_id)
-    if p is None:
-        return {"id": "main", "prompt": "", "contexto": "[]"}
-    return p
-
-
-@app.put("/plantilla-ia")
-def actualizar_plantilla_ia_endpoint(body: PlantillaIaIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
-    datos = {k: v for k, v in body.model_dump().items() if v is not None}
-    return crud.actualizar_plantilla_ia(db, datos, negocio_id)
 
 
 if __name__ == "__main__":

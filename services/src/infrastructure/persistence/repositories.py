@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from src.domain.entities import Categoria, Cliente, DetallePedido, Pedido, Producto, Usuario
+from src.domain.entities import Categoria, Cliente, DetallePedido, Negocio, Pedido, PlantillaIa, Producto, Usuario
 from src.domain.errors import EmailDuplicadoError
 from src.domain.ids import nuevo_id
 from src.infrastructure.persistence import models
@@ -348,6 +348,23 @@ class SqlAlchemyUsuarioRepository:
         return True
 
 
+_CAMPOS_NEGOCIO = {
+    "tipoNegocio": "tipo_negocio", "nombre": "nombre", "direccion": "direccion",
+    "horaApertura": "hora_apertura", "horaCierre": "hora_cierre",
+    "formatoEntrega": "formato_entrega", "terminosEntrega": "terminos_entrega",
+    "numeroWhatsapp": "numero_whatsapp",
+}
+
+
+def _a_negocio(n: "models.Negocio") -> Negocio:
+    return Negocio(
+        id=n.id, nombre=n.nombre, tipoNegocio=n.tipo_negocio,
+        direccion=n.direccion, horaApertura=n.hora_apertura,
+        horaCierre=n.hora_cierre, formatoEntrega=n.formato_entrega,
+        terminosEntrega=n.terminos_entrega, numeroWhatsapp=n.numero_whatsapp,
+    )
+
+
 class SqlAlchemyNegocioRepository:
     def __init__(self, db: Session):
         self._db = db
@@ -357,3 +374,54 @@ class SqlAlchemyNegocioRepository:
         self._db.add(negocio)
         self._db.flush()
         return negocio.id
+
+    def obtener(self, negocio_id: str) -> Negocio | None:
+        n = self._db.get(models.Negocio, negocio_id)
+        return _a_negocio(n) if n is not None else None
+
+    def actualizar(self, datos: dict, negocio_id: str) -> Negocio:
+        n = self._db.get(models.Negocio, negocio_id)
+        if n is None:
+            n = models.Negocio(id=negocio_id, nombre=datos.get("nombre", "ProntoApp"))
+            self._db.add(n)
+        for clave_json, attr in _CAMPOS_NEGOCIO.items():
+            if clave_json in datos:
+                setattr(n, attr, datos[clave_json])
+        self._db.commit()
+        return _a_negocio(n)
+
+
+_CAMPOS_PLANTILLA_IA = {"prompt": "prompt", "contexto": "contexto"}
+
+
+def _a_plantilla(p: "models.PlantillaIa") -> PlantillaIa:
+    return PlantillaIa(id=p.id, prompt=p.prompt, contexto=p.contexto)
+
+
+class SqlAlchemyPlantillaIaRepository:
+    def __init__(self, db: Session):
+        self._db = db
+
+    def obtener(self, negocio_id: str) -> PlantillaIa | None:
+        p = self._db.scalars(
+            select(models.PlantillaIa).where(models.PlantillaIa.negocio_id == negocio_id)
+        ).first()
+        return _a_plantilla(p) if p is not None else None
+
+    def actualizar(self, datos: dict, negocio_id: str) -> PlantillaIa:
+        p = self._db.scalars(
+            select(models.PlantillaIa).where(models.PlantillaIa.negocio_id == negocio_id)
+        ).first()
+        if p is None:
+            p = models.PlantillaIa(
+                id=nuevo_id("pia"),
+                prompt=datos.get("prompt", ""),
+                contexto=datos.get("contexto", "[]"),
+                negocio_id=negocio_id,
+            )
+            self._db.add(p)
+        for clave, attr in _CAMPOS_PLANTILLA_IA.items():
+            if clave in datos:
+                setattr(p, attr, datos[clave])
+        self._db.commit()
+        return _a_plantilla(p)

@@ -69,3 +69,25 @@ class Usuario:
     rol: str
     negocioId: str
     telefono: str | None = None
+
+
+# ─── Negocio / Plantilla ──────────────────────────────────────────────────────
+
+@dataclass
+class Negocio:
+    id: str
+    nombre: str
+    tipoNegocio: str | None = None
+    direccion: str | None = None
+    horaApertura: str | None = None
+    horaCierre: str | None = None
+    formatoEntrega: str | None = None
+    terminosEntrega: str | None = None
+    numeroWhatsapp: str | None = None
+
+
+@dataclass
+class PlantillaIa:
+    id: str
+    prompt: str
+    contexto: str

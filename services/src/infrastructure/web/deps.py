@@ -19,10 +19,13 @@ from src.application.pedidos import (
     ActualizarEstadoPedido, CrearPedido, EliminarPedido, ListarPedidos,
 )
 from src.domain.ports import (
-    CategoriaRepository, ClienteRepository, PedidoRepository, PasswordHasher,
-    ProductoRepository, TokenService, UsuarioRepository,
+    CategoriaRepository, ClienteRepository, NegocioRepository, PedidoRepository,
+    PasswordHasher, PlantillaIaRepository, ProductoRepository, TokenService,
+    UsuarioRepository,
 )
 from src.application.auth import Login, RegistrarNegocio
+from src.application.negocio import ActualizarNegocio, LeerNegocio
+from src.application.plantilla import ActualizarPlantillaIa, LeerPlantillaIa
 from src.application.usuarios import (
     ActualizarUsuario, CrearUsuario, EliminarUsuario, ListarUsuarios,
 )
@@ -30,7 +33,8 @@ from src.infrastructure.notifications.telegram import TelegramNotificador
 from src.infrastructure.persistence.repositories import (
     SqlAlchemyCategoriaRepository, SqlAlchemyClienteRepository,
     SqlAlchemyNegocioRepository, SqlAlchemyPedidoRepository,
-    SqlAlchemyProductoRepository, SqlAlchemyUsuarioRepository,
+    SqlAlchemyPlantillaIaRepository, SqlAlchemyProductoRepository,
+    SqlAlchemyUsuarioRepository,
 )
 from src.infrastructure.security.jwt_service import JwtTokenService
 from src.infrastructure.security.password import BcryptPasswordHasher
@@ -161,7 +165,7 @@ def _usuario_repo(db: Session = Depends(get_db)) -> UsuarioRepository:
     return SqlAlchemyUsuarioRepository(db)
 
 
-def _negocio_repo(db: Session = Depends(get_db)) -> SqlAlchemyNegocioRepository:
+def _negocio_repo(db: Session = Depends(get_db)) -> NegocioRepository:
     return SqlAlchemyNegocioRepository(db)
 
 
@@ -181,7 +185,7 @@ def login_uc(
 
 
 def registrar_negocio_uc(
-    negocio_repo: SqlAlchemyNegocioRepository = Depends(_negocio_repo),
+    negocio_repo: NegocioRepository = Depends(_negocio_repo),
     usuario_repo: UsuarioRepository = Depends(_usuario_repo),
     hasher: PasswordHasher = Depends(get_password_hasher),
 ) -> RegistrarNegocio:
@@ -208,3 +212,33 @@ def actualizar_usuario_uc(repo: UsuarioRepository = Depends(_usuario_repo)) -> A
 
 def eliminar_usuario_uc(repo: UsuarioRepository = Depends(_usuario_repo)) -> EliminarUsuario:
     return EliminarUsuario(repo)
+
+
+# ─── Negocio / Plantilla ──────────────────────────────────────────────────────
+
+def _plantilla_repo(db: Session = Depends(get_db)) -> PlantillaIaRepository:
+    return SqlAlchemyPlantillaIaRepository(db)
+
+
+def leer_negocio_uc(
+    repo: NegocioRepository = Depends(_negocio_repo),
+) -> LeerNegocio:
+    return LeerNegocio(repo)
+
+
+def actualizar_negocio_uc(
+    repo: NegocioRepository = Depends(_negocio_repo),
+) -> ActualizarNegocio:
+    return ActualizarNegocio(repo)
+
+
+def leer_plantilla_uc(
+    repo: PlantillaIaRepository = Depends(_plantilla_repo),
+) -> LeerPlantillaIa:
+    return LeerPlantillaIa(repo)
+
+
+def actualizar_plantilla_uc(
+    repo: PlantillaIaRepository = Depends(_plantilla_repo),
+) -> ActualizarPlantillaIa:
+    return ActualizarPlantillaIa(repo)

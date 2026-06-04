@@ -6,6 +6,7 @@ from passlib.hash import bcrypt
 from sqlalchemy.orm import Session
 from . import models, crud
 from .db import SessionLocal
+from .domain.ids import nuevo_id
 
 _BASE = Path(__file__).resolve().parent.parent / "data"
 _USUARIOS_DEFAULT = [
@@ -73,7 +74,7 @@ def run(db: Session, inventario_path: str | None = None, pedidos_path: str | Non
             db.flush()
             for it in ped.get("items", []):
                 _upsert(db, models.DetallePedido(
-                    id=crud._nuevo_id("D"), pedido_id=ped["id"], producto_id=None,
+                    id=nuevo_id("D"), pedido_id=ped["id"], producto_id=None,
                     nombre=it["nombre"], cantidad=it["cantidad"], precio_unitario=it["precio"],
                 ))
     db.commit()

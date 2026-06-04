@@ -2,7 +2,7 @@
 entidades de dominio."""
 from typing import Protocol
 
-from src.domain.entities import Categoria, Cliente, DetallePedido, Pedido, Producto, Usuario
+from src.domain.entities import Categoria, Cliente, DetallePedido, Negocio, Pedido, PlantillaIa, Producto, Usuario
 
 
 class CategoriaRepository(Protocol):
@@ -64,3 +64,10 @@ class UsuarioRepository(Protocol):
 
 class NegocioRepository(Protocol):
     def crear(self, nombre: str) -> str: ...  # crea negocio con id nuevo, devuelve negocio_id
+    def obtener(self, negocio_id: str) -> Negocio | None: ...
+    def actualizar(self, datos: dict, negocio_id: str) -> Negocio: ...  # crea si no existe
+
+
+class PlantillaIaRepository(Protocol):
+    def obtener(self, negocio_id: str) -> PlantillaIa | None: ...
+    def actualizar(self, datos: dict, negocio_id: str) -> PlantillaIa: ...  # upsert

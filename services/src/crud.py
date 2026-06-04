@@ -1,16 +1,7 @@
 """Acceso a datos para FastAPI. Devuelve dicts con el MISMO contrato JSON que
 la versión basada en archivos, para no romper Flutter ni el bot."""
-import uuid
 from typing import Optional
-from sqlalchemy import select
 from sqlalchemy.orm import Session
-from . import models
-
-
-# ─── IDs ──────────────────────────────────────────────────────────────────────
-
-def _nuevo_id(prefijo: str) -> str:
-    return f"{prefijo}-{str(uuid.uuid4())[:8].upper()}"
 
 
 # ─── Serialización (contrato) ─────────────────────────────────────────────────
@@ -154,16 +145,23 @@ def login(db: Session, email: str, password: str) -> Optional[dict]:
     return _ua_dict(usuario)
 
 
+def _negocio_repo_inst(db: Session):
+    from src.infrastructure.persistence.repositories import SqlAlchemyNegocioRepository
+    return SqlAlchemyNegocioRepository(db)
+
+
+def _plantilla_repo_inst(db: Session):
+    from src.infrastructure.persistence.repositories import SqlAlchemyPlantillaIaRepository
+    return SqlAlchemyPlantillaIaRepository(db)
+
+
 def leer_negocio(db: Session, negocio_id: str) -> Optional[dict]:
-    n = db.get(models.Negocio, negocio_id)
+    from src.application.negocio import LeerNegocio
+    from src.infrastructure.web.presenters import negocio_a_dict
+    n = LeerNegocio(_negocio_repo_inst(db)).execute(negocio_id)
     if n is None:
         return None
-    return {
-        "id": n.id, "tipoNegocio": n.tipo_negocio, "nombre": n.nombre,
-        "direccion": n.direccion, "horaApertura": n.hora_apertura,
-        "horaCierre": n.hora_cierre, "formatoEntrega": n.formato_entrega,
-        "terminosEntrega": n.terminos_entrega, "numeroWhatsapp": n.numero_whatsapp,
-    }
+    return negocio_a_dict(n)
 
 
 from src.domain.errors import CategoriaConProductosError, EmailDuplicadoError  # noqa: E402  (alias de errores de dominio)
@@ -221,24 +219,11 @@ def eliminar_producto(db: Session, prod_id: str, negocio_id: str) -> bool:
     return True
 
 
-_CAMPOS_NEGOCIO = {
-    "tipoNegocio": "tipo_negocio", "nombre": "nombre", "direccion": "direccion",
-    "horaApertura": "hora_apertura", "horaCierre": "hora_cierre",
-    "formatoEntrega": "formato_entrega", "terminosEntrega": "terminos_entrega",
-    "numeroWhatsapp": "numero_whatsapp",
-}
-
-
 def actualizar_negocio(db: Session, datos: dict, negocio_id: str) -> dict:
-    negocio = db.get(models.Negocio, negocio_id)
-    if negocio is None:
-        negocio = models.Negocio(id=negocio_id, nombre=datos.get("nombre", "ProntoApp"))
-        db.add(negocio)
-    for clave_json, attr in _CAMPOS_NEGOCIO.items():
-        if clave_json in datos:
-            setattr(negocio, attr, datos[clave_json])
-    db.commit()
-    return leer_negocio(db, negocio_id)
+    from src.application.negocio import ActualizarNegocio
+    from src.infrastructure.web.presenters import negocio_a_dict
+    n = ActualizarNegocio(_negocio_repo_inst(db)).execute(datos, negocio_id)
+    return negocio_a_dict(n)
 
 
 def actualizar_usuario(db: Session, usuario_id: str, datos: dict, negocio_id: str) -> Optional[dict]:
@@ -262,24 +247,17 @@ def eliminar_usuario(db: Session, usuario_id: str, negocio_id: str) -> bool:
     return True
 
 
-_CAMPOS_PLANTILLA_IA = {"prompt": "prompt", "contexto": "contexto"}
-
-
 def leer_plantilla_ia(db: Session, negocio_id: str) -> Optional[dict]:
-    p = db.scalars(select(models.PlantillaIa).where(models.PlantillaIa.negocio_id == negocio_id)).first()
+    from src.application.plantilla import LeerPlantillaIa
+    from src.infrastructure.web.presenters import plantilla_a_dict
+    p = LeerPlantillaIa(_plantilla_repo_inst(db)).execute(negocio_id)
     if p is None:
         return None
-    return {"id": p.id, "prompt": p.prompt, "contexto": p.contexto}
+    return plantilla_a_dict(p)
 
 
 def actualizar_plantilla_ia(db: Session, datos: dict, negocio_id: str) -> dict:
-    p = db.scalars(select(models.PlantillaIa).where(models.PlantillaIa.negocio_id == negocio_id)).first()
-    if p is None:
-        p = models.PlantillaIa(id=_nuevo_id("pia"), prompt=datos.get("prompt", ""),
-                               contexto=datos.get("contexto", "[]"), negocio_id=negocio_id)
-        db.add(p)
-    for clave, attr in _CAMPOS_PLANTILLA_IA.items():
-        if clave in datos:
-            setattr(p, attr, datos[clave])
-    db.commit()
-    return {"id": p.id, "prompt": p.prompt, "contexto": p.contexto}
+    from src.application.plantilla import ActualizarPlantillaIa
+    from src.infrastructure.web.presenters import plantilla_a_dict
+    p = ActualizarPlantillaIa(_plantilla_repo_inst(db)).execute(datos, negocio_id)
+    return plantilla_a_dict(p)
