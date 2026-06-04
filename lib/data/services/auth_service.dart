@@ -26,6 +26,9 @@ class AuthService extends ChangeNotifier {
   bool get isInitialized => _isInitialized;
 
   static const String _sessionKey = 'prontoapp_session';
+  static const String _tokenKey = 'prontoapp_token';
+  String? _token;
+  String? get currentToken => _token;
 
   /// Guarda el ApiClient y resume la sesión cacheada (sin llamar al server).
   Future<void> initialize(ApiClient api) async {
@@ -35,6 +38,7 @@ class AuthService extends ChangeNotifier {
     _currentUser = sessionJson != null
         ? UserModel.fromJson(jsonDecode(sessionJson) as Map<String, dynamic>)
         : null;
+    _token = prefs.getString(_tokenKey);
     _isInitialized = true;
     notifyListeners();
   }
@@ -50,10 +54,16 @@ class AuthService extends ChangeNotifier {
         negocioId: d['negocioId'] as String? ?? 'main',
       );
 
-  Future<void> _guardarSesion(UserModel user) async {
+  Future<void> _guardarSesion(UserModel user, String? token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_sessionKey, jsonEncode(user.toJson()));
+    if (token != null) {
+      await prefs.setString(_tokenKey, token);
+    } else {
+      await prefs.remove(_tokenKey);
+    }
     _currentUser = user;
+    _token = token;
     notifyListeners();
   }
 
@@ -62,7 +72,7 @@ class AuthService extends ChangeNotifier {
       final data = await _api!.post('/auth/login', {'email': email, 'password': password})
           as Map<String, dynamic>;
       final user = _userFromServer(data);
-      await _guardarSesion(user);
+      await _guardarSesion(user, data['token'] as String?);
       return user;
     } catch (_) {
       return null;
@@ -80,7 +90,7 @@ class AuthService extends ChangeNotifier {
       final data = await _api!.post('/registro', {
         'nombre': '$name $lastName', 'email': email, 'password': password, 'businessName': businessName,
       }) as Map<String, dynamic>;
-      await _guardarSesion(_userFromServer(data));
+      await _guardarSesion(_userFromServer(data), data['token'] as String?);
       return true;
     } catch (_) {
       return false;
@@ -90,7 +100,9 @@ class AuthService extends ChangeNotifier {
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_sessionKey);
+    await prefs.remove(_tokenKey);
     _currentUser = null;
+    _token = null;
     notifyListeners();
   }
 }

@@ -12,18 +12,21 @@ const _utf8 = {'content-type': 'application/json; charset=utf-8'};
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
+  tearDown(() async => AuthService().logout());
 
-  test('login ok guarda sesión y currentUser', () async {
+  test('login ok guarda sesión, currentUser y token', () async {
     final mock = MockClient((req) async => http.Response(
-        jsonEncode({'id': '1', 'nombre': 'Carlos', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'main'}),
+        jsonEncode({'id': '1', 'nombre': 'Carlos', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'main', 'token': 'jwt-xyz'}),
         200, headers: _utf8));
     await AuthService().initialize(_api(mock));
     final u = await AuthService().login('g@p.com', 'password123');
     expect(u, isNotNull);
     expect(AuthService().currentUser!.name, 'Carlos');
     expect(AuthService().currentUser!.role, RoleType.gerente);
+    expect(AuthService().currentToken, 'jwt-xyz');
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('prontoapp_session'), isNotNull);
+    expect(prefs.getString('prontoapp_token'), 'jwt-xyz');
   });
 
   test('login 401 devuelve null', () async {
@@ -37,7 +40,7 @@ void main() {
     final mock = MockClient((req) async {
       pathLlamado = req.url.path;
       return http.Response(
-          jsonEncode({'id': '9', 'nombre': 'Ana Gómez', 'email': 'a@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'N1'}),
+          jsonEncode({'id': '9', 'nombre': 'Ana Gómez', 'email': 'a@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'N1', 'token': 'jwt-reg'}),
           201, headers: _utf8);
     });
     await AuthService().initialize(_api(mock));
@@ -46,6 +49,7 @@ void main() {
     expect(pathLlamado, '/registro');
     expect(AuthService().currentUser!.name, 'Ana Gómez');
     expect(AuthService().currentUser!.negocioId, 'N1');
+    expect(AuthService().currentToken, 'jwt-reg');
   });
 
   test('register 409 devuelve false', () async {
@@ -66,7 +70,7 @@ void main() {
 
   test('logout limpia sesión', () async {
     final mock = MockClient((req) async => http.Response(
-        jsonEncode({'id': '1', 'nombre': 'C', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'main'}),
+        jsonEncode({'id': '1', 'nombre': 'C', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'main', 'token': 'jwt-xyz'}),
         200, headers: _utf8));
     await AuthService().initialize(_api(mock));
     await AuthService().login('g@p.com', 'x');
@@ -74,5 +78,14 @@ void main() {
     expect(AuthService().currentUser, isNull);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('prontoapp_session'), isNull);
+    expect(AuthService().currentToken, isNull);
+    expect(prefs.getString('prontoapp_token'), isNull);
+  });
+
+  test('initialize restaura el token cacheado', () async {
+    SharedPreferences.setMockInitialValues({'prontoapp_token': 'jwt-cache'});
+    final mock = MockClient((req) async => http.Response('', 200));
+    await AuthService().initialize(_api(mock));
+    expect(AuthService().currentToken, 'jwt-cache');
   });
 }
