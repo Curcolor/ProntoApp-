@@ -27,3 +27,4 @@ def test_seed_carga_defaults(db, tmp_path):
     assert db.query(models.Pedido).count() == 1
     assert db.query(models.Cliente).count() == 1
     assert db.query(models.PlantillaIa).count() == 1
+    assert db.query(models.Producto).filter(models.Producto.negocio_id == "main").count() >= 1
