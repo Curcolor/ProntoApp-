@@ -52,3 +52,18 @@ def test_mismo_whatsapp_distinto_negocio(db):
     crud.crear_pedido(db, _pedido("300"), "A")
     crud.crear_pedido(db, _pedido("300"), "B")  # no debe chocar
     assert db.query(models.Cliente).count() == 2
+
+
+def test_usuarios_aislados(db):
+    crud.crear_usuario(db, {"nombre": "Ga", "email": "ga@p.com", "password": "x", "rol": "gerente"}, "A")
+    crud.crear_usuario(db, {"nombre": "Gb", "email": "gb@p.com", "password": "x", "rol": "gerente"}, "B")
+    us_a = crud.listar_usuarios(db, "A")
+    assert [u["email"] for u in us_a] == ["ga@p.com"]
+    assert us_a[0]["negocioId"] == "A"
+
+
+def test_plantilla_aislada(db):
+    crud.actualizar_plantilla_ia(db, {"prompt": "PA"}, "A")
+    crud.actualizar_plantilla_ia(db, {"prompt": "PB"}, "B")
+    assert crud.leer_plantilla_ia(db, "A")["prompt"] == "PA"
+    assert crud.leer_plantilla_ia(db, "B")["prompt"] == "PB"

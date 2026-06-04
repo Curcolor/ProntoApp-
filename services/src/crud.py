@@ -168,18 +168,18 @@ from passlib.hash import bcrypt
 
 def _usuario_a_dict(u: "models.Usuario") -> dict:
     return {"id": u.id, "nombre": u.nombre, "email": u.email,
-            "telefono": u.telefono, "rol": u.rol}
+            "telefono": u.telefono, "rol": u.rol, "negocioId": u.negocio_id}
 
 
 class EmailDuplicadoError(Exception):
     """El email del usuario ya está registrado."""
 
 
-def crear_usuario(db: Session, datos: dict) -> dict:
+def crear_usuario(db: Session, datos: dict, negocio_id: str) -> dict:
     user = models.Usuario(
         id=datos.get("id") or _nuevo_id("U"), nombre=datos["nombre"],
         email=datos["email"], contrasena_hash=bcrypt.hash(datos["password"]),
-        telefono=datos.get("telefono"), rol=datos["rol"],
+        telefono=datos.get("telefono"), rol=datos["rol"], negocio_id=negocio_id,
     )
     db.add(user)
     try:
@@ -190,8 +190,9 @@ def crear_usuario(db: Session, datos: dict) -> dict:
     return _usuario_a_dict(user)
 
 
-def listar_usuarios(db: Session) -> list[dict]:
-    return [_usuario_a_dict(u) for u in db.scalars(select(models.Usuario)).all()]
+def listar_usuarios(db: Session, negocio_id: str) -> list[dict]:
+    return [_usuario_a_dict(u) for u in db.scalars(
+        select(models.Usuario).where(models.Usuario.negocio_id == negocio_id)).all()]
 
 
 def login(db: Session, email: str, password: str) -> Optional[dict]:
@@ -201,8 +202,8 @@ def login(db: Session, email: str, password: str) -> Optional[dict]:
     return _usuario_a_dict(user)
 
 
-def leer_negocio(db: Session) -> Optional[dict]:
-    n = db.scalars(select(models.Negocio)).first()
+def leer_negocio(db: Session, negocio_id: str) -> Optional[dict]:
+    n = db.get(models.Negocio, negocio_id)
     if n is None:
         return None
     return {
@@ -306,23 +307,24 @@ _CAMPOS_NEGOCIO = {
 }
 
 
-def actualizar_negocio(db: Session, datos: dict) -> dict:
-    negocio = db.scalars(select(models.Negocio)).first()
+def actualizar_negocio(db: Session, datos: dict, negocio_id: str) -> dict:
+    negocio = db.get(models.Negocio, negocio_id)
     if negocio is None:
-        negocio = models.Negocio(id="main", nombre=datos.get("nombre", "ProntoApp"))
+        negocio = models.Negocio(id=negocio_id, nombre=datos.get("nombre", "ProntoApp"))
         db.add(negocio)
     for clave_json, attr in _CAMPOS_NEGOCIO.items():
         if clave_json in datos:
             setattr(negocio, attr, datos[clave_json])
     db.commit()
-    return leer_negocio(db)
+    return leer_negocio(db, negocio_id)
 
 
 _CAMPOS_USUARIO = {"nombre": "nombre", "telefono": "telefono", "rol": "rol"}
 
 
-def actualizar_usuario(db: Session, usuario_id: str, datos: dict) -> Optional[dict]:
-    user = db.get(models.Usuario, usuario_id)
+def actualizar_usuario(db: Session, usuario_id: str, datos: dict, negocio_id: str) -> Optional[dict]:
+    user = db.scalars(select(models.Usuario).where(
+        models.Usuario.id == usuario_id, models.Usuario.negocio_id == negocio_id)).first()
     if user is None:
         return None
     for clave_json, attr in _CAMPOS_USUARIO.items():
@@ -332,8 +334,9 @@ def actualizar_usuario(db: Session, usuario_id: str, datos: dict) -> Optional[di
     return _usuario_a_dict(user)
 
 
-def eliminar_usuario(db: Session, usuario_id: str) -> bool:
-    user = db.get(models.Usuario, usuario_id)
+def eliminar_usuario(db: Session, usuario_id: str, negocio_id: str) -> bool:
+    user = db.scalars(select(models.Usuario).where(
+        models.Usuario.id == usuario_id, models.Usuario.negocio_id == negocio_id)).first()
     if user is None:
         return False
     db.delete(user)
@@ -344,18 +347,18 @@ def eliminar_usuario(db: Session, usuario_id: str) -> bool:
 _CAMPOS_PLANTILLA_IA = {"prompt": "prompt", "contexto": "contexto"}
 
 
-def leer_plantilla_ia(db: Session) -> Optional[dict]:
-    p = db.scalars(select(models.PlantillaIa)).first()
+def leer_plantilla_ia(db: Session, negocio_id: str) -> Optional[dict]:
+    p = db.scalars(select(models.PlantillaIa).where(models.PlantillaIa.negocio_id == negocio_id)).first()
     if p is None:
         return None
     return {"id": p.id, "prompt": p.prompt, "contexto": p.contexto}
 
 
-def actualizar_plantilla_ia(db: Session, datos: dict) -> dict:
-    p = db.scalars(select(models.PlantillaIa)).first()
+def actualizar_plantilla_ia(db: Session, datos: dict, negocio_id: str) -> dict:
+    p = db.scalars(select(models.PlantillaIa).where(models.PlantillaIa.negocio_id == negocio_id)).first()
     if p is None:
-        p = models.PlantillaIa(id="main", prompt=datos.get("prompt", ""),
-                               contexto=datos.get("contexto", "[]"))
+        p = models.PlantillaIa(id=_nuevo_id("pia"), prompt=datos.get("prompt", ""),
+                               contexto=datos.get("contexto", "[]"), negocio_id=negocio_id)
         db.add(p)
     for clave, attr in _CAMPOS_PLANTILLA_IA.items():
         if clave in datos:
