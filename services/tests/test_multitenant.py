@@ -67,3 +67,12 @@ def test_plantilla_aislada(db):
     crud.actualizar_plantilla_ia(db, {"prompt": "PB"}, "B")
     assert crud.leer_plantilla_ia(db, "A")["prompt"] == "PA"
     assert crud.leer_plantilla_ia(db, "B")["prompt"] == "PB"
+
+
+def test_registrar_crea_negocio_y_gerente(db):
+    u = crud.registrar(db, {"nombre": "Ana", "email": "a@p.com", "password": "x", "businessName": "Café Ana"})
+    assert u["rol"] == "gerente"
+    neg_id = u["negocioId"]
+    assert db.get(models.Negocio, neg_id).nombre == "Café Ana"
+    with pytest.raises(crud.EmailDuplicadoError):
+        crud.registrar(db, {"nombre": "Otro", "email": "a@p.com", "password": "y", "businessName": "X"})

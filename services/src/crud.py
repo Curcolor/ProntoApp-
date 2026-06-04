@@ -190,6 +190,24 @@ def crear_usuario(db: Session, datos: dict, negocio_id: str) -> dict:
     return _usuario_a_dict(user)
 
 
+def registrar(db: Session, datos: dict) -> dict:
+    negocio = models.Negocio(id=_nuevo_id("N"), nombre=datos["businessName"])
+    db.add(negocio)
+    db.flush()
+    user = models.Usuario(
+        id=_nuevo_id("U"), nombre=datos["nombre"], email=datos["email"],
+        contrasena_hash=bcrypt.hash(datos["password"]), rol="gerente",
+        telefono=datos.get("telefono"), negocio_id=negocio.id,
+    )
+    db.add(user)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise EmailDuplicadoError(datos["email"])
+    return _usuario_a_dict(user)
+
+
 def listar_usuarios(db: Session, negocio_id: str) -> list[dict]:
     return [_usuario_a_dict(u) for u in db.scalars(
         select(models.Usuario).where(models.Usuario.negocio_id == negocio_id)).all()]
