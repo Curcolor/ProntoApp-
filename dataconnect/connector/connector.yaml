@@ -1,5 +1,3 @@
 connectorId: "default"
-generate:
-  dartSdk:
-    outputDir: "../../lib/dataconnect-generated"
-    package: "dataconnect_generated"
+# Sin generación de SDK Dart: la app habla con FastAPI (ApiClient), no con el
+# SDK de Data Connect. Evita ensuciar lib/ con código generado sin usar.
