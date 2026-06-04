@@ -47,6 +47,7 @@ class AuthService extends ChangeNotifier {
           (e) => e.toString().split('.').last == d['rol'],
           orElse: () => RoleType.gerente,
         ),
+        negocioId: d['negocioId'] as String? ?? 'main',
       );
 
   Future<void> _guardarSesion(UserModel user) async {
@@ -76,8 +77,8 @@ class AuthService extends ChangeNotifier {
     required String password,
   }) async {
     try {
-      final data = await _api!.post('/usuarios', {
-        'nombre': '$name $lastName', 'email': email, 'password': password, 'rol': 'gerente',
+      final data = await _api!.post('/registro', {
+        'nombre': '$name $lastName', 'email': email, 'password': password, 'businessName': businessName,
       }) as Map<String, dynamic>;
       await _guardarSesion(_userFromServer(data));
       return true;

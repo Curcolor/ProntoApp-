@@ -15,14 +15,20 @@ class ApiClient {
   final String baseUrl;
   final String secreto;
   final http.Client _client;
+  final String Function()? negocioId;
 
-  ApiClient({required this.baseUrl, required this.secreto, http.Client? client})
+  ApiClient({required this.baseUrl, required this.secreto, http.Client? client, this.negocioId})
       : _client = client ?? http.Client();
 
-  Map<String, String> get _headers => {
-        if (secreto.isNotEmpty) 'X-Secret': secreto,
-        'Content-Type': 'application/json',
-      };
+  Map<String, String> get _headers {
+    final h = <String, String>{
+      if (secreto.isNotEmpty) 'X-Secret': secreto,
+      'Content-Type': 'application/json',
+    };
+    final neg = negocioId?.call();
+    if (neg != null && neg.isNotEmpty) h['X-Negocio-Id'] = neg;
+    return h;
+  }
 
   Uri _uri(String path) => Uri.parse('$baseUrl$path');
 

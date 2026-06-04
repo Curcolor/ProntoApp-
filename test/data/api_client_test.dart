@@ -28,4 +28,13 @@ void main() {
     final r = await api.post('/productos', {'name': 'Café'});
     expect(r['id'], 'prod-1');
   });
+
+  test('manda X-Negocio-Id desde el callback', () async {
+    final mock = MockClient((req) async {
+      expect(req.headers['X-Negocio-Id'], 'NEG1');
+      return http.Response(jsonEncode({'ok': true}), 200);
+    });
+    final api = ApiClient(baseUrl: 'http://x', secreto: '', client: mock, negocioId: () => 'NEG1');
+    await api.get('/x');
+  });
 }

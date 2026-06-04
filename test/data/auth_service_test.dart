@@ -15,7 +15,7 @@ void main() {
 
   test('login ok guarda sesión y currentUser', () async {
     final mock = MockClient((req) async => http.Response(
-        jsonEncode({'id': '1', 'nombre': 'Carlos', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente'}),
+        jsonEncode({'id': '1', 'nombre': 'Carlos', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'main'}),
         200, headers: _utf8));
     await AuthService().initialize(_api(mock));
     final u = await AuthService().login('g@p.com', 'password123');
@@ -32,14 +32,20 @@ void main() {
     expect(await AuthService().login('x', 'y'), isNull);
   });
 
-  test('register ok hace auto-login', () async {
-    final mock = MockClient((req) async => http.Response(
-        jsonEncode({'id': '9', 'nombre': 'Ana Gómez', 'email': 'a@p.com', 'telefono': null, 'rol': 'gerente'}),
-        201, headers: _utf8));
+  test('register ok hace auto-login con POST /registro', () async {
+    String? pathLlamado;
+    final mock = MockClient((req) async {
+      pathLlamado = req.url.path;
+      return http.Response(
+          jsonEncode({'id': '9', 'nombre': 'Ana Gómez', 'email': 'a@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'N1'}),
+          201, headers: _utf8);
+    });
     await AuthService().initialize(_api(mock));
     final ok = await AuthService().register(name: 'Ana', lastName: 'Gómez', businessName: 'X', email: 'a@p.com', password: '123');
     expect(ok, true);
+    expect(pathLlamado, '/registro');
     expect(AuthService().currentUser!.name, 'Ana Gómez');
+    expect(AuthService().currentUser!.negocioId, 'N1');
   });
 
   test('register 409 devuelve false', () async {
@@ -60,7 +66,7 @@ void main() {
 
   test('logout limpia sesión', () async {
     final mock = MockClient((req) async => http.Response(
-        jsonEncode({'id': '1', 'nombre': 'C', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente'}),
+        jsonEncode({'id': '1', 'nombre': 'C', 'email': 'g@p.com', 'telefono': null, 'rol': 'gerente', 'negocioId': 'main'}),
         200, headers: _utf8));
     await AuthService().initialize(_api(mock));
     await AuthService().login('g@p.com', 'x');

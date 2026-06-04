@@ -9,6 +9,7 @@ class UserModel {
   final String email;
   final String name;
   final RoleType role;
+  final String negocioId;
   final String? password; // Agregado para validación local
 
   UserModel({
@@ -16,6 +17,7 @@ class UserModel {
     required this.email,
     required this.name,
     required this.role,
+    this.negocioId = 'main',
     this.password,
   });
 
@@ -25,6 +27,7 @@ class UserModel {
       'email': email,
       'name': name,
       'role': role.toString().split('.').last,
+      'negocioId': negocioId,
       'password': password,
     };
   }
@@ -38,6 +41,7 @@ class UserModel {
         (e) => e.toString().split('.').last == json['role'],
         orElse: () => RoleType.gerente,
       ),
+      negocioId: json['negocioId'] as String? ?? 'main',
       password: json['password'],
     );
   }
