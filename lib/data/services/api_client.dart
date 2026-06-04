@@ -16,11 +16,24 @@ class ApiClient {
   final String secreto;
   final http.Client _client;
   final String Function()? negocioId;
+  final String? Function()? token;
+  final void Function()? onUnauthorized;
 
-  ApiClient({required this.baseUrl, required this.secreto, http.Client? client, this.negocioId})
-      : _client = client ?? http.Client();
+  ApiClient({
+    required this.baseUrl,
+    required this.secreto,
+    http.Client? client,
+    this.negocioId,
+    this.token,
+    this.onUnauthorized,
+  }) : _client = client ?? http.Client();
 
   Map<String, String> get _headers {
+    final tok = token?.call();
+    if (tok != null && tok.isNotEmpty) {
+      // Cliente autenticado: el server deriva el negocio del token.
+      return {'Authorization': 'Bearer $tok', 'Content-Type': 'application/json'};
+    }
     final h = <String, String>{
       if (secreto.isNotEmpty) 'X-Secret': secreto,
       'Content-Type': 'application/json',
@@ -37,6 +50,7 @@ class ApiClient {
       if (r.body.isEmpty) return null;
       return jsonDecode(utf8.decode(r.bodyBytes));
     }
+    if (r.statusCode == 401) onUnauthorized?.call();
     throw ApiException(r.statusCode, '$metodo $path -> ${r.body}');
   }
 

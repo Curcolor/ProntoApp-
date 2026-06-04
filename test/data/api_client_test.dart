@@ -37,4 +37,27 @@ void main() {
     final api = ApiClient(baseUrl: 'http://x', secreto: '', client: mock, negocioId: () => 'NEG1');
     await api.get('/x');
   });
+
+  test('con token manda Authorization Bearer y NO X-Secret/X-Negocio-Id', () async {
+    final mock = MockClient((req) async {
+      expect(req.headers['Authorization'], 'Bearer jwt123');
+      expect(req.headers.containsKey('X-Secret'), false);
+      expect(req.headers.containsKey('X-Negocio-Id'), false);
+      return http.Response(jsonEncode({'ok': true}), 200);
+    });
+    final api = ApiClient(
+        baseUrl: 'http://x', secreto: 'sec', client: mock,
+        negocioId: () => 'NEG1', token: () => 'jwt123');
+    await api.get('/x');
+  });
+
+  test('401 dispara onUnauthorized', () async {
+    var llamado = false;
+    final mock = MockClient((req) async => http.Response('no', 401));
+    final api = ApiClient(
+        baseUrl: 'http://x', secreto: '', client: mock,
+        onUnauthorized: () => llamado = true);
+    await expectLater(() => api.get('/x'), throwsA(isA<ApiException>()));
+    expect(llamado, true);
+  });
 }
