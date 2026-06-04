@@ -57,22 +57,22 @@ def _pedido_a_dict(p: "models.Pedido") -> dict:
 
 # ─── Inventario ───────────────────────────────────────────────────────────────
 
-def leer_inventario(db: Session) -> dict:
-    cats = db.scalars(select(models.Categoria)).all()
-    prods = db.scalars(select(models.Producto)).all()
+def leer_inventario(db: Session, negocio_id: str) -> dict:
+    cats = db.scalars(select(models.Categoria).where(models.Categoria.negocio_id == negocio_id)).all()
+    prods = db.scalars(select(models.Producto).where(models.Producto.negocio_id == negocio_id)).all()
     return {
         "categorias": [_categoria_a_dict(c) for c in cats],
         "productos": [_producto_a_dict(p) for p in prods],
     }
 
 
-def reemplazar_inventario(db: Session, categorias: list[dict], productos: list[dict]) -> None:
+def reemplazar_inventario(db: Session, categorias: list[dict], productos: list[dict], negocio_id: str) -> None:
     """Reemplaza todo el inventario (PUT /inventario)."""
-    db.query(models.Producto).delete()
-    db.query(models.Categoria).delete()
+    db.query(models.Producto).filter(models.Producto.negocio_id == negocio_id).delete()
+    db.query(models.Categoria).filter(models.Categoria.negocio_id == negocio_id).delete()
     db.flush()
     for c in categorias:
-        db.add(models.Categoria(id=c["id"], name=c["name"], emoji=c.get("emoji", "")))
+        db.add(models.Categoria(id=c["id"], name=c["name"], emoji=c.get("emoji", ""), negocio_id=negocio_id))
     db.flush()
     for p in productos:
         db.add(models.Producto(
@@ -81,18 +81,19 @@ def reemplazar_inventario(db: Session, categorias: list[dict], productos: list[d
             prep_time_minutes=p.get("prepTimeMinutes", 0),
             is_available=p.get("isAvailable", True), description=p.get("description", ""),
             ai_context=p.get("aiContext", ""), ai_active=p.get("aiActive", True),
-            image_url=p.get("imageUrl"), emoji=p.get("emoji", "📦"),
+            image_url=p.get("imageUrl"), emoji=p.get("emoji", "📦"), negocio_id=negocio_id,
         ))
     db.commit()
 
 
-def descontar_stock(db: Session, items: list[dict]) -> None:
+def descontar_stock(db: Session, items: list[dict], negocio_id: str) -> None:
     """Descuenta stock por nombre de producto (case-insensitive), sin bajar de 0."""
     for item in items:
         nombre = str(item.get("nombre", "")).lower()
-        prod = db.scalars(
-            select(models.Producto).where(func.lower(models.Producto.name) == nombre)
-        ).first()
+        prod = db.scalars(select(models.Producto).where(
+            models.Producto.negocio_id == negocio_id,
+            func.lower(models.Producto.name) == nombre,
+        )).first()
         if prod is not None:
             prod.stock = max(0, prod.stock - int(item.get("cantidad", 0)))
     db.commit()
@@ -211,18 +212,17 @@ class CategoriaConProductosError(Exception):
     """Se intentó borrar una categoría que aún tiene productos."""
 
 
-def crear_categoria(db: Session, datos: dict) -> dict:
-    cat = models.Categoria(
-        id=datos.get("id") or _nuevo_id("cat"),
-        name=datos["name"], emoji=datos.get("emoji", ""),
-    )
+def crear_categoria(db: Session, datos: dict, negocio_id: str) -> dict:
+    cat = models.Categoria(id=datos.get("id") or _nuevo_id("cat"),
+                           name=datos["name"], emoji=datos.get("emoji", ""), negocio_id=negocio_id)
     db.add(cat)
     db.commit()
     return _categoria_a_dict(cat)
 
 
-def actualizar_categoria(db: Session, cat_id: str, datos: dict) -> Optional[dict]:
-    cat = db.get(models.Categoria, cat_id)
+def actualizar_categoria(db: Session, cat_id: str, datos: dict, negocio_id: str) -> Optional[dict]:
+    cat = db.scalars(select(models.Categoria).where(
+        models.Categoria.id == cat_id, models.Categoria.negocio_id == negocio_id)).first()
     if cat is None:
         return None
     if "name" in datos:
@@ -233,13 +233,13 @@ def actualizar_categoria(db: Session, cat_id: str, datos: dict) -> Optional[dict
     return _categoria_a_dict(cat)
 
 
-def eliminar_categoria(db: Session, cat_id: str) -> bool:
-    cat = db.get(models.Categoria, cat_id)
+def eliminar_categoria(db: Session, cat_id: str, negocio_id: str) -> bool:
+    cat = db.scalars(select(models.Categoria).where(
+        models.Categoria.id == cat_id, models.Categoria.negocio_id == negocio_id)).first()
     if cat is None:
         return False
-    tiene = db.scalars(
-        select(models.Producto).where(models.Producto.categoria_id == cat_id)
-    ).first()
+    tiene = db.scalars(select(models.Producto).where(
+        models.Producto.categoria_id == cat_id, models.Producto.negocio_id == negocio_id)).first()
     if tiene is not None:
         raise CategoriaConProductosError(cat_id)
     db.delete(cat)
@@ -247,7 +247,7 @@ def eliminar_categoria(db: Session, cat_id: str) -> bool:
     return True
 
 
-def crear_producto(db: Session, datos: dict) -> dict:
+def crear_producto(db: Session, datos: dict, negocio_id: str) -> dict:
     prod = models.Producto(
         id=datos.get("id") or _nuevo_id("prod"),
         categoria_id=datos["categoryId"], name=datos["name"], price=datos["price"],
@@ -255,7 +255,7 @@ def crear_producto(db: Session, datos: dict) -> dict:
         prep_time_minutes=datos.get("prepTimeMinutes", 0),
         is_available=datos.get("isAvailable", True), description=datos.get("description", ""),
         ai_context=datos.get("aiContext", ""), ai_active=datos.get("aiActive", True),
-        image_url=datos.get("imageUrl"), emoji=datos.get("emoji", "📦"),
+        image_url=datos.get("imageUrl"), emoji=datos.get("emoji", "📦"), negocio_id=negocio_id,
     )
     db.add(prod)
     db.commit()
@@ -271,8 +271,9 @@ _CAMPOS_PRODUCTO = {
 }
 
 
-def actualizar_producto(db: Session, prod_id: str, datos: dict) -> Optional[dict]:
-    prod = db.get(models.Producto, prod_id)
+def actualizar_producto(db: Session, prod_id: str, datos: dict, negocio_id: str) -> Optional[dict]:
+    prod = db.scalars(select(models.Producto).where(
+        models.Producto.id == prod_id, models.Producto.negocio_id == negocio_id)).first()
     if prod is None:
         return None
     for clave_json, attr in _CAMPOS_PRODUCTO.items():
@@ -282,8 +283,9 @@ def actualizar_producto(db: Session, prod_id: str, datos: dict) -> Optional[dict
     return _producto_a_dict(prod)
 
 
-def eliminar_producto(db: Session, prod_id: str) -> bool:
-    prod = db.get(models.Producto, prod_id)
+def eliminar_producto(db: Session, prod_id: str, negocio_id: str) -> bool:
+    prod = db.scalars(select(models.Producto).where(
+        models.Producto.id == prod_id, models.Producto.negocio_id == negocio_id)).first()
     if prod is None:
         return False
     db.delete(prod)
