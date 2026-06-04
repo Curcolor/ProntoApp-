@@ -7,10 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from . import auth, crud
+from . import crud
 from .infrastructure.web.deps import get_db, requerir_tenant
 from .infrastructure.web.routers import inventario as inventario_router
 from .infrastructure.web.routers import pedidos as pedidos_router
+from .infrastructure.web.routers import auth as auth_router
 
 load_dotenv()
 
@@ -20,6 +21,7 @@ app.add_middleware(
 )
 app.include_router(inventario_router.router)
 app.include_router(pedidos_router.router)
+app.include_router(auth_router.router)
 
 
 def get_negocio_id(x_negocio_id: Optional[str] = Header(default=None)) -> str:
@@ -33,36 +35,6 @@ def get_negocio_id(x_negocio_id: Optional[str] = Header(default=None)) -> str:
 def health_check():
     from datetime import datetime
     return {"ok": True, "timestamp": datetime.now().isoformat()}
-
-
-class LoginIn(BaseModel):
-    email: str
-    password: str
-
-
-@app.post("/auth/login")
-def auth_login(body: LoginIn, db: Session = Depends(get_db)):
-    user = crud.login(db, body.email, body.password)
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
-    return {**user, "token": auth.crear_token(user)}
-
-
-class RegistroIn(BaseModel):
-    nombre: str
-    email: str
-    password: str
-    businessName: str
-    telefono: Optional[str] = None
-
-
-@app.post("/registro", status_code=status.HTTP_201_CREATED)
-def registro_endpoint(body: RegistroIn, db: Session = Depends(get_db)):
-    try:
-        user = crud.registrar(db, body.model_dump())
-    except crud.EmailDuplicadoError:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El email ya está registrado")
-    return {**user, "token": auth.crear_token(user)}
 
 
 @app.get("/negocio")

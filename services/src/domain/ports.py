@@ -1,8 +1,8 @@
-"""Puertos (interfaces) del inventario y pedidos. Devuelven/aceptan entidades
-de dominio."""
+"""Puertos (interfaces) del inventario, pedidos y auth. Devuelven/aceptan
+entidades de dominio."""
 from typing import Protocol
 
-from src.domain.entities import Categoria, Cliente, DetallePedido, Pedido, Producto
+from src.domain.entities import Categoria, Cliente, DetallePedido, Pedido, Producto, Usuario
 
 
 class CategoriaRepository(Protocol):
@@ -41,3 +41,23 @@ class PedidoRepository(Protocol):
     def crear(self, cliente: Cliente, items: list[dict], datos: dict, negocio_id: str) -> Pedido: ...
     def cambiar_estado(self, pedido_id: str, estado: str, negocio_id: str) -> Pedido | None: ...
     def eliminar(self, pedido_id: str, negocio_id: str) -> bool: ...
+
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+
+class PasswordHasher(Protocol):
+    def hash(self, password: str) -> str: ...
+    def verify(self, password: str, hash: str) -> bool: ...
+
+
+class TokenService(Protocol):
+    def emitir(self, usuario: Usuario) -> str: ...
+
+
+class UsuarioRepository(Protocol):
+    def por_email(self, email: str) -> tuple[Usuario, str] | None: ...  # (usuario, contrasena_hash)
+    def crear(self, datos: dict, contrasena_hash: str, negocio_id: str) -> Usuario: ...  # raise EmailDuplicadoError on conflict
+
+
+class NegocioRepository(Protocol):
+    def crear(self, nombre: str) -> str: ...  # crea negocio con id nuevo, devuelve negocio_id

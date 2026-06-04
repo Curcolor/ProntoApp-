@@ -1,8 +1,8 @@
 """Presentadores: entidad de dominio → dict del contrato JSON.
 
 Reproducen exactamente `crud._categoria_a_dict` / `crud._producto_a_dict` /
-`crud._pedido_a_dict` / `crud._limpiar_telefono`."""
-from src.domain.entities import Categoria, Pedido, Producto
+`crud._pedido_a_dict` / `crud._limpiar_telefono` / `crud._usuario_a_dict`."""
+from src.domain.entities import Categoria, Pedido, Producto, Usuario
 
 
 def categoria_a_dict(c: Categoria) -> dict:
@@ -24,6 +24,19 @@ def limpiar_telefono(telefono: str) -> str:
         partes = telefono.split("|", 1)
         return partes[1] if len(partes) > 1 else ""
     return telefono
+
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+
+def usuario_a_dict(u: Usuario) -> dict:
+    return {
+        "id": u.id,
+        "nombre": u.nombre,
+        "email": u.email,
+        "telefono": u.telefono,
+        "rol": u.rol,
+        "negocioId": u.negocioId,
+    }
 
 
 def pedido_a_dict(p: Pedido) -> dict:

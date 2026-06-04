@@ -134,21 +134,18 @@ def crear_usuario(db: Session, datos: dict, negocio_id: str) -> dict:
 
 
 def registrar(db: Session, datos: dict) -> dict:
-    negocio = models.Negocio(id=_nuevo_id("N"), nombre=datos["businessName"])
-    db.add(negocio)
-    db.flush()
-    user = models.Usuario(
-        id=_nuevo_id("U"), nombre=datos["nombre"], email=datos["email"],
-        contrasena_hash=bcrypt.hash(datos["password"]), rol="gerente",
-        telefono=datos.get("telefono"), negocio_id=negocio.id,
+    from src.application.auth import RegistrarNegocio
+    from src.infrastructure.persistence.repositories import (
+        SqlAlchemyNegocioRepository, SqlAlchemyUsuarioRepository,
     )
-    db.add(user)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise EmailDuplicadoError(datos["email"])
-    return _usuario_a_dict(user)
+    from src.infrastructure.security.password import BcryptPasswordHasher
+    from src.infrastructure.web.presenters import usuario_a_dict as _ua_dict
+    usuario = RegistrarNegocio(
+        SqlAlchemyNegocioRepository(db),
+        SqlAlchemyUsuarioRepository(db),
+        BcryptPasswordHasher(),
+    ).execute(datos)
+    return _ua_dict(usuario)
 
 
 def listar_usuarios(db: Session, negocio_id: str) -> list[dict]:
@@ -157,10 +154,14 @@ def listar_usuarios(db: Session, negocio_id: str) -> list[dict]:
 
 
 def login(db: Session, email: str, password: str) -> Optional[dict]:
-    user = db.scalars(select(models.Usuario).where(models.Usuario.email == email)).first()
-    if user is None or not bcrypt.verify(password, user.contrasena_hash):
+    from src.application.auth import Login
+    from src.infrastructure.persistence.repositories import SqlAlchemyUsuarioRepository
+    from src.infrastructure.security.password import BcryptPasswordHasher
+    from src.infrastructure.web.presenters import usuario_a_dict as _ua_dict
+    usuario = Login(SqlAlchemyUsuarioRepository(db), BcryptPasswordHasher()).execute(email, password)
+    if usuario is None:
         return None
-    return _usuario_a_dict(user)
+    return _ua_dict(usuario)
 
 
 def leer_negocio(db: Session, negocio_id: str) -> Optional[dict]:

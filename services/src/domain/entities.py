@@ -1,4 +1,4 @@
-"""Entidades de dominio del inventario y pedidos. Dataclasses puras (sin
+"""Entidades de dominio del inventario, pedidos y auth. Dataclasses puras (sin
 SQLAlchemy ni Pydantic). Los nombres de atributo coinciden con el contrato JSON."""
 from __future__ import annotations
 
@@ -57,3 +57,15 @@ class Pedido:
     tipo: str
     direccion: str | None
     creadoEn: object | None  # datetime; el presenter hace .isoformat()
+
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+
+@dataclass
+class Usuario:
+    id: str
+    nombre: str
+    email: str
+    rol: str
+    negocioId: str
+    telefono: str | None = None

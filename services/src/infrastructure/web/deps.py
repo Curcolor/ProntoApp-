@@ -20,12 +20,17 @@ from src.application.pedidos import (
 )
 from src.domain.ports import (
     CategoriaRepository, ClienteRepository, PedidoRepository, ProductoRepository,
+    TokenService,
 )
+from src.application.auth import Login, RegistrarNegocio
 from src.infrastructure.notifications.telegram import TelegramNotificador
 from src.infrastructure.persistence.repositories import (
     SqlAlchemyCategoriaRepository, SqlAlchemyClienteRepository,
-    SqlAlchemyPedidoRepository, SqlAlchemyProductoRepository,
+    SqlAlchemyNegocioRepository, SqlAlchemyPedidoRepository,
+    SqlAlchemyProductoRepository, SqlAlchemyUsuarioRepository,
 )
+from src.infrastructure.security.jwt_service import JwtTokenService
+from src.infrastructure.security.password import BcryptPasswordHasher
 
 SECRETO = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
 
@@ -145,3 +150,21 @@ def eliminar_pedido_uc(
     pedido: PedidoRepository = Depends(_pedido_repo),
 ) -> EliminarPedido:
     return EliminarPedido(pedido)
+
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+
+def get_token_service() -> TokenService:
+    return JwtTokenService()
+
+
+def login_uc(db: Session = Depends(get_db)) -> Login:
+    return Login(SqlAlchemyUsuarioRepository(db), BcryptPasswordHasher())
+
+
+def registrar_negocio_uc(db: Session = Depends(get_db)) -> RegistrarNegocio:
+    return RegistrarNegocio(
+        SqlAlchemyNegocioRepository(db),
+        SqlAlchemyUsuarioRepository(db),
+        BcryptPasswordHasher(),
+    )

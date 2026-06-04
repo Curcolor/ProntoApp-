@@ -1,12 +1,14 @@
-"""Adaptadores SQLAlchemy de los puertos del inventario y pedidos.
+"""Adaptadores SQLAlchemy de los puertos del inventario, pedidos y auth.
 
 Replican las consultas de `crud` (filtro por negocio_id, reemplazo = borrar e
 insertar, descuento de stock por nombre case-insensitive sin bajar de 0). Cada
 método mutador hace commit, igual que el `crud` original."""
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from src.domain.entities import Categoria, Cliente, DetallePedido, Pedido, Producto
+from src.domain.entities import Categoria, Cliente, DetallePedido, Pedido, Producto, Usuario
+from src.domain.errors import EmailDuplicadoError
 from src.domain.ids import nuevo_id
 from src.infrastructure.persistence import models
 
@@ -267,3 +269,58 @@ class SqlAlchemyPedidoRepository:
         self._db.delete(row)
         self._db.commit()
         return True
+
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+
+def _a_usuario(u: "models.Usuario") -> Usuario:
+    return Usuario(
+        id=u.id,
+        nombre=u.nombre,
+        email=u.email,
+        rol=u.rol,
+        negocioId=u.negocio_id,
+        telefono=u.telefono,
+    )
+
+
+class SqlAlchemyUsuarioRepository:
+    def __init__(self, db: Session):
+        self._db = db
+
+    def por_email(self, email: str) -> tuple[Usuario, str] | None:
+        row = self._db.scalars(
+            select(models.Usuario).where(models.Usuario.email == email)
+        ).first()
+        if row is None:
+            return None
+        return (_a_usuario(row), row.contrasena_hash)
+
+    def crear(self, datos: dict, contrasena_hash: str, negocio_id: str) -> Usuario:
+        user = models.Usuario(
+            id=datos.get("id") or nuevo_id("U"),
+            nombre=datos["nombre"],
+            email=datos["email"],
+            contrasena_hash=contrasena_hash,
+            telefono=datos.get("telefono"),
+            rol=datos["rol"],
+            negocio_id=negocio_id,
+        )
+        self._db.add(user)
+        try:
+            self._db.commit()
+        except IntegrityError:
+            self._db.rollback()
+            raise EmailDuplicadoError(datos["email"])
+        return _a_usuario(user)
+
+
+class SqlAlchemyNegocioRepository:
+    def __init__(self, db: Session):
+        self._db = db
+
+    def crear(self, nombre: str) -> str:
+        negocio = models.Negocio(id=nuevo_id("N"), nombre=nombre)
+        self._db.add(negocio)
+        self._db.flush()
+        return negocio.id
