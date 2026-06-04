@@ -1,11 +1,11 @@
 specVersion: "v1"
 serviceId: "prontoapp"
-location: "us-central1"
+location: "us-east4"
 schema:
   source: "./schema"
   datasource:
     postgresql:
       database: "prontoapp"
       cloudSql:
-        instanceId: "prontoapp-movil"
+        instanceId: "prontoapp-prod"
 connectorDirs: ["./connector"]
