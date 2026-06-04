@@ -101,12 +101,13 @@ def descontar_stock(db: Session, items: list[dict], negocio_id: str) -> None:
 
 # ─── Clientes ─────────────────────────────────────────────────────────────────
 
-def _upsert_cliente(db: Session, nombre: str, numero_whatsapp: str) -> "models.Cliente":
-    cliente = db.scalars(
-        select(models.Cliente).where(models.Cliente.numero_whatsapp == numero_whatsapp)
-    ).first()
+def _upsert_cliente(db: Session, nombre: str, numero_whatsapp: str, negocio_id: str) -> "models.Cliente":
+    cliente = db.scalars(select(models.Cliente).where(
+        models.Cliente.negocio_id == negocio_id,
+        models.Cliente.numero_whatsapp == numero_whatsapp)).first()
     if cliente is None:
-        cliente = models.Cliente(id=_nuevo_id("C"), nombre=nombre, numero_whatsapp=numero_whatsapp)
+        cliente = models.Cliente(id=_nuevo_id("C"), nombre=nombre,
+                                 numero_whatsapp=numero_whatsapp, negocio_id=negocio_id)
         db.add(cliente)
         db.flush()
     return cliente
@@ -114,16 +115,18 @@ def _upsert_cliente(db: Session, nombre: str, numero_whatsapp: str) -> "models.C
 
 # ─── Pedidos ──────────────────────────────────────────────────────────────────
 
-def listar_pedidos(db: Session) -> list[dict]:
-    pedidos = db.scalars(select(models.Pedido).order_by(models.Pedido.creado_en.desc())).all()
+def listar_pedidos(db: Session, negocio_id: str) -> list[dict]:
+    pedidos = db.scalars(select(models.Pedido).where(
+        models.Pedido.negocio_id == negocio_id).order_by(models.Pedido.creado_en.desc())).all()
     return [_pedido_a_dict(p) for p in pedidos]
 
 
-def crear_pedido(db: Session, datos: dict) -> dict:
-    cliente = _upsert_cliente(db, datos["cliente"], datos["telefono"])
+def crear_pedido(db: Session, datos: dict, negocio_id: str) -> dict:
+    cliente = _upsert_cliente(db, datos["cliente"], datos["telefono"], negocio_id)
     pedido = models.Pedido(
         id=_nuevo_id("P"), cliente_id=cliente.id, total=datos["total"],
         estado="recibido", tipo=datos["tipo"], direccion=datos.get("direccion"),
+        negocio_id=negocio_id,
     )
     db.add(pedido)
     db.flush()
@@ -133,14 +136,15 @@ def crear_pedido(db: Session, datos: dict) -> dict:
             nombre=it["nombre"], cantidad=it["cantidad"], precio_unitario=it["precio"],
         ))
     db.flush()
-    descontar_stock(db, datos["items"])
+    descontar_stock(db, datos["items"], negocio_id)
     db.commit()
     db.refresh(pedido)
     return _pedido_a_dict(pedido)
 
 
-def actualizar_estado(db: Session, pedido_id: str, estado: str) -> Optional[dict]:
-    pedido = db.get(models.Pedido, pedido_id)
+def actualizar_estado(db: Session, pedido_id: str, estado: str, negocio_id: str) -> Optional[dict]:
+    pedido = db.scalars(select(models.Pedido).where(
+        models.Pedido.id == pedido_id, models.Pedido.negocio_id == negocio_id)).first()
     if pedido is None:
         return None
     pedido.estado = estado
@@ -149,8 +153,9 @@ def actualizar_estado(db: Session, pedido_id: str, estado: str) -> Optional[dict
     return _pedido_a_dict(pedido)
 
 
-def eliminar_pedido(db: Session, pedido_id: str) -> bool:
-    pedido = db.get(models.Pedido, pedido_id)
+def eliminar_pedido(db: Session, pedido_id: str, negocio_id: str) -> bool:
+    pedido = db.scalars(select(models.Pedido).where(
+        models.Pedido.id == pedido_id, models.Pedido.negocio_id == negocio_id)).first()
     if pedido is None:
         return False
     db.delete(pedido)

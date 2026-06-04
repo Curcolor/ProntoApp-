@@ -34,3 +34,21 @@ def test_actualizar_producto_ajeno_devuelve_none(db):
     _cat(db, "A", "ca"); _prod(db, "A", "pa", "ca")
     assert crud.actualizar_producto(db, "pa", {"price": 9}, "B") is None
     assert crud.actualizar_producto(db, "pa", {"price": 9}, "A")["price"] == 9
+
+
+def _pedido(neg_tel):
+    return {"cliente": "Ana", "telefono": neg_tel, "items": [], "total": 1000,
+            "tipo": "recoger", "direccion": None}
+
+
+def test_pedidos_aislados(db):
+    crud.crear_pedido(db, _pedido("300A"), "A")
+    crud.crear_pedido(db, _pedido("300B"), "B")
+    assert len(crud.listar_pedidos(db, "A")) == 1
+    assert crud.listar_pedidos(db, "A")[0]["telefono"] == "300A"
+
+
+def test_mismo_whatsapp_distinto_negocio(db):
+    crud.crear_pedido(db, _pedido("300"), "A")
+    crud.crear_pedido(db, _pedido("300"), "B")  # no debe chocar
+    assert db.query(models.Cliente).count() == 2
