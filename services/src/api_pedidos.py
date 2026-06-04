@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from .db import SessionLocal
 from . import auth, crud
+from .auth import TokenInvalidoError, decodificar_token
 
 load_dotenv()
 
@@ -31,12 +32,28 @@ def get_db():
 
 
 def get_negocio_id(x_negocio_id: Optional[str] = Header(default=None)) -> str:
+    # Conservada solo por compatibilidad de imports/tests; ya no la usan los endpoints.
     return x_negocio_id or "main"
 
 
-def _verificar_secreto(x_secret: Optional[str]) -> None:
+def requerir_tenant(
+    authorization: Optional[str] = Header(default=None),
+    x_secret: Optional[str] = Header(default=None),
+    x_negocio_id: Optional[str] = Header(default=None),
+) -> str:
+    """Resuelve el negocio del request. App: del JWT. Bot/servicio: del header."""
+    if authorization and authorization.lower().startswith("bearer "):
+        try:
+            claims = decodificar_token(authorization.split(" ", 1)[1].strip())
+        except TokenInvalidoError:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido o expirado")
+        negocio = claims.get("negocio_id")
+        if not negocio:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token sin negocio_id")
+        return negocio
     if SECRETO and x_secret != SECRETO:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado: secreto inválido")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Autenticación requerida")
+    return x_negocio_id or "main"
 
 
 def _notificar_cambio_estado_telegram(chat_id: str, pedido_id: str, estado: str) -> None:
@@ -90,20 +107,17 @@ def health_check():
 
 
 @app.get("/pedidos")
-def obtener_pedidos(x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def obtener_pedidos(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     return crud.listar_pedidos(db, negocio_id)
 
 
 @app.post("/pedidos", status_code=status.HTTP_201_CREATED)
-def crear_pedido(pedido: PedidoIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def crear_pedido(pedido: PedidoIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     return crud.crear_pedido(db, pedido.model_dump(), negocio_id)
 
 
 @app.patch("/pedidos/{pedido_id}/estado")
-def actualizar_estado(pedido_id: str, body: EstadoIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def actualizar_estado(pedido_id: str, body: EstadoIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     # leer teléfono antes/después para notificar
     from .models import Pedido
     from sqlalchemy import select
@@ -122,21 +136,18 @@ def actualizar_estado(pedido_id: str, body: EstadoIn, x_secret: Optional[str] = 
 
 
 @app.delete("/pedidos/{pedido_id}", status_code=status.HTTP_204_NO_CONTENT)
-def eliminar_pedido(pedido_id: str, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def eliminar_pedido(pedido_id: str, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     if not crud.eliminar_pedido(db, pedido_id, negocio_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Pedido {pedido_id} no encontrado")
 
 
 @app.get("/inventario")
-def obtener_inventario(x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def obtener_inventario(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     return crud.leer_inventario(db, negocio_id)
 
 
 @app.put("/inventario")
-def actualizar_inventario(body: InventarioIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def actualizar_inventario(body: InventarioIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     crud.reemplazar_inventario(db, body.categorias, body.productos, negocio_id)
     return {"ok": True}
 
@@ -172,7 +183,7 @@ def registro_endpoint(body: RegistroIn, db: Session = Depends(get_db)):
 
 
 @app.get("/negocio")
-def obtener_negocio(db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
+def obtener_negocio(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     return crud.leer_negocio(db, negocio_id)
 
 
@@ -219,14 +230,12 @@ class CategoriaPatch(BaseModel):
 
 
 @app.post("/productos", status_code=status.HTTP_201_CREATED)
-def crear_producto(body: ProductoIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def crear_producto(body: ProductoIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     return crud.crear_producto(db, body.model_dump(), negocio_id)
 
 
 @app.patch("/productos/{prod_id}")
-def actualizar_producto(prod_id: str, body: ProductoPatch, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def actualizar_producto(prod_id: str, body: ProductoPatch, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     datos = {k: v for k, v in body.model_dump().items() if v is not None}
     actualizado = crud.actualizar_producto(db, prod_id, datos, negocio_id)
     if actualizado is None:
@@ -235,21 +244,18 @@ def actualizar_producto(prod_id: str, body: ProductoPatch, x_secret: Optional[st
 
 
 @app.delete("/productos/{prod_id}", status_code=status.HTTP_204_NO_CONTENT)
-def eliminar_producto(prod_id: str, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def eliminar_producto(prod_id: str, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     if not crud.eliminar_producto(db, prod_id, negocio_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto {prod_id} no encontrado")
 
 
 @app.post("/categorias", status_code=status.HTTP_201_CREATED)
-def crear_categoria(body: CategoriaIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def crear_categoria(body: CategoriaIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     return crud.crear_categoria(db, body.model_dump(), negocio_id)
 
 
 @app.patch("/categorias/{cat_id}")
-def actualizar_categoria(cat_id: str, body: CategoriaPatch, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def actualizar_categoria(cat_id: str, body: CategoriaPatch, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     datos = {k: v for k, v in body.model_dump().items() if v is not None}
     actualizado = crud.actualizar_categoria(db, cat_id, datos, negocio_id)
     if actualizado is None:
@@ -258,8 +264,7 @@ def actualizar_categoria(cat_id: str, body: CategoriaPatch, x_secret: Optional[s
 
 
 @app.delete("/categorias/{cat_id}", status_code=status.HTTP_204_NO_CONTENT)
-def eliminar_categoria(cat_id: str, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def eliminar_categoria(cat_id: str, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     try:
         ok = crud.eliminar_categoria(db, cat_id, negocio_id)
     except crud.CategoriaConProductosError:
@@ -277,8 +282,7 @@ class UsuarioIn(BaseModel):
 
 
 @app.post("/usuarios", status_code=status.HTTP_201_CREATED)
-def crear_usuario_endpoint(body: UsuarioIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def crear_usuario_endpoint(body: UsuarioIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     try:
         return crud.crear_usuario(db, body.model_dump(), negocio_id)
     except crud.EmailDuplicadoError:
@@ -286,8 +290,7 @@ def crear_usuario_endpoint(body: UsuarioIn, x_secret: Optional[str] = Header(def
 
 
 @app.get("/usuarios")
-def listar_usuarios_endpoint(x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def listar_usuarios_endpoint(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     return crud.listar_usuarios(db, negocio_id)
 
 
@@ -309,15 +312,13 @@ class UsuarioPatch(BaseModel):
 
 
 @app.put("/negocio")
-def actualizar_negocio_endpoint(body: NegocioIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def actualizar_negocio_endpoint(body: NegocioIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     datos = {k: v for k, v in body.model_dump().items() if v is not None}
     return crud.actualizar_negocio(db, datos, negocio_id)
 
 
 @app.patch("/usuarios/{usuario_id}")
-def actualizar_usuario_endpoint(usuario_id: str, body: UsuarioPatch, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def actualizar_usuario_endpoint(usuario_id: str, body: UsuarioPatch, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     datos = {k: v for k, v in body.model_dump().items() if v is not None}
     actualizado = crud.actualizar_usuario(db, usuario_id, datos, negocio_id)
     if actualizado is None:
@@ -326,8 +327,7 @@ def actualizar_usuario_endpoint(usuario_id: str, body: UsuarioPatch, x_secret: O
 
 
 @app.delete("/usuarios/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
-def eliminar_usuario_endpoint(usuario_id: str, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def eliminar_usuario_endpoint(usuario_id: str, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     if not crud.eliminar_usuario(db, usuario_id, negocio_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Usuario {usuario_id} no encontrado")
 
@@ -338,8 +338,7 @@ class PlantillaIaIn(BaseModel):
 
 
 @app.get("/plantilla-ia")
-def obtener_plantilla_ia(x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def obtener_plantilla_ia(db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     p = crud.leer_plantilla_ia(db, negocio_id)
     if p is None:
         return {"id": "main", "prompt": "", "contexto": "[]"}
@@ -347,8 +346,7 @@ def obtener_plantilla_ia(x_secret: Optional[str] = Header(default=None), db: Ses
 
 
 @app.put("/plantilla-ia")
-def actualizar_plantilla_ia_endpoint(body: PlantillaIaIn, x_secret: Optional[str] = Header(default=None), db: Session = Depends(get_db), negocio_id: str = Depends(get_negocio_id)):
-    _verificar_secreto(x_secret)
+def actualizar_plantilla_ia_endpoint(body: PlantillaIaIn, db: Session = Depends(get_db), negocio_id: str = Depends(requerir_tenant)):
     datos = {k: v for k, v in body.model_dump().items() if v is not None}
     return crud.actualizar_plantilla_ia(db, datos, negocio_id)
 
