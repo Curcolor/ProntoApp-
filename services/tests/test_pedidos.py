@@ -1,4 +1,12 @@
+import pytest
 from src import crud, models
+
+
+@pytest.fixture(autouse=True)
+def _negocio_main(db):
+    if db.get(models.Negocio, "main") is None:
+        db.add(models.Negocio(id="main", nombre="ProntoApp"))
+        db.flush()
 
 
 def _payload():
@@ -10,34 +18,34 @@ def _payload():
 
 
 def test_crear_pedido_upsert_cliente_y_detalle(db):
-    pedido = crud.crear_pedido(db, _payload())
+    pedido = crud.crear_pedido(db, _payload(), "main")
     assert pedido["id"].startswith("P-")
     assert pedido["estado"] == "recibido"
     # cliente upsert por numero_whatsapp
     clientes = db.query(models.Cliente).all()
     assert len(clientes) == 1
     # segundo pedido del mismo telefono no duplica cliente
-    crud.crear_pedido(db, _payload())
+    crud.crear_pedido(db, _payload(), "main")
     assert db.query(models.Cliente).count() == 1
     assert db.query(models.DetallePedido).count() == 2
 
 
 def test_listar_pedidos_limpia_telefono(db):
-    crud.crear_pedido(db, _payload())
-    pedidos = crud.listar_pedidos(db)
+    crud.crear_pedido(db, _payload(), "main")
+    pedidos = crud.listar_pedidos(db, "main")
     assert pedidos[0]["telefono"] == "3001234567"
     assert pedidos[0]["cliente"] == "Ana"
     assert pedidos[0]["items"][0]["nombre"] == "Café"
 
 
 def test_actualizar_estado(db):
-    p = crud.crear_pedido(db, _payload())
-    ok = crud.actualizar_estado(db, p["id"], "listo")
+    p = crud.crear_pedido(db, _payload(), "main")
+    ok = crud.actualizar_estado(db, p["id"], "listo", "main")
     assert ok is not None
     assert db.get(models.Pedido, p["id"]).estado == "listo"
 
 
 def test_eliminar_pedido_cascade(db):
-    p = crud.crear_pedido(db, _payload())
-    assert crud.eliminar_pedido(db, p["id"]) is True
+    p = crud.crear_pedido(db, _payload(), "main")
+    assert crud.eliminar_pedido(db, p["id"], "main") is True
     assert db.query(models.DetallePedido).count() == 0

@@ -1,4 +1,12 @@
+import pytest
 from src import crud, models
+
+
+@pytest.fixture(autouse=True)
+def _negocio_main(db):
+    if db.get(models.Negocio, "main") is None:
+        db.add(models.Negocio(id="main", nombre="ProntoApp"))
+        db.flush()
 
 
 def test_reemplazar_y_leer_inventario(db):
@@ -11,8 +19,9 @@ def test_reemplazar_y_leer_inventario(db):
             "description": "", "aiContext": "", "aiActive": True,
             "imageUrl": None, "emoji": "☕",
         }],
+        negocio_id="main",
     )
-    inv = crud.leer_inventario(db)
+    inv = crud.leer_inventario(db, "main")
     assert inv["categorias"][0]["id"] == "cat_1"
     assert inv["productos"][0]["categoryId"] == "cat_1"
     assert inv["productos"][0]["price"] == 5000
@@ -27,6 +36,7 @@ def test_descontar_stock_por_nombre(db):
             "description": "", "aiContext": "", "aiActive": True,
             "imageUrl": None, "emoji": "x",
         }],
+        negocio_id="main",
     )
-    crud.descontar_stock(db, [{"nombre": "café", "cantidad": 2}])
+    crud.descontar_stock(db, [{"nombre": "café", "cantidad": 2}], "main")
     assert db.get(models.Producto, "p").stock == 3

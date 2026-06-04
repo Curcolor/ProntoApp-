@@ -1,4 +1,12 @@
+import pytest
 from src import models
+
+
+@pytest.fixture(autouse=True)
+def _negocio_main(db):
+    if db.get(models.Negocio, "main") is None:
+        db.add(models.Negocio(id="main", nombre="ProntoApp"))
+        db.flush()
 
 
 def test_crear_producto_y_categoria(db):
