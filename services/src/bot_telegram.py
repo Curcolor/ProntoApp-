@@ -49,6 +49,7 @@ TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:5050")
 SECRETO = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
+BOT_NEGOCIO_ID = os.getenv("BOT_NEGOCIO_ID", "main")
 
 if not TOKEN:
     raise RuntimeError("TELEGRAM_BOT_TOKEN no está configurado en .env")
@@ -64,7 +65,9 @@ cliente_ia = OpenAI(
 # Historial de conversación por chat_id (últimos 12 mensajes)
 conversaciones: dict[int, list[dict]] = defaultdict(list)
 
-CABECERAS_API = {"X-Secret": SECRETO} if SECRETO else {}
+CABECERAS_API = {"X-Negocio-Id": BOT_NEGOCIO_ID}
+if SECRETO:
+    CABECERAS_API["X-Secret"] = SECRETO
 
 
 # ─── Inventario ───────────────────────────────────────────────────────────────
