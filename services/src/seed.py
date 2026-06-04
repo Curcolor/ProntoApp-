@@ -27,6 +27,14 @@ def run(db: Session, inventario_path: str | None = None, pedidos_path: str | Non
     _upsert(db, models.Negocio(id="main", nombre="ProntoApp", tipo_negocio="restaurante",
                                formato_entrega="ambos", numero_whatsapp=""))
 
+    # Plantilla IA default (1 fila)
+    _PERSONA_DEFAULT = (
+        'Eres el asistente de pedidos de ProntoApp, una panadería y cafetería.\n'
+        'Tu nombre es "Pronto" y eres amable, conciso y eficiente.'
+    )
+    _upsert(db, models.PlantillaIa(id="main", prompt=_PERSONA_DEFAULT, contexto="[]"))
+    db.flush()
+
     # Usuarios default (idempotente por PK)
     for u in _USUARIOS_DEFAULT:
         _upsert(db, models.Usuario(

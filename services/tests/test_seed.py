@@ -26,3 +26,4 @@ def test_seed_carga_defaults(db, tmp_path):
     assert db.get(models.Producto, "prod_1").name == "Café"
     assert db.query(models.Pedido).count() == 1
     assert db.query(models.Cliente).count() == 1
+    assert db.query(models.PlantillaIa).count() == 1
