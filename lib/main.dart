@@ -13,6 +13,7 @@ import 'package:prontoapp/data/providers/order_provider.dart';
 import 'package:prontoapp/data/providers/notification_provider.dart';
 import 'package:prontoapp/data/repositories/negocio_repository.dart';
 import 'package:prontoapp/data/repositories/usuario_repository.dart';
+import 'package:prontoapp/data/repositories/plantilla_ia_repository.dart';
 
 class AppScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -35,6 +36,7 @@ void main() async {
   final orderRepo = OrderRepository(apiClient, prefs);
   final negocioRepo = NegocioRepository(apiClient);
   final usuarioRepo = UsuarioRepository(apiClient);
+  final plantillaIaRepo = PlantillaIaRepository(apiClient);
 
   runApp(
     MultiProvider(
@@ -51,6 +53,7 @@ void main() async {
         ),
         Provider<NegocioRepository>.value(value: negocioRepo),
         Provider<UsuarioRepository>.value(value: usuarioRepo),
+        Provider<PlantillaIaRepository>.value(value: plantillaIaRepo),
       ],
       child: const ProntoApp(),
     ),

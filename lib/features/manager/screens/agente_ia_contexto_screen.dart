@@ -4,7 +4,9 @@ import 'package:prontoapp/preview_support/preview_theme.dart';
 import 'package:prontoapp/preview_support/preview_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:prontoapp/data/repositories/plantilla_ia_repository.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
 
 class AgenteIaContextoScreen extends StatefulWidget {
@@ -32,25 +34,32 @@ class _AgenteIaContextoScreenState extends State<AgenteIaContextoScreen> {
   }
 
   Future<void> _cargarContexto() async {
-    final prefs = await SharedPreferences.getInstance();
-    for (int i = 0; i < _pasos.length; i++) {
-      final guardado = prefs.getString('ia_context_$i');
-      if (guardado != null) {
-        _controladores[i].text = guardado;
+    try {
+      final p = await context.read<PlantillaIaRepository>().fetch();
+      final lista = jsonDecode(p.contexto);
+      if (lista is List) {
+        for (int i = 0; i < _controladores.length && i < lista.length; i++) {
+          _controladores[i].text = (lista[i] ?? '').toString();
+        }
       }
+    } catch (_) {
+      // Sin datos / offline: deja los campos vacíos.
     }
+    if (mounted) setState(() {});
   }
 
   Future<void> _guardarContexto() async {
-    final prefs = await SharedPreferences.getInstance();
-    for (int i = 0; i < _pasos.length; i++) {
-      await prefs.setString('ia_context_$i', _controladores[i].text);
-    }
-    if (mounted) {
+    final contexto = jsonEncode(_controladores.map((c) => c.text).toList());
+    try {
+      await context.read<PlantillaIaRepository>().update({'contexto': contexto});
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contexto guardado exitosamente')),
-      );
+        const SnackBar(content: Text('Contexto guardado')));
       Navigator.pop(context);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo guardar el contexto')));
     }
   }
 

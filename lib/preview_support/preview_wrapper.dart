@@ -6,6 +6,7 @@ import 'package:prontoapp/data/providers/notification_provider.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
 import 'package:prontoapp/data/repositories/negocio_repository.dart';
 import 'package:prontoapp/data/repositories/usuario_repository.dart';
+import 'package:prontoapp/data/repositories/plantilla_ia_repository.dart';
 import 'package:prontoapp/data/services/api_client.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
 
@@ -35,6 +36,7 @@ Widget previewWrapper(Widget child) => MultiProvider(
         ),
         Provider<NegocioRepository>.value(value: NegocioRepository(_previewApi)),
         Provider<UsuarioRepository>.value(value: UsuarioRepository(_previewApi)),
+        Provider<PlantillaIaRepository>.value(value: PlantillaIaRepository(_previewApi)),
       ],
       child: child,
     );
