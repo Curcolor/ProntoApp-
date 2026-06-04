@@ -1,5 +1,6 @@
 # Imagen única para la API y el bot de ProntoApp.
-FROM python:3.13-slim
+# 3.11 (no 3.13): python-telegram-bot 13.15 importa `imghdr`, removido en 3.13.
+FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
