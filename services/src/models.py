@@ -1,8 +1,8 @@
 """Modelos SQLAlchemy que espejan dataconnect/schema/schema.gql.
 Mantener en sync con el .gql (mismos nombres de columna)."""
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import (
-    Boolean, DateTime, Float, ForeignKey, Integer, String, func,
+    Boolean, DateTime, Float, ForeignKey, Integer, String,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .db import Base
@@ -74,9 +74,13 @@ class Pedido(Base):
     direccion: Mapped[str | None] = mapped_column(String)
     canal: Mapped[str] = mapped_column(String, nullable=False, default="whatsapp")
     usuario_asignado_id: Mapped[str | None] = mapped_column(ForeignKey("usuario.id"))
-    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    creado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     actualizado_en: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
     )
     cliente: Mapped["Cliente"] = relationship()
     items: Mapped[list["DetallePedido"]] = relationship(
