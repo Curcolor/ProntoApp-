@@ -10,7 +10,9 @@ import json
 import logging
 import os
 import re
+import threading
 from collections import defaultdict
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import httpx
 from dotenv import load_dotenv
@@ -390,6 +392,23 @@ def _enviar_seguro(
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
+def _iniciar_health_server() -> None:
+    """Cloud Run exige que el contenedor escuche en $PORT. El bot es un poller
+    (no HTTP), así que levantamos un servidor de health mínimo en un thread."""
+    port = int(os.getenv("PORT", "8080"))
+
+    class _Handler(BaseHTTPRequestHandler):
+        def do_GET(self):  # noqa: N802
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"ok")
+
+        def log_message(self, *args):  # silenciar logs de acceso
+            pass
+
+    HTTPServer(("0.0.0.0", port), _Handler).serve_forever()
+
+
 def main() -> None:
     """Punto de entrada del bot."""
     logger.info("🚀 Iniciando bot de Telegram ProntoApp...")
@@ -417,6 +436,9 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("cancelar", cmd_cancelar))
     dispatcher.add_handler(MessageHandler(~Filters.command, manejar_mensaje))
     dispatcher.add_error_handler(manejar_error)
+
+    # Cloud Run necesita un listener en $PORT; lo levantamos aparte del polling.
+    threading.Thread(target=_iniciar_health_server, daemon=True).start()
 
     logger.info("✅ Bot activo. Presiona Ctrl+C para detenerlo.")
     updater.start_polling()
