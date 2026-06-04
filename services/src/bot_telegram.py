@@ -119,13 +119,39 @@ def _obtener_menu_texto() -> str:
 
 # ─── Prompt del sistema ───────────────────────────────────────────────────────
 
+_PERSONA_FALLBACK = (
+    'Eres el asistente de pedidos de ProntoApp, una panadería y cafetería.\n'
+    'Tu nombre es "Pronto" y eres amable, conciso y eficiente.'
+)
+
+
+def _obtener_plantilla() -> tuple[str, str]:
+    """Devuelve (persona, contexto_texto) desde la API; fallback si falla."""
+    try:
+        respuesta = httpx.get(f"{FASTAPI_URL}/plantilla-ia", headers=CABECERAS_API, timeout=5)
+        if respuesta.status_code == 200:
+            data = respuesta.json()
+            persona = data.get("prompt") or _PERSONA_FALLBACK
+            contexto_raw = data.get("contexto") or "[]"
+            try:
+                contexto_texto = "\n".join(json.loads(contexto_raw))
+            except Exception:
+                contexto_texto = str(contexto_raw)
+            return persona, contexto_texto
+    except Exception as error:
+        logger.warning(f"No se pudo obtener la plantilla IA: {error}")
+    return _PERSONA_FALLBACK, ""
+
+
 def _construir_system_prompt() -> str:
-    """Construye el prompt del sistema con el menú actual del inventario."""
+    """Construye el prompt: persona+contexto desde la API + menú + bloque fijo."""
+    persona, contexto = _obtener_plantilla()
     menu = _obtener_menu_texto()
 
-    return f"""Eres el asistente de pedidos de ProntoApp, una panadería y cafetería.
-Tu nombre es "Pronto" y eres amable, conciso y eficiente.
+    contexto_bloque = f"\n{contexto}\n" if contexto.strip() else "\n"
 
+    return f"""{persona}
+{contexto_bloque}
 {menu}
 
 Tu misión:
