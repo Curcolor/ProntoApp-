@@ -142,7 +142,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 16.0,
                   mainAxisSpacing: 16.0,
-                  childAspectRatio: 1.35,
+                  childAspectRatio: 1.15,
                   children: [
                     _buildMetricCard(
                       icon: FontAwesomeIcons.bagShopping,
