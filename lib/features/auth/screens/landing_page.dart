@@ -78,7 +78,8 @@ class LandingPage extends StatelessWidget {
             // Contenido principal
             SafeArea(
               bottom: false,
-              child: Column(
+              child: SingleChildScrollView(
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Logo Prontoa!
@@ -121,7 +122,8 @@ class LandingPage extends StatelessWidget {
                   ),
 
                   // Celulares superpuestos (Phone mockups)
-                  Expanded(
+                  SizedBox(
+                    height: 290,
                     child: Stack(
                       alignment: Alignment.center,
                       clipBehavior: Clip.none,
@@ -129,12 +131,12 @@ class LandingPage extends StatelessWidget {
                         // Celular de atrás
                         Positioned(
                           right: -10,
-                          top: 20,
+                          top: 10,
                           child: Transform.rotate(
                             angle: -0.18, // Ángulo ligero a la izquierda
                             child: _buildPhoneMockup(
                               opacity: 0.08,
-                              height: 360,     // Mucho más alto, como un celular real
+                              height: 230,     // Más pequeño para no competir con los títulos
                               messages: [
                                 const SizedBox(height: 10),
                                 _buildChatBubble("¿Hacen domicilios?", isMe: false),
@@ -146,12 +148,12 @@ class LandingPage extends StatelessWidget {
                         // Celular de adelante (superpuesto sobre el de atrás)
                         Positioned(
                           right: 80,       // Más a la izquierda para superponerse
-                          top: 110,        // Más abajo
+                          top: 40,         // Dentro del SizedBox para no chocar con el texto
                           child: Transform.rotate(
                             angle: -0.09,  // Ligeramente doblado, pero menos que el de atrás
                             child: _buildPhoneMockup(
                               opacity: 0.15,
-                              height: 380,
+                              height: 250,
                               messages: [
                                 const SizedBox(height: 20),
                                 _buildChatBubble("Hola, quiero pedir 2\npan de bono 🍞", isMe: false),
@@ -346,6 +348,7 @@ class LandingPage extends StatelessWidget {
                   )
                 ],
               ),
+              ),
             ),
           ],
         ),
@@ -392,7 +395,7 @@ class LandingPage extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0), // Blur potente
         child: Container(
-          width: 180, // Ligeramente más ancho
+          width: 130,
           height: height,
           padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
           decoration: BoxDecoration(
@@ -417,14 +420,28 @@ class LandingPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              // Burbujas
-              ...messages.map((m) => Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: m,
-              )),
-              // Para empujar el contenido hacia arriba dando efecto de cortado por abajo
-              const Spacer(), 
+              const SizedBox(height: 16),
+              // Burbujas: ocupan el espacio restante y se recortan por abajo
+              // (efecto de celular cortado) sin provocar overflow.
+              Expanded(
+                child: ClipRect(
+                  child: OverflowBox(
+                    alignment: Alignment.topCenter,
+                    minHeight: 0,
+                    maxHeight: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: messages
+                          .map((m) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: m,
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
