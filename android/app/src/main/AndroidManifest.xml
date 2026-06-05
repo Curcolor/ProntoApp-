@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Requerido para que el APK release pueda hablar con la API (red). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="prontoapp"
         android:name="${applicationName}"
