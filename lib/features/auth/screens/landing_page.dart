@@ -37,8 +37,8 @@ class LandingPage extends StatelessWidget {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [
               Color(0xFF25D366),
               Color(0xFF128C7E),
@@ -181,8 +181,8 @@ class LandingPage extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
-                                color: Colors.black.withAlpha((0.2 * 255).toInt()),
-                                border: Border.all(color: Colors.white.withAlpha(50), width: 1),
+                                color: Colors.white.withAlpha((0.15 * 255).toInt()),
+                                border: Border.all(color: Colors.white.withAlpha((0.25 * 255).toInt()), width: 1),
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               child: Row(
@@ -219,7 +219,7 @@ class LandingPage extends StatelessWidget {
                               TextSpan(text: title),
                               TextSpan(
                                 text: highlightedTitle,
-                                style: const TextStyle(color: Color(0xFFFFD15C)), // WhatsApp en amarillo
+                                style: const TextStyle(color: Color(0xFFFCD34D)), // WhatsApp amarillo (amber-300, diseño)
                               ),
                             ],
                           ),
@@ -246,7 +246,7 @@ class LandingPage extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 20),
                               decoration: BoxDecoration(
-                                color: Colors.black.withAlpha((0.15 * 255).toInt()),
+                                color: Colors.white.withAlpha((0.1 * 255).toInt()),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -276,18 +276,18 @@ class LandingPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            icon: const FaIcon(FontAwesomeIcons.play, color: Color(0xFF075E54), size: 16),
+                            icon: const FaIcon(FontAwesomeIcons.play, color: Color(0xFF059669), size: 16),
                             label: Text(
                               'Comenzar Gratis',
                               style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF075E54),
+                                color: const Color(0xFF059669),
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF075E54),
+                              foregroundColor: const Color(0xFF059669),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(17),
@@ -330,7 +330,7 @@ class LandingPage extends StatelessWidget {
                               'Ver Demo',
                               style: GoogleFonts.inter(
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                             ),
