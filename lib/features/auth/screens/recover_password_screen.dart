@@ -38,18 +38,8 @@ class RecoverPasswordScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
-              // Padlock / Candado SVG original
-              Center(
-                child: SvgPicture.asset(
-                  'assets/icons/candado.svg',
-                  width: 140, 
-                  height: 140,
-                ),
-              ),
-              const SizedBox(height: 32),
-              
-              // Texts
+
+              // Texts (diseño: título y subtítulo van arriba del candado)
               Text(
                 'Recuperar Contraseña',
                 style: GoogleFonts.inter(
@@ -66,14 +56,24 @@ class RecoverPasswordScreen extends StatelessWidget {
                 child: Text(
                   'Ingresa tu correo para recibir un enlace de recuperación',
                   style: GoogleFonts.inter(
-                    fontSize: 15,
-                    color: const Color(0xFF64748B),
+                    fontSize: 16,
+                    color: const Color(0xFF475569),
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
+
+              // Padlock / Candado SVG original
+              Center(
+                child: SvgPicture.asset(
+                  'assets/icons/candado.svg',
+                  width: 140,
+                  height: 140,
+                ),
+              ),
+              const SizedBox(height: 40),
 
               // Inputs (Correo)
               Text(
@@ -89,7 +89,7 @@ class RecoverPasswordScreen extends StatelessWidget {
                   prefixIcon: const Icon(Icons.mail_outline, color: Color(0xFF94A3B8)),
                   contentPadding: const EdgeInsets.symmetric(vertical: 16),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: const Color(0xFFF8FAFC),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
@@ -168,7 +168,7 @@ class RecoverPasswordScreen extends StatelessWidget {
                     'Enviar Enlace de Recuperación',
                     style: GoogleFonts.inter(
                       fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
