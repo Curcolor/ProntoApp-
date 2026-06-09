@@ -17,7 +17,7 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -28,21 +28,25 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
               // Glowing WhatsApp Icon
               Center(
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: 96,
+                  height: 96,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1BA672), // Custom vibrant green
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF25D366), Color(0xFF128C7E)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF1BA672).withAlpha(100),
-                        blurRadius: 40,
-                        spreadRadius: 8,
+                        color: const Color(0xFF25D366).withAlpha((0.4 * 255).toInt()),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
                   alignment: Alignment.center,
-                  child: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white, size: 50),
+                  child: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white, size: 42),
                 ),
               ),
               const SizedBox(height: 40),
@@ -50,9 +54,9 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
               Text(
                 '¡Sincronizando \'Mi\nPanadería\'!',
                 style: GoogleFonts.inter(
-                  fontSize: 28, 
-                  fontWeight: FontWeight.w800, 
-                  color: const Color(0xFF0F172A), 
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF0F172A),
                   height: 1.2,
                   letterSpacing: -0.5,
                 ),
@@ -62,8 +66,9 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
               Text(
                 'Nuestra IA está configurando tu agente de\nWhatsApp...',
                 style: GoogleFonts.inter(
-                  fontSize: 15, 
-                  color: const Color(0xFF64748B), 
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                  color: const Color(0xFF6B7280),
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
@@ -92,7 +97,7 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
               Container(
                 height: 56,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                   gradient: const LinearGradient(
                     colors: [Color(0xFF25D366), Color(0xFF128C7E)],
                     begin: Alignment.centerLeft,
@@ -116,15 +121,15 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '¡Empieza a Vender!', 
-                        style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)
+                        '¡Empieza a Vender!',
+                        style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)
                       ),
                       const SizedBox(width: 8),
                       const FaIcon(FontAwesomeIcons.arrowRight, size: 16, color: Colors.white),
@@ -143,15 +148,15 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
   Widget _buildChecklistItem(String text) {
     return Row(
       children: [
-        const FaIcon(FontAwesomeIcons.solidCircleCheck, color: Color(0xFF22C55E), size: 24),
+        const FaIcon(FontAwesomeIcons.solidCircleCheck, color: Color(0xFF25D366), size: 20),
         const SizedBox(width: 16),
         Expanded(
           child: Text(
             text,
             style: GoogleFonts.inter(
               fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF334155),
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF374151),
             ),
           ),
         ),
