@@ -454,7 +454,32 @@ class ColaPedidosScreen extends StatelessWidget {
   }
 
   Widget _buildColaVacia() {
-    return const Center(child: Text('Sin pedidos pendientes'));
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('🍳', style: TextStyle(fontSize: 56)),
+          const SizedBox(height: 16),
+          Text(
+            'Cola vacía',
+            style: GoogleFonts.inter(
+              color: const Color(0xFF0F172A),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Los pedidos nuevos del bot aparecerán aquí\nlistos para preparar.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF94A3B8),
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
