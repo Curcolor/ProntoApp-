@@ -298,7 +298,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           icono: FontAwesomeIcons.envelope,
           iconoColor: const Color(0xFF94A3B8),
           tipoTeclado: TextInputType.emailAddress,
-          fillColor: const Color(0xFFF8FAFC),
           validator: (val) {
             if (val == null || val.isEmpty) return 'Requerido';
             if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val)) return 'Correo inválido';
@@ -340,7 +339,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required FaIconData icono,
     required Color iconoColor,
     TextInputType tipoTeclado = TextInputType.text,
-    Color fillColor = Colors.white,
+    Color fillColor = const Color(0xFFF8FAFC), // diseño: inputs #f8fafc (sólo contraseña en blanco)
     String? Function(String?)? validator,
   }) {
     return TextFormField(
