@@ -416,29 +416,29 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       ),
                     )),
 
-                // Total
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  padding: const EdgeInsets.only(top: 9.78),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                        top: BorderSide(
-                            color: Color(0xFFE2E8F0), width: 1.09)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // Total (separador punteado, como el diseño Figma)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Column(
                     children: [
-                      Text('Total',
-                          style: GoogleFonts.inter(
-                              color: const Color(0xFF475569),
-                              fontSize: 14.12,
-                              fontWeight: FontWeight.w600)),
-                      Text(
-                        '\$${pedido.total.toStringAsFixed(0)}',
-                        style: GoogleFonts.inter(
-                            color: const Color(0xFF0F172A),
-                            fontSize: 17.38,
-                            fontWeight: FontWeight.w800),
+                      const _DashedLine(color: Color(0xFFE2E8F0)),
+                      const SizedBox(height: 9.78),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Total',
+                              style: GoogleFonts.inter(
+                                  color: const Color(0xFF475569),
+                                  fontSize: 14.12,
+                                  fontWeight: FontWeight.w600)),
+                          Text(
+                            '\$${pedido.total.toStringAsFixed(0)}',
+                            style: GoogleFonts.inter(
+                                color: const Color(0xFF0F172A),
+                                fontSize: 17.38,
+                                fontWeight: FontWeight.w800),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -503,6 +503,43 @@ class _OrdersScreenState extends State<OrdersScreen> {
       ),
     );
   }
+}
+
+/// Línea horizontal punteada (separador del Total, como el diseño Figma).
+class _DashedLine extends StatelessWidget {
+  final Color color;
+  const _DashedLine({required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: const Size(double.infinity, 1.09),
+      painter: _DashedLinePainter(color),
+    );
+  }
+}
+
+class _DashedLinePainter extends CustomPainter {
+  final Color color;
+  _DashedLinePainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const double dashWidth = 4;
+    const double dashGap = 3;
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.09;
+    double startX = 0;
+    while (startX < size.width) {
+      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
+      startX += dashWidth + dashGap;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashedLinePainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 @Preview(name: 'Pedidos', group: 'Manager', wrapper: previewWrapper, theme: previewTheme, size: kPreviewPhone)
