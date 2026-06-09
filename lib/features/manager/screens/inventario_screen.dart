@@ -391,8 +391,8 @@ class _InventarioScreenState extends State<InventarioScreen> {
     String statusBadgeText = 'Disponible';
     Color statusBadgeColor = AppColors.successText;
     Color statusBadgeBg = AppColors.successBg;
-    Color stockFillColor = AppColors.successIcon;
-    
+    Color stockFillColor = AppColors.primary; // diseño: barra de stock disponible #25D366
+
     if (isOutOfStock) {
       statusBadgeText = 'Agotado';
       statusBadgeColor = AppColors.dangerText;
