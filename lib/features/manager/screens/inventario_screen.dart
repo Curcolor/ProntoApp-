@@ -111,7 +111,7 @@ class _InventarioScreenState extends State<InventarioScreen> {
             ),
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'Panadería El Trigo Dorado',
