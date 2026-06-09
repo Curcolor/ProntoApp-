@@ -211,13 +211,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderLight, width: 1),
+        borderRadius: BorderRadius.circular(17.38),
+        border: Border.all(color: AppColors.borderLight, width: 1.09),
         boxShadow: [
           BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 3.26,
+            offset: const Offset(0, 1.09),
+          ),
+          BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
+            blurRadius: 2.17,
+            offset: const Offset(0, 1.09),
           ),
         ],
       ),
@@ -263,7 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   title,
                   style: GoogleFonts.inter(
-                    color: AppColors.textPrimary, // Or specific title color
+                    color: const Color(0xFF1E293B), // diseño tr-name (#1E293B)
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -329,7 +334,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Text(
                     title,
                     style: GoogleFonts.inter(
-                      color: AppColors.textPrimary,
+                      color: const Color(0xFF1E293B), // diseño tr-name (#1E293B)
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
