@@ -244,9 +244,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Botón Principal Exacto
+                // Botón Principal Exacto (diseño: 56.5, más alto que los sociales)
                 Container(
-                  height: 52.15,
+                  height: 56.5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(17.38),
                     gradient: const LinearGradient(
