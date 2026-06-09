@@ -477,27 +477,48 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
           // Acción principal
           if (pedido.estado.siguiente != null)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => provider.avanzarEstado(pedido.id),
-                icon: const FaIcon(FontAwesomeIcons.check,
-                    size: 14.12, color: Colors.white),
-                label: Text(
-                  'Pasar a ${pedido.estado.siguiente!.etiqueta}',
-                  style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 14.12,
-                      fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => provider.avanzarEstado(pedido.id),
+                    icon: const FaIcon(FontAwesomeIcons.check,
+                        size: 14.12, color: Colors.white),
+                    label: Text(
+                      'Pasar a ${pedido.estado.siguiente!.etiqueta}',
+                      style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.12,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF25D366),
+                      elevation: 0,
+                      minimumSize: const Size(0, 43.46),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13.04)),
+                    ),
+                  ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF25D366),
-                  elevation: 0,
-                  minimumSize: const Size(0, 43.46),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(13.04)),
+                const SizedBox(width: 8.69),
+                // Botón WhatsApp — solo visual (contactar al cliente = ciclo futuro)
+                SizedBox(
+                  width: 43.46,
+                  height: 43.46,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF25D366),
+                      elevation: 0,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13.04)),
+                    ),
+                    child: const FaIcon(FontAwesomeIcons.whatsapp,
+                        color: Colors.white, size: 19.56),
+                  ),
                 ),
-              ),
+              ],
             ),
         ],
       ),
