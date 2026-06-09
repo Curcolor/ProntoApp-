@@ -43,9 +43,9 @@ class ColaPedidosScreen extends StatelessWidget {
                             _buildSectionTitle(colaCocina.length),
                             const SizedBox(height: 16),
 
-                            // Lista de tarjetas - VERSION ULTRA SEGURA
+                            // Lista de tarjetas (fiel al diseño Figma 2256:3717)
                             ...colaCocina.map(
-                              (pedido) => _buildOrderCardUltraSeguro(
+                              (pedido) => _buildOrderCard(
                                 context,
                                 pedido,
                                 provider,
@@ -187,122 +187,267 @@ class ColaPedidosScreen extends StatelessWidget {
       children: [
         Text(
           '📋 Cola activa',
-          style: TextStyle(
-            color: Colors.blueGrey[900],
+          style: GoogleFonts.inter(
+            color: const Color(0xFF0F172A),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const Text(
+        Text(
           'Ordenar ↕',
-          style: TextStyle(color: Colors.green, fontSize: 13),
+          style: GoogleFonts.inter(
+            color: const Color(0xFF1DB954),
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );
   }
 
-  // ─── Tarjeta ULTRA SEGURA ──────────────────────────────────────────────
-  // Usamos solo widgets base de Flutter y colores nativos para descartar errores de dependencias.
+  // ─── Tarjeta de pedido (fiel al diseño Figma 2256:3717) ─────────────────
+  // Variantes por estado: Nuevo (verde), ¡Urgente! (rojo, recibido >=10 min),
+  // En prep. (amber con acento izquierdo).
 
-  Widget _buildOrderCardUltraSeguro(
+  Widget _buildOrderCard(
     BuildContext context,
     OrderModel pedido,
     OrderProvider provider,
   ) {
-    final bool estaPreparando = pedido.estado == EstadoPedido.enPreparacion;
+    final bool enPrep = pedido.estado == EstadoPedido.enPreparacion;
+    final bool urgente = !enPrep && pedido.minutosTranscurridos >= 10;
 
-    return Card(
+    // Paleta por estado: fondo suave (tintBg) + texto/acento (tintText).
+    final Color tintBg;
+    final Color tintText;
+    final String badgeText;
+    if (enPrep) {
+      tintBg = const Color(0xFFFEF3C7);
+      tintText = const Color(0xFFB45309);
+      badgeText = 'En prep.';
+    } else if (urgente) {
+      tintBg = const Color(0xFFFEE2E2);
+      tintText = const Color(0xFFDC2626);
+      badgeText = '¡Urgente!';
+    } else {
+      tintBg = const Color(0xFFDCFCE7);
+      tintText = const Color(0xFF15803D);
+      badgeText = 'Nuevo';
+    }
+
+    final String idMostrar =
+        pedido.id.startsWith('#') ? pedido.id : '#${pedido.id}';
+    final int? numero =
+        int.tryParse(pedido.id.replaceAll(RegExp(r'[^0-9]'), ''));
+    final String numTile = numero != null ? '#$numero' : '#';
+
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: estaPreparando ? Colors.orange : Colors.green,
-          width: 2,
-        ),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: enPrep
+            ? const Border(
+                left: BorderSide(color: Color(0xFFF59E0B), width: 4),
+                top: BorderSide(color: Color(0xFFF1F5F9)),
+                right: BorderSide(color: Color(0xFFF1F5F9)),
+                bottom: BorderSide(color: Color(0xFFF1F5F9)),
+              )
+            : Border.all(color: const Color(0xFFF1F5F9)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 1.5,
+            offset: const Offset(0, 1),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 1,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Identificación
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'ORDEN: ${pedido.id}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Encabezado: número + título/canal + badge
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: tintBg,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: estaPreparando
-                        ? Colors.orange[100]
-                        : Colors.green[100],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    estaPreparando ? 'PREPARANDO' : 'RECIBIDO',
-                    style: TextStyle(
-                      color: estaPreparando
-                          ? Colors.orange[900]
-                          : Colors.green[900],
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'CLIENTE: ${pedido.cliente}',
-              style: const TextStyle(color: Colors.black87, fontSize: 14),
-            ),
-            const Divider(color: Colors.grey),
-
-            // Listado de productos (Manual para mayor seguridad)
-            for (var item in pedido.items)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Text(
-                  '• ${item.cantidad}x ${item.nombre}',
-                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                  numTile,
+                  style: GoogleFonts.inter(
+                    color: tintText,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
-
-            const SizedBox(height: 16),
-
-            // Acciones
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  pedido.tiempoTranscurridoFormat,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+              const SizedBox(width: 11),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pedido $idMostrar',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF0F172A),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'vía WhatsApp · ${pedido.cliente}',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 12,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () => provider.avanzarEstado(pedido.id),
-                  style: TextButton.styleFrom(
-                    backgroundColor: estaPreparando
-                        ? Colors.blueGrey[800]
-                        : Colors.green[600],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(
+                  color: tintBg,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  badgeText,
+                  style: GoogleFonts.inter(
+                    color: tintText,
+                    fontSize: 11.95,
+                    fontWeight: FontWeight.w600,
                   ),
-                  child: Text(estaPreparando ? 'MARCAR LISTO' : 'EMPEZAR'),
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Items con viñeta gris
+          ...pedido.items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                children: [
+                  Container(
+                    width: 5,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCBD5E1),
+                      borderRadius: BorderRadius.circular(2.5),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      '${item.cantidad}× ${item.nombre}',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF334155),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
+          const SizedBox(height: 12),
+
+          // Footer: pill de tiempo + acciones por estado
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: tintBg,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FaIcon(FontAwesomeIcons.clock, color: tintText, size: 11),
+                    const SizedBox(width: 5),
+                    Text(
+                      pedido.tiempoTranscurridoFormat,
+                      style: GoogleFonts.inter(
+                        color: tintText,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: _accionesPorEstado(pedido, provider, enPrep),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Botones de acción según el estado del pedido (estilo Figma).
+  List<Widget> _accionesPorEstado(
+    OrderModel pedido,
+    OrderProvider provider,
+    bool enPrep,
+  ) {
+    if (enPrep) {
+      return [
+        _kitchenBtn('Marcar listo', FontAwesomeIcons.check,
+            const Color(0xFF1E293B), () => provider.avanzarEstado(pedido.id)),
+      ];
+    }
+    // Recibido (Nuevo o ¡Urgente!) → empieza preparación.
+    return [
+      _kitchenBtn('Empezar', FontAwesomeIcons.play, const Color(0xFF25D366),
+          () => provider.avanzarEstado(pedido.id)),
+    ];
+  }
+
+  Widget _kitchenBtn(
+      String label, FaIconData icon, Color bg, VoidCallback onTap) {
+    return SizedBox(
+      height: 34,
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: FaIcon(icon, size: 12, color: Colors.white),
+        label: Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: bg,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(999),
+          ),
         ),
       ),
     );
