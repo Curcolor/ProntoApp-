@@ -247,14 +247,11 @@ class ColaPedidosScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: enPrep
-            ? const Border(
-                left: BorderSide(color: Color(0xFFF59E0B), width: 4),
-                top: BorderSide(color: Color(0xFFF1F5F9)),
-                right: BorderSide(color: Color(0xFFF1F5F9)),
-                bottom: BorderSide(color: Color(0xFFF1F5F9)),
-              )
-            : Border.all(color: const Color(0xFFF1F5F9)),
+        // Borde UNIFORME (no uniforme + borderRadius = assert en paint → tarjeta en blanco).
+        border: Border.all(
+          color: enPrep ? const Color(0xFFF59E0B) : const Color(0xFFF1F5F9),
+          width: enPrep ? 1.5 : 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
