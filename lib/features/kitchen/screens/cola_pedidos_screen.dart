@@ -235,11 +235,19 @@ class ColaPedidosScreen extends StatelessWidget {
       badgeText = 'Nuevo';
     }
 
-    final String idMostrar =
-        pedido.id.startsWith('#') ? pedido.id : '#${pedido.id}';
-    final int? numero =
-        int.tryParse(pedido.id.replaceAll(RegExp(r'[^0-9]'), ''));
-    final String numTile = numero != null ? '#$numero' : '#';
+    // Número del pedido relativo al DÍA (resetea cada día), no el id absoluto.
+    final DateTime hoy = DateTime.now();
+    final List<OrderModel> pedidosDelDia = provider.pedidos
+        .where((p) =>
+            p.creadoEn.year == hoy.year &&
+            p.creadoEn.month == hoy.month &&
+            p.creadoEn.day == hoy.day)
+        .toList()
+      ..sort((a, b) => a.creadoEn.compareTo(b.creadoEn));
+    final int idxHoy = pedidosDelDia.indexWhere((p) => p.id == pedido.id);
+    final int numeroDelDia =
+        idxHoy >= 0 ? idxHoy + 1 : pedidosDelDia.length + 1;
+    final String numTile = '#$numeroDelDia';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -295,7 +303,7 @@ class ColaPedidosScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Pedido $idMostrar',
+                      'Pedido del día $numTile',
                       style: GoogleFonts.inter(
                         color: const Color(0xFF0F172A),
                         fontSize: 15,
