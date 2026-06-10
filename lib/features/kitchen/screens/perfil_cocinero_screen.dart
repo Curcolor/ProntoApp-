@@ -87,15 +87,34 @@ class PerfilCocineroScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: Center(
-                              child: Text(
-                                inicial,
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFF92400E),
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w800,
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              alignment: Alignment.center,
+                              children: [
+                                Text(
+                                  inicial,
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFF92400E),
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
-                              ),
+                                // Punto verde "en línea" (como el diseño Figma)
+                                Positioned(
+                                  right: 2,
+                                  bottom: 2,
+                                  child: Container(
+                                    width: 18,
+                                    height: 18,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF22C55E),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.white, width: 3),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
