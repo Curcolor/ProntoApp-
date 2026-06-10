@@ -280,29 +280,32 @@ class PedidosParaEntregarScreen extends StatelessWidget {
     OrderProvider provider,
     bool yaEnRuta,
   ) {
+    final Color accent =
+        yaEnRuta ? const Color(0xFF1D4ED8) : const Color(0xFF15803D);
+    final Color badgeBg =
+        yaEnRuta ? const Color(0xFFDBEAFE) : const Color(0xFFDCFCE7);
+    final List<Color> avGrad = yaEnRuta
+        ? [const Color(0xFFDBEAFE), const Color(0xFFBFDBFE)]
+        : [const Color(0xFFDCFCE7), const Color(0xFFBBF7D0)];
+
+    void abrir() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => yaEnRuta
+              ? EnRutaScreen(pedido: pedido)
+              : DetalleEntregaScreen(pedido: pedido),
+        ),
+      );
+    }
+
     return GestureDetector(
-      onTap: () {
-        if (yaEnRuta) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EnRutaScreen(pedido: pedido),
-            ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetalleEntregaScreen(pedido: pedido),
-            ),
-          );
-        }
-      },
+      onTap: abrir,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFF1F5F9)),
           boxShadow: const [
             BoxShadow(
@@ -313,142 +316,185 @@ class PedidosParaEntregarScreen extends StatelessWidget {
           ],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Cabecera: id + cliente·canal | badge | avatar
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: yaEnRuta
-                          ? [const Color(0xFFDBEAFE), const Color(0xFFBFDBFE)]
-                          : [const Color(0xFFDCFCE7), const Color(0xFFBBF7D0)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    pedido.inicialCliente,
-                    style: GoogleFonts.inter(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: yaEnRuta
-                          ? const Color(0xFF1D4ED8)
-                          : const Color(0xFF15803D),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        pedido.cliente,
+                        '#${pedido.id}',
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: const Color(0xFF0F172A),
                         ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
-                        pedido.direccion ?? 'Local',
+                        '${pedido.cliente} · vía WhatsApp',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
                           color: const Color(0xFF64748B),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '#${pedido.id}',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF0F172A),
-                      ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: badgeBg,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    yaEnRuta ? 'En ruta' : 'Listo',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: accent,
                     ),
-                    Text(
-                      'Hace ${pedido.tiempoTranscurridoFormat}',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF94A3B8),
-                      ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 42,
+                  height: 42,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: avGrad,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    pedido.inicialCliente,
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: accent,
+                    ),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
+            // Caja de dirección
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FaIcon(FontAwesomeIcons.locationDot,
+                      color: accent, size: 12),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      pedido.direccion ?? 'Recoger en tienda',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF334155),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Items
+            Text(
+              pedido.resumenItems,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: const Color(0xFF475569),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Footer: monto + acciones (distancia/ruta real = Ciclo 14)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    _buildTag(
-                      yaEnRuta
-                          ? FontAwesomeIcons.motorcycle
-                          : FontAwesomeIcons.bagShopping,
-                      yaEnRuta ? 'En ruta' : 'Listo',
-                      yaEnRuta
-                          ? const Color(0xFF1D4ED8)
-                          : const Color(0xFF15803D),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildTag(
-                      FontAwesomeIcons.clock,
-                      pedido.tiempoTranscurridoFormat,
-                      const Color(0xFF64748B),
-                    ),
-                  ],
-                ),
                 Text(
                   '\$${pedido.total.toStringAsFixed(0)}',
                   style: GoogleFonts.inter(
-                    fontSize: 15,
+                    fontSize: 17,
                     fontWeight: FontWeight.w800,
                     color: const Color(0xFF0F172A),
                   ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 36,
+                      child: ElevatedButton.icon(
+                        onPressed: abrir,
+                        icon: FaIcon(
+                          yaEnRuta
+                              ? FontAwesomeIcons.route
+                              : FontAwesomeIcons.motorcycle,
+                          size: 12,
+                          color: Colors.white,
+                        ),
+                        label: Text(
+                          yaEnRuta ? 'Ver ruta' : 'Tomar',
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF3B82F6),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // WhatsApp — solo visual (contactar al cliente = ciclo futuro)
+                    SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF25D366),
+                          elevation: 0,
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                        child: const FaIcon(FontAwesomeIcons.whatsapp,
+                            color: Colors.white, size: 16),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTag(dynamic icon, String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          FaIcon(icon, size: 9, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
       ),
     );
   }
