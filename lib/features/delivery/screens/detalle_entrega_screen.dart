@@ -60,6 +60,7 @@ class DetalleEntregaScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final provider = context.watch<OrderProvider>();
     return Padding(
       padding: const EdgeInsets.only(
         left: 20.0,
@@ -92,7 +93,7 @@ class DetalleEntregaScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Pedido #${pedido.id}',
+                  'Pedido del día #${provider.numeroDelDia(pedido)}',
                   style: GoogleFonts.inter(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,

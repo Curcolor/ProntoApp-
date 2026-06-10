@@ -327,7 +327,7 @@ class PedidosParaEntregarScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '#${pedido.id}',
+                        'Pedido del día #${provider.numeroDelDia(pedido)}',
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,

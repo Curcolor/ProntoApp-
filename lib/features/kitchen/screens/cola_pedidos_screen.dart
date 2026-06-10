@@ -236,18 +236,7 @@ class ColaPedidosScreen extends StatelessWidget {
     }
 
     // Número del pedido relativo al DÍA (resetea cada día), no el id absoluto.
-    final DateTime hoy = DateTime.now();
-    final List<OrderModel> pedidosDelDia = provider.pedidos
-        .where((p) =>
-            p.creadoEn.year == hoy.year &&
-            p.creadoEn.month == hoy.month &&
-            p.creadoEn.day == hoy.day)
-        .toList()
-      ..sort((a, b) => a.creadoEn.compareTo(b.creadoEn));
-    final int idxHoy = pedidosDelDia.indexWhere((p) => p.id == pedido.id);
-    final int numeroDelDia =
-        idxHoy >= 0 ? idxHoy + 1 : pedidosDelDia.length + 1;
-    final String numTile = '#$numeroDelDia';
+    final String numTile = '#${provider.numeroDelDia(pedido)}';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),

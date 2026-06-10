@@ -38,7 +38,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
                   _buildSummaryCard(entregadosHoy),
                   const SizedBox(height: 24),
                   if (historialReciente.isNotEmpty) ...[
-                    _buildDeliveryHistory(historialReciente),
+                    _buildDeliveryHistory(provider, historialReciente),
                     const SizedBox(height: 24),
                   ],
                   _buildPersonalInfo(context, user?.email ?? ''),
@@ -285,7 +285,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDeliveryHistory(List<OrderModel> historial) {
+  Widget _buildDeliveryHistory(OrderProvider provider, List<OrderModel> historial) {
     return Column(
       children: [
         Row(
@@ -313,7 +313,7 @@ class PerfilRepartidorScreen extends StatelessWidget {
         ...historial.map((p) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: _buildHistoryCard(
-            id: '#${p.id}',
+            id: '#${provider.numeroDelDia(p)}',
             name: p.cliente,
             address: p.direccion ?? 'Entrega local',
             amount: '\$${p.total.toStringAsFixed(0)}',

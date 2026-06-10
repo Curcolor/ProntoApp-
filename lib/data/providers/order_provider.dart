@@ -41,6 +41,21 @@ class OrderProvider extends ChangeNotifier {
         p.creadoEn.year == hoy.year && p.creadoEn.month == hoy.month && p.creadoEn.day == hoy.day).length;
   }
 
+  /// Número del pedido relativo al DÍA (1, 2, 3… reseteando cada día),
+  /// según orden de creación. Reusado por cocina y repartidor.
+  int numeroDelDia(OrderModel pedido) {
+    final hoy = DateTime.now();
+    final delDia = _pedidos
+        .where((p) =>
+            p.creadoEn.year == hoy.year &&
+            p.creadoEn.month == hoy.month &&
+            p.creadoEn.day == hoy.day)
+        .toList()
+      ..sort((a, b) => a.creadoEn.compareTo(b.creadoEn));
+    final idx = delDia.indexWhere((p) => p.id == pedido.id);
+    return idx >= 0 ? idx + 1 : delDia.length + 1;
+  }
+
   double get ventasHoy {
     final hoy = DateTime.now();
     return _pedidos.where((p) => p.estado == EstadoPedido.entregado &&
