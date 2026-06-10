@@ -103,19 +103,18 @@ class PerfilRepartidorScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Punto verde "en línea" (como el diseño Figma)
                 Positioned(
-                  bottom: -2,
-                  right: -8,
+                  bottom: 2,
+                  right: 2,
                   child: Container(
-                    width: 30,
-                    height: 30,
+                    width: 18,
+                    height: 18,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF25D366),
+                      color: const Color(0xFF22C55E),
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: Colors.white, width: 3),
                     ),
-                    alignment: Alignment.center,
-                    child: const FaIcon(FontAwesomeIcons.camera, size: 12, color: Colors.white),
                   ),
                 ),
               ],

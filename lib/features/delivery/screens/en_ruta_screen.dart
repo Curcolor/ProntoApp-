@@ -75,10 +75,10 @@ class EnRutaScreen extends StatelessWidget {
             ),
           ),
           
-          // ETA Card
+          // ETA Card (arriba-derecha, como el diseño Figma)
           Positioned(
             top: MediaQuery.of(context).size.height * 0.12,
-            left: 20,
+            right: 20,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
