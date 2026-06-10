@@ -50,17 +50,26 @@ class PedidosParaEntregarScreen extends StatelessWidget {
                                   const Color(0xFF1D4ED8),
                                 ),
                                 const SizedBox(height: 16),
-                                ...enRuta.map(
-                                  (pedido) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 16),
-                                    child: _buildOrderCard(
-                                      context,
-                                      pedido,
-                                      provider,
-                                      true,
+                                for (final grupo
+                                    in provider.agruparPorDia(enRuta)) ...[
+                                  _buildDiaHeader(
+                                    OrderProvider.etiquetaDia(grupo.key),
+                                    grupo.value.length,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ...grupo.value.map(
+                                    (pedido) => Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 16),
+                                      child: _buildOrderCard(
+                                        context,
+                                        pedido,
+                                        provider,
+                                        true,
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                                 const SizedBox(height: 8),
                               ],
 
@@ -71,17 +80,26 @@ class PedidosParaEntregarScreen extends StatelessWidget {
                                   const Color(0xFF128C7E),
                                 ),
                                 const SizedBox(height: 16),
-                                ...listos.map(
-                                  (pedido) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 16),
-                                    child: _buildOrderCard(
-                                      context,
-                                      pedido,
-                                      provider,
-                                      false,
+                                for (final grupo
+                                    in provider.agruparPorDia(listos)) ...[
+                                  _buildDiaHeader(
+                                    OrderProvider.etiquetaDia(grupo.key),
+                                    grupo.value.length,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ...grupo.value.map(
+                                    (pedido) => Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 16),
+                                      child: _buildOrderCard(
+                                        context,
+                                        pedido,
+                                        provider,
+                                        false,
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ],
                             ],
                           ),
@@ -272,6 +290,45 @@ class PedidosParaEntregarScreen extends StatelessWidget {
     );
   }
 
+  /// Encabezado de grupo de día (Hoy / Ayer / fecha) + conteo.
+  Widget _buildDiaHeader(String label, int count) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE2E8F0),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const FaIcon(FontAwesomeIcons.calendarDay,
+                  size: 11, color: Color(0xFF475569)),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF334155),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$count pedido${count == 1 ? '' : 's'}',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF94A3B8),
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+
   // ─── Tarjeta de Pedido ────────────────────────────────────────────────────
 
   Widget _buildOrderCard(
@@ -332,6 +389,14 @@ class PedidosParaEntregarScreen extends StatelessWidget {
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: const Color(0xFF0F172A),
+                        ),
+                      ),
+                      Text(
+                        'Cód. ${pedido.id}',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF94A3B8),
                         ),
                       ),
                       const SizedBox(height: 2),

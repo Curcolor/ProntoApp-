@@ -58,6 +58,34 @@ class OrderProvider extends ChangeNotifier {
     return idx >= 0 ? idx + 1 : 1;
   }
 
+  /// Agrupa pedidos por día de creación, más reciente primero.
+  /// Cada entrada conserva el orden relativo de la lista recibida.
+  List<MapEntry<DateTime, List<OrderModel>>> agruparPorDia(
+      List<OrderModel> pedidos) {
+    final mapa = <DateTime, List<OrderModel>>{};
+    for (final p in pedidos) {
+      final dia = DateTime(p.creadoEn.year, p.creadoEn.month, p.creadoEn.day);
+      (mapa[dia] ??= []).add(p);
+    }
+    final dias = mapa.keys.toList()..sort((a, b) => b.compareTo(a));
+    return [for (final d in dias) MapEntry(d, mapa[d]!)];
+  }
+
+  /// Etiqueta legible para un día: Hoy / Ayer / "9 jun".
+  static String etiquetaDia(DateTime dia) {
+    final hoy = DateTime.now();
+    final diff = DateTime(hoy.year, hoy.month, hoy.day)
+        .difference(DateTime(dia.year, dia.month, dia.day))
+        .inDays;
+    if (diff == 0) return 'Hoy';
+    if (diff == 1) return 'Ayer';
+    const meses = [
+      'ene', 'feb', 'mar', 'abr', 'may', 'jun',
+      'jul', 'ago', 'sep', 'oct', 'nov', 'dic'
+    ];
+    return '${dia.day} ${meses[dia.month - 1]}';
+  }
+
   double get ventasHoy {
     final hoy = DateTime.now();
     return _pedidos.where((p) => p.estado == EstadoPedido.entregado &&

@@ -43,14 +43,23 @@ class ColaPedidosScreen extends StatelessWidget {
                             _buildSectionTitle(colaCocina.length),
                             const SizedBox(height: 16),
 
-                            // Lista de tarjetas (fiel al diseño Figma 2256:3717)
-                            ...colaCocina.map(
-                              (pedido) => _buildOrderCard(
-                                context,
-                                pedido,
-                                provider,
+                            // Tarjetas agrupadas por día de creación
+                            for (final grupo
+                                in provider.agruparPorDia(colaCocina)) ...[
+                              _buildDiaHeader(
+                                OrderProvider.etiquetaDia(grupo.key),
+                                grupo.value.length,
                               ),
-                            ),
+                              const SizedBox(height: 12),
+                              ...grupo.value.map(
+                                (pedido) => _buildOrderCard(
+                                  context,
+                                  pedido,
+                                  provider,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                            ],
 
                             const SizedBox(height: 80),
                           ],
@@ -205,6 +214,45 @@ class ColaPedidosScreen extends StatelessWidget {
     );
   }
 
+  /// Encabezado de grupo de día (Hoy / Ayer / fecha) + conteo.
+  Widget _buildDiaHeader(String label, int count) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE2E8F0),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const FaIcon(FontAwesomeIcons.calendarDay,
+                  size: 11, color: Color(0xFF475569)),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF334155),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$count pedido${count == 1 ? '' : 's'}',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF94A3B8),
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+
   // ─── Tarjeta de pedido (fiel al diseño Figma 2256:3717) ─────────────────
   // Variantes por estado: Nuevo (verde), ¡Urgente! (rojo, recibido >=10 min),
   // En prep. (amber con acento izquierdo).
@@ -297,6 +345,14 @@ class ColaPedidosScreen extends StatelessWidget {
                         color: const Color(0xFF0F172A),
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Cód. ${pedido.id}',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 2),
