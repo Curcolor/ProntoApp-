@@ -27,6 +27,8 @@ class _DemoScreenState extends State<DemoScreen> {
   int _rol = 0;
   late Duration _restante;
   Timer? _timer;
+  // ApiClient aislado del demo, creado una sola vez (no en cada build).
+  late final _demoApi = crearDemoApiClient();
 
   @override
   void initState() {
@@ -60,7 +62,6 @@ class _DemoScreenState extends State<DemoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final demoApi = crearDemoApiClient();
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
@@ -77,11 +78,11 @@ class _DemoScreenState extends State<DemoScreen> {
                           products: demoProductos, categories: demoCategorias)),
                   ChangeNotifierProvider(create: (_) => NotificationProvider()),
                   Provider<NegocioRepository>.value(
-                      value: NegocioRepository(demoApi)),
+                      value: NegocioRepository(_demoApi)),
                   Provider<UsuarioRepository>.value(
-                      value: UsuarioRepository(demoApi)),
+                      value: UsuarioRepository(_demoApi)),
                   Provider<PlantillaIaRepository>.value(
-                      value: PlantillaIaRepository(demoApi)),
+                      value: PlantillaIaRepository(_demoApi)),
                 ],
                 child: IndexedStack(
                   index: _rol,
