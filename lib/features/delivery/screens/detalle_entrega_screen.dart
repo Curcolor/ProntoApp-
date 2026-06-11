@@ -171,7 +171,9 @@ class DetalleEntregaScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      pedido.telefono,
+                      pedido.telefono.startsWith('tg:')
+                          ? 'Vía Telegram'
+                          : pedido.telefono,
                       style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w400,

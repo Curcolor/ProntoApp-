@@ -356,12 +356,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           fontSize: 10.5,
                           fontWeight: FontWeight.w500),
                     ),
-                    Text(
-                      pedido.telefono,
-                      style: GoogleFonts.inter(
-                          color: const Color(0xFF64748B),
-                          fontSize: 11.95),
-                    ),
                   ],
                 ),
               ),
