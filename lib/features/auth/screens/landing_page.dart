@@ -8,6 +8,9 @@ import 'dart:ui';
 import 'package:prontoapp/data/models/user_model.dart';
 import 'package:prontoapp/features/auth/screens/login_screen.dart';
 import 'package:prontoapp/features/auth/screens/register_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:prontoapp/features/demo/data/demo_limite.dart';
+import 'package:prontoapp/features/demo/screens/demo_screen.dart';
 
 class LandingPage extends StatelessWidget {
   final RoleType role;
@@ -324,7 +327,7 @@ class LandingPage extends StatelessWidget {
                           width: double.infinity,
                           height: 54,
                           child: OutlinedButton.icon(
-                            onPressed: () {},
+                            onPressed: () => _abrirDemo(context),
                             icon: const FaIcon(FontAwesomeIcons.eye, color: Colors.white, size: 16),
                             label: Text(
                               'Ver Demo',
@@ -354,6 +357,33 @@ class LandingPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _abrirDemo(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final limite = DemoLimite(prefs);
+    if (!context.mounted) return;
+    if (await limite.puedeUsar()) {
+      await limite.registrarUso();
+      if (!context.mounted) return;
+      Navigator.push(context,
+          MaterialPageRoute(builder: (_) => const DemoScreen()));
+    } else {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Demo no disponible'),
+          content: const Text(
+              'Has alcanzado el límite de demostraciones en este dispositivo.'),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Entendido')),
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildVerticalDivider() {
