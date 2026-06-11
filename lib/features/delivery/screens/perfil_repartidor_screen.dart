@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
 import 'package:prontoapp/data/models/order_model.dart';
+import 'package:prontoapp/core/widgets/dia_grupo_header.dart';
 
 class PerfilRepartidorScreen extends StatelessWidget {
   const PerfilRepartidorScreen({super.key});
@@ -310,16 +311,23 @@ class PerfilRepartidorScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        ...historial.map((p) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _buildHistoryCard(
-            id: '#${provider.numeroDelDia(p)}',
-            name: p.cliente,
-            address: p.direccion ?? 'Entrega local',
-            amount: '\$${p.total.toStringAsFixed(0)}',
-            timeAgo: 'Finalizado',
+        for (final grupo in provider.agruparPorDia(historial)) ...[
+          DiaGrupoHeader(
+            label: OrderProvider.etiquetaDia(grupo.key),
+            count: grupo.value.length,
           ),
-        )),
+          const SizedBox(height: 12),
+          ...grupo.value.map((p) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildHistoryCard(
+                  id: 'Pedido del día #${provider.numeroDelDia(p)}',
+                  name: p.cliente,
+                  address: 'Cód. ${p.id} · ${p.direccion ?? 'Entrega local'}',
+                  amount: '\$${p.total.toStringAsFixed(0)}',
+                  timeAgo: 'Finalizado',
+                ),
+              )),
+        ],
       ],
     );
   }

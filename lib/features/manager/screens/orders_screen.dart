@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/data/models/order_model.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
+import 'package:prontoapp/core/widgets/dia_grupo_header.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -175,14 +176,29 @@ class _OrdersScreenState extends State<OrdersScreen> {
               Expanded(
                 child: pedidos.isEmpty
                     ? _buildEstadoVacio()
-                    : ListView.separated(
+                    : ListView(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 21.73, vertical: 8.0),
-                        itemCount: pedidos.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 13.04),
-                        itemBuilder: (context, index) =>
-                            _buildOrderCard(context, pedidos[index], provider),
+                        children: [
+                          for (final grupo
+                              in provider.agruparPorDia(pedidos)) ...[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 4, bottom: 12),
+                              child: DiaGrupoHeader(
+                                label: OrderProvider.etiquetaDia(grupo.key),
+                                count: grupo.value.length,
+                              ),
+                            ),
+                            ...grupo.value.map(
+                              (p) => Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 13.04),
+                                child: _buildOrderCard(context, p, provider),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
               ),
             ],
@@ -331,6 +347,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 2),
+                    Text(
+                      'Pedido del día #${provider.numeroDelDia(pedido)} · Cód. ${pedido.id}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                          color: const Color(0xFF94A3B8),
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w500),
+                    ),
                     Text(
                       pedido.telefono,
                       style: GoogleFonts.inter(

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/core/constants/app_colors.dart';
+import 'package:prontoapp/core/widgets/dia_grupo_header.dart';
 import 'package:prontoapp/data/services/auth_service.dart';
 import 'package:prontoapp/data/models/order_model.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
@@ -244,22 +245,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 8.0),
-                  sliver: SliverList.builder(
-                    itemCount: pedidosTab.length,
-                    itemBuilder: (context, index) {
-                      final pedido = pedidosTab[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: _buildOrderCard(
-                          pedido: pedido,
-                          onAceptar: pedido.estado.siguiente != null
-                              ? () => context
-                                  .read<OrderProvider>()
-                                  .avanzarEstado(pedido.id)
-                              : null,
-                        ),
-                      );
-                    },
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final grupo
+                            in orderProvider.agruparPorDia(pedidosTab)) ...[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: DiaGrupoHeader(
+                              label: OrderProvider.etiquetaDia(grupo.key),
+                              count: grupo.value.length,
+                            ),
+                          ),
+                          ...grupo.value.map(
+                            (pedido) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: _buildOrderCard(
+                                pedido: pedido,
+                                numeroDia:
+                                    orderProvider.numeroDelDia(pedido),
+                                onAceptar: pedido.estado.siguiente != null
+                                    ? () => context
+                                        .read<OrderProvider>()
+                                        .avanzarEstado(pedido.id)
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
 
@@ -463,6 +479,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildOrderCard({
     required OrderModel pedido,
+    required int numeroDia,
     VoidCallback? onAceptar,
   }) {
     final inicial = pedido.inicialCliente;
@@ -525,7 +542,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${pedido.id} · ${pedido.tipo.etiqueta}',
+                      'Pedido del día #$numeroDia · Cód. ${pedido.id}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
                           color: AppColors.textMuted, fontSize: 12),
                     ),

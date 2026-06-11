@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:prontoapp/data/models/order_model.dart';
 import 'package:prontoapp/data/providers/order_provider.dart';
+import 'package:prontoapp/core/widgets/dia_grupo_header.dart';
 
 /// Pantalla "Listos" de la vista cocina.
 /// Muestra pedidos en estado [listo] y el historial de [entregados] del día.
@@ -60,12 +61,19 @@ class PedidosListosScreen extends StatelessWidget {
                     const Color(0xFFB45309),
                   ),
                   const SizedBox(height: 14),
-                  ...listos.map(
-                    (p) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _buildListoCard(p, provider, context),
+                  for (final grupo in provider.agruparPorDia(listos)) ...[
+                    DiaGrupoHeader(
+                      label: OrderProvider.etiquetaDia(grupo.key),
+                      count: grupo.value.length,
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    ...grupo.value.map(
+                      (p) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildListoCard(p, provider, context),
+                      ),
+                    ),
+                  ],
                 ] else ...[
                   _buildSeccionVacia(
                     '🛵',
@@ -92,12 +100,19 @@ class PedidosListosScreen extends StatelessWidget {
                     'Los pedidos entregados se mostrarán aquí al final del día.',
                   )
                 else
-                  ...entregados.map(
-                    (p) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _buildEntregadoCard(p),
+                  for (final grupo in provider.agruparPorDia(entregados)) ...[
+                    DiaGrupoHeader(
+                      label: OrderProvider.etiquetaDia(grupo.key),
+                      count: grupo.value.length,
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    ...grupo.value.map(
+                      (p) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildEntregadoCard(provider, p),
+                      ),
+                    ),
+                  ],
               ],
             ),
           ),
@@ -271,14 +286,27 @@ class PedidosListosScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  '${pedido.id} · ${pedido.cliente}',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF0F172A),
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pedido del día #${provider.numeroDelDia(pedido)} · ${pedido.cliente}',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF0F172A),
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'Cód. ${pedido.id}',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 8),
@@ -406,7 +434,7 @@ class PedidosListosScreen extends StatelessWidget {
 
   // ── Tarjeta de pedido entregado ──────────────────────────────────────────────
 
-  Widget _buildEntregadoCard(OrderModel pedido) {
+  Widget _buildEntregadoCard(OrderProvider provider, OrderModel pedido) {
     return Container(
       padding: const EdgeInsets.fromLTRB(17, 13, 17, 15),
       decoration: BoxDecoration(
