@@ -15,6 +15,7 @@ import 'package:prontoapp/features/delivery/screens/delivery_main_screen.dart';
 import 'package:prontoapp/features/demo/data/demo_api_client.dart';
 import 'package:prontoapp/features/demo/data/demo_data.dart';
 import 'package:prontoapp/features/demo/screens/demo_whatsapp_screen.dart';
+import 'package:prontoapp/features/demo/screens/demo_tutorial.dart';
 
 const Duration kDemoDuracion = Duration(minutes: 5);
 
@@ -30,6 +31,10 @@ class _DemoScreenState extends State<DemoScreen> {
   Timer? _timer;
   // ApiClient aislado del demo, creado una sola vez (no en cada build).
   late final _demoApi = crearDemoApiClient();
+  // Tutorial guiado (coach marks) sobre los botones del demo.
+  final List<GlobalKey> _tabKeys = List.generate(4, (_) => GlobalKey());
+  final GlobalKey _countdownKey = GlobalKey();
+  bool _tutorialActivo = true;
 
   @override
   void initState() {
@@ -65,42 +70,87 @@ class _DemoScreenState extends State<DemoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _barraDemo(),
-            Expanded(
-              child: MultiProvider(
-                providers: [
-                  ChangeNotifierProvider(
-                      create: (_) => OrderProvider.preview(pedidos: demoPedidos)),
-                  ChangeNotifierProvider(
-                      create: (_) => InventoryProvider.preview(
-                          products: demoProductos, categories: demoCategorias)),
-                  ChangeNotifierProvider(create: (_) => NotificationProvider()),
-                  Provider<NegocioRepository>.value(
-                      value: NegocioRepository(_demoApi)),
-                  Provider<UsuarioRepository>.value(
-                      value: UsuarioRepository(_demoApi)),
-                  Provider<PlantillaIaRepository>.value(
-                      value: PlantillaIaRepository(_demoApi)),
-                ],
-                child: IndexedStack(
-                  index: _rol,
-                  children: const [
-                    DemoWhatsappScreen(),
-                    ManagerMainScreen(),
-                    KitchenMainScreen(),
-                    DeliveryMainScreen(),
-                  ],
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              children: [
+                _barraDemo(),
+                Expanded(
+                  child: MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider(
+                          create: (_) =>
+                              OrderProvider.preview(pedidos: demoPedidos)),
+                      ChangeNotifierProvider(
+                          create: (_) => InventoryProvider.preview(
+                              products: demoProductos,
+                              categories: demoCategorias)),
+                      ChangeNotifierProvider(
+                          create: (_) => NotificationProvider()),
+                      Provider<NegocioRepository>.value(
+                          value: NegocioRepository(_demoApi)),
+                      Provider<UsuarioRepository>.value(
+                          value: UsuarioRepository(_demoApi)),
+                      Provider<PlantillaIaRepository>.value(
+                          value: PlantillaIaRepository(_demoApi)),
+                    ],
+                    child: IndexedStack(
+                      index: _rol,
+                      children: const [
+                        DemoWhatsappScreen(),
+                        ManagerMainScreen(),
+                        KitchenMainScreen(),
+                        DeliveryMainScreen(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+          if (_tutorialActivo)
+            DemoTutorial(
+              pasos: _pasos(),
+              onCerrar: () => setState(() => _tutorialActivo = false),
+            ),
+        ],
       ),
     );
   }
+
+  List<TutorialPaso> _pasos() => [
+        TutorialPaso(
+          objetivo: _tabKeys[0],
+          titulo: 'Los pedidos llegan por WhatsApp',
+          descripcion:
+              'Tus clientes piden por WhatsApp y un asistente toma el pedido automáticamente, sin que hagas nada. Aquí lo ves en vivo.',
+        ),
+        TutorialPaso(
+          objetivo: _tabKeys[1],
+          titulo: 'Panel del Gerente',
+          descripcion:
+              'El dueño ve las ventas del día, los pedidos en tiempo real, el inventario y la configuración del negocio.',
+        ),
+        TutorialPaso(
+          objetivo: _tabKeys[2],
+          titulo: 'Vista de Cocina',
+          descripcion:
+              'La cocina recibe la cola de pedidos y marca cada uno como listo cuando termina.',
+        ),
+        TutorialPaso(
+          objetivo: _tabKeys[3],
+          titulo: 'Vista del Repartidor',
+          descripcion:
+              'El repartidor ve sus entregas, la ruta hacia el cliente y confirma cada pedido.',
+        ),
+        TutorialPaso(
+          objetivo: _countdownKey,
+          titulo: 'Demo de 5 minutos',
+          descripcion:
+              'Estás en una demostración con datos de ejemplo — no se usa nada real. Explora libremente; toca el (?) para repetir esta guía.',
+        ),
+      ];
 
   Widget _barraDemo() {
     return Container(
@@ -127,9 +177,10 @@ class _DemoScreenState extends State<DemoScreen> {
                 ),
               ),
               Container(
+                key: _countdownKey,
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
+                    color: Colors.white.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(999)),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   const FaIcon(FontAwesomeIcons.clock, size: 11, color: Colors.white),
@@ -140,6 +191,12 @@ class _DemoScreenState extends State<DemoScreen> {
                 ]),
               ),
               const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () => setState(() => _tutorialActivo = true),
+                child: const FaIcon(FontAwesomeIcons.circleQuestion,
+                    size: 15, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
               GestureDetector(
                 onTap: _salir,
                 child: const FaIcon(FontAwesomeIcons.xmark,
@@ -168,6 +225,7 @@ class _DemoScreenState extends State<DemoScreen> {
             child: GestureDetector(
               onTap: () => setState(() => _rol = i),
               child: Container(
+                key: _tabKeys[i],
                 padding: const EdgeInsets.symmetric(vertical: 7),
                 decoration: BoxDecoration(
                     color: activo ? Colors.white : Colors.transparent,
