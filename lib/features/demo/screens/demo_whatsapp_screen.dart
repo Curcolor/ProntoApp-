@@ -15,7 +15,12 @@ class _Msg {
 /// indicador de "escribiendo…". Muestra a los visitantes cómo llegan los
 /// pedidos por WhatsApp y se confirman solos.
 class DemoWhatsappScreen extends StatefulWidget {
-  const DemoWhatsappScreen({super.key});
+  /// Si [tope] != null, muestra exactamente [tope] mensajes SIN auto-play
+  /// (lo controla el tutorial, así la animación se detiene en cada paso).
+  /// [claves] keyea cada burbuja para que el tutorial la pueda enfocar.
+  final int? tope;
+  final List<GlobalKey>? claves;
+  const DemoWhatsappScreen({super.key, this.tope, this.claves});
 
   @override
   State<DemoWhatsappScreen> createState() => _DemoWhatsappScreenState();
@@ -45,7 +50,18 @@ class _DemoWhatsappScreenState extends State<DemoWhatsappScreen> {
   @override
   void initState() {
     super.initState();
-    _reproducir();
+    if (widget.tope == null) _reproducir();
+  }
+
+  @override
+  void didUpdateWidget(DemoWhatsappScreen old) {
+    super.didUpdateWidget(old);
+    if (old.tope != null && widget.tope == null) {
+      // Salió del tutorial → reanuda el auto-play.
+      _reproducir();
+    } else if (widget.tope != null && widget.tope != old.tope) {
+      _bajar(); // el tutorial reveló otro mensaje
+    }
   }
 
   @override
@@ -98,9 +114,16 @@ class _DemoWhatsappScreenState extends State<DemoWhatsappScreen> {
     });
   }
 
+  Key? _claveDe(int i) =>
+      (widget.claves != null && i < widget.claves!.length)
+          ? widget.claves![i]
+          : null;
+
   @override
   Widget build(BuildContext context) {
-    final bool fin = _visibles >= _guion.length && !_escribiendo;
+    final bool tutorial = widget.tope != null;
+    final int n = widget.tope ?? _visibles;
+    final bool fin = !tutorial && _visibles >= _guion.length && !_escribiendo;
     return Column(
       children: [
         _cabecera(),
@@ -112,8 +135,9 @@ class _DemoWhatsappScreenState extends State<DemoWhatsappScreen> {
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
               children: [
                 _fechaChip(),
-                for (int i = 0; i < _visibles; i++) _burbuja(_guion[i]),
-                if (_escribiendo) _escribiendoBurbuja(),
+                for (int i = 0; i < n && i < _guion.length; i++)
+                  _burbuja(_guion[i], _claveDe(i)),
+                if (!tutorial && _escribiendo) _escribiendoBurbuja(),
                 if (fin) _reiniciar(),
               ],
             ),
@@ -187,11 +211,12 @@ class _DemoWhatsappScreenState extends State<DemoWhatsappScreen> {
     );
   }
 
-  Widget _burbuja(_Msg m) {
+  Widget _burbuja(_Msg m, [Key? clave]) {
     final bg = m.delCliente ? const Color(0xFFDCF8C6) : Colors.white;
     return Align(
       alignment: m.delCliente ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
+        key: clave,
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.fromLTRB(10, 7, 10, 7),
         constraints: BoxConstraints(

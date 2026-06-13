@@ -31,16 +31,65 @@ class _DemoScreenState extends State<DemoScreen> {
   Timer? _timer;
   // ApiClient aislado del demo, creado una sola vez (no en cada build).
   late final _demoApi = crearDemoApiClient();
-  // Tutorial guiado (coach marks) sobre los botones del demo.
+  // Tutorial guiado (coach marks).
   final List<GlobalKey> _tabKeys = List.generate(4, (_) => GlobalKey());
   final GlobalKey _countdownKey = GlobalKey();
+  final GlobalKey _bodyKey = GlobalKey(); // área del módulo (para resaltar zonas)
+  final List<GlobalKey> _waKeys = List.generate(8, (_) => GlobalKey());
   bool _tutorialActivo = true;
+  int _idx = 0; // paso actual del tour
+  int? _waVisibles = 1; // mensajes de WhatsApp visibles en el paso actual
+
+  late final List<_PasoTour> _tour = [
+    _PasoTour(rol: 0, waTope: 1, waSpotlight: 0,
+        titulo: 'El cliente pide por WhatsApp',
+        desc: 'Tu cliente escribe como a cualquier contacto, sin instalar nada.'),
+    _PasoTour(rol: 0, waTope: 4, waSpotlight: 3,
+        titulo: 'El asistente toma el pedido',
+        desc: 'Entiende qué quiere y arma el pedido solo, sin que hagas nada.'),
+    _PasoTour(rol: 0, waTope: 6, waSpotlight: 5,
+        titulo: 'Pide los datos que faltan',
+        desc: 'Nombre, y si es a domicilio o para recoger — todo por chat.'),
+    _PasoTour(rol: 0, waTope: 8, waSpotlight: 7,
+        titulo: 'Pedido confirmado ✅',
+        desc:
+            'Se confirma al cliente y aparece al instante en el panel del negocio.'),
+    _PasoTour(rol: 1, zona: _zonaTop,
+        titulo: 'Panel del Gerente — resumen',
+        desc: 'El dueño ve ventas, pedidos y métricas del día de un vistazo.'),
+    _PasoTour(rol: 1, zona: _zonaMedio,
+        titulo: 'Pedidos en vivo',
+        desc:
+            'Los pedidos entran en tiempo real, agrupados por día y con su código.'),
+    _PasoTour(rol: 1, zona: _zonaNav,
+        titulo: 'Navegación del gerente',
+        desc: 'Inicio, Pedidos, KPIs, Perfil y Configuración del negocio.'),
+    _PasoTour(rol: 2, zona: _zonaMedio,
+        titulo: 'Vista de Cocina',
+        desc:
+            'La cocina ve la cola de pedidos y su urgencia, lista para preparar.'),
+    _PasoTour(rol: 2, zona: _zonaNav,
+        titulo: 'Flujo de cocina',
+        desc: 'Cola → En curso → Listos: marca cada pedido a medida que avanza.'),
+    _PasoTour(rol: 3, zona: _zonaMedio,
+        titulo: 'Vista del Repartidor',
+        desc: 'Ve sus entregas, la dirección del cliente y el monto a cobrar.'),
+    _PasoTour(rol: 3, zona: _zonaNav,
+        titulo: 'Reparto y entrega',
+        desc:
+            'Toma el pedido, sigue la ruta y confirma la entrega con un toque.'),
+    _PasoTour(rol: 3, objetivoKey: _countdownKey,
+        titulo: 'Es una demo de 5 minutos',
+        desc:
+            'Datos de ejemplo, nada real. Explora libremente; toca el (?) para repetir esta guía.'),
+  ];
 
   @override
   void initState() {
     super.initState();
     _restante = kDemoDuracion;
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (_tutorialActivo) return; // el countdown se pausa durante la guía
       if (_restante.inSeconds <= 1) {
         _salir();
       } else {
@@ -96,12 +145,16 @@ class _DemoScreenState extends State<DemoScreen> {
                           value: PlantillaIaRepository(_demoApi)),
                     ],
                     child: IndexedStack(
+                      key: _bodyKey,
                       index: _rol,
-                      children: const [
-                        DemoWhatsappScreen(),
-                        ManagerMainScreen(),
-                        KitchenMainScreen(),
-                        DeliveryMainScreen(),
+                      children: [
+                        DemoWhatsappScreen(
+                          tope: _tutorialActivo ? _waVisibles : null,
+                          claves: _waKeys,
+                        ),
+                        const ManagerMainScreen(),
+                        const KitchenMainScreen(),
+                        const DeliveryMainScreen(),
                       ],
                     ),
                   ),
@@ -109,48 +162,68 @@ class _DemoScreenState extends State<DemoScreen> {
               ],
             ),
           ),
-          if (_tutorialActivo)
-            DemoTutorial(
-              pasos: _pasos(),
-              onCerrar: () => setState(() => _tutorialActivo = false),
-            ),
+          if (_tutorialActivo) _overlayTutorial(),
         ],
       ),
     );
   }
 
-  List<TutorialPaso> _pasos() => [
-        TutorialPaso(
-          objetivo: _tabKeys[0],
-          titulo: 'Los pedidos llegan por WhatsApp',
-          descripcion:
-              'Tus clientes piden por WhatsApp y un asistente toma el pedido automáticamente, sin que hagas nada. Aquí lo ves en vivo.',
-        ),
-        TutorialPaso(
-          objetivo: _tabKeys[1],
-          titulo: 'Panel del Gerente',
-          descripcion:
-              'El dueño ve las ventas del día, los pedidos en tiempo real, el inventario y la configuración del negocio.',
-        ),
-        TutorialPaso(
-          objetivo: _tabKeys[2],
-          titulo: 'Vista de Cocina',
-          descripcion:
-              'La cocina recibe la cola de pedidos y marca cada uno como listo cuando termina.',
-        ),
-        TutorialPaso(
-          objetivo: _tabKeys[3],
-          titulo: 'Vista del Repartidor',
-          descripcion:
-              'El repartidor ve sus entregas, la ruta hacia el cliente y confirma cada pedido.',
-        ),
-        TutorialPaso(
-          objetivo: _countdownKey,
-          titulo: 'Demo de 5 minutos',
-          descripcion:
-              'Estás en una demostración con datos de ejemplo — no se usa nada real. Explora libremente; toca el (?) para repetir esta guía.',
-        ),
-      ];
+  Widget _overlayTutorial() {
+    final paso = _tour[_idx];
+    final rect = _resolverRect(paso);
+    if (rect == null) {
+      // El objetivo aún no está medido: reintenta el próximo frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _tutorialActivo) setState(() {});
+      });
+    }
+    return DemoTutorial(
+      objetivo: rect,
+      titulo: paso.titulo,
+      descripcion: paso.desc,
+      indice: _idx,
+      total: _tour.length,
+      onSiguiente: _siguientePaso,
+      onSaltar: () => setState(() => _tutorialActivo = false),
+    );
+  }
+
+  void _siguientePaso() {
+    if (_idx < _tour.length - 1) {
+      _aplicarPaso(_idx + 1);
+      // Tras cambiar de rol/mensajes, re-leer el rect del nuevo objetivo.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _tutorialActivo) setState(() {});
+      });
+    } else {
+      setState(() => _tutorialActivo = false);
+    }
+  }
+
+  void _aplicarPaso(int idx) {
+    final p = _tour[idx];
+    setState(() {
+      _idx = idx;
+      _rol = p.rol;
+      _waVisibles = p.waTope;
+    });
+  }
+
+  Rect? _resolverRect(_PasoTour p) {
+    if (p.waSpotlight != null) return _rectDeKey(_waKeys[p.waSpotlight!]);
+    if (p.objetivoKey != null) return _rectDeKey(p.objetivoKey!);
+    if (p.zona != null) {
+      final c = _rectDeKey(_bodyKey);
+      return c == null ? null : p.zona!(c);
+    }
+    return null;
+  }
+
+  Rect? _rectDeKey(GlobalKey k) {
+    final box = k.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return null;
+    return box.localToGlobal(Offset.zero) & box.size;
+  }
 
   Widget _barraDemo() {
     return Container(
@@ -192,7 +265,10 @@ class _DemoScreenState extends State<DemoScreen> {
               ),
               const SizedBox(width: 8),
               GestureDetector(
-                onTap: () => setState(() => _tutorialActivo = true),
+                onTap: () {
+                  setState(() => _tutorialActivo = true);
+                  _aplicarPaso(0);
+                },
                 child: const FaIcon(FontAwesomeIcons.circleQuestion,
                     size: 15, color: Colors.white),
               ),
@@ -246,3 +322,29 @@ class _DemoScreenState extends State<DemoScreen> {
     );
   }
 }
+
+/// Un paso del tour guiado del demo.
+class _PasoTour {
+  final int rol; // 0=WhatsApp, 1=Gerente, 2=Cocina, 3=Reparto
+  final String titulo;
+  final String desc;
+  final int? waTope; // si rol==0: cuántos mensajes mostrar
+  final int? waSpotlight; // si rol==0: índice del mensaje a enfocar
+  final Rect Function(Rect cuerpo)? zona; // si rol 1-3: zona a enfocar
+  final GlobalKey? objetivoKey; // objetivo por key (p.ej. el countdown)
+  const _PasoTour({
+    required this.rol,
+    required this.titulo,
+    required this.desc,
+    this.waTope,
+    this.waSpotlight,
+    this.zona,
+    this.objetivoKey,
+  });
+}
+
+// Zonas a resaltar dentro del área del módulo (relativas al rect del cuerpo).
+Rect _zonaTop(Rect c) => Rect.fromLTWH(c.left + 12, c.top + 8, c.width - 24, 152);
+Rect _zonaMedio(Rect c) =>
+    Rect.fromLTWH(c.left + 12, c.top + c.height * 0.30, c.width - 24, c.height * 0.40);
+Rect _zonaNav(Rect c) => Rect.fromLTWH(c.left, c.bottom - 74, c.width, 70);
