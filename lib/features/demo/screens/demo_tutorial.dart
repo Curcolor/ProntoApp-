@@ -156,19 +156,31 @@ class _SpotlightPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final fondo = Paint()..color = Colors.black.withValues(alpha: 0.76);
+    final fondo = Paint()..color = Colors.black.withValues(alpha: 0.72);
     final rectPantalla = Offset.zero & size;
     if (hueco == null) {
       canvas.drawRect(rectPantalla, fondo);
       return;
     }
     final rrect = RRect.fromRectAndRadius(hueco!, const Radius.circular(12));
+    // El interior del recorte queda iluminado (sin oscurecer): se pinta el
+    // fondo en TODA la pantalla menos el hueco.
     final completo = Path()..addRect(rectPantalla);
     final agujero = Path()..addRRect(rrect);
     canvas.drawPath(
       Path.combine(PathOperation.difference, completo, agujero),
       fondo,
     );
+    // Halo verde difuso alrededor del recorte (lo hace "brillar").
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = const Color(0xFF25D366).withValues(alpha: 0.45)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3
+        ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 8),
+    );
+    // Borde nítido.
     canvas.drawRRect(
       rrect,
       Paint()

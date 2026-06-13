@@ -38,9 +38,14 @@ class _DemoScreenState extends State<DemoScreen> {
   final List<GlobalKey> _waKeys = List.generate(8, (_) => GlobalKey());
   bool _tutorialActivo = true;
   int _idx = 0; // paso actual del tour
-  int? _waVisibles = 1; // mensajes de WhatsApp visibles en el paso actual
+  int? _waVisibles = 0; // mensajes de WhatsApp visibles en el paso actual
 
   late final List<_PasoTour> _tour = [
+    // Intro: tarjeta centrada (sin objetivo) sobre fondo oscuro.
+    _PasoTour(rol: 0, waTope: 0,
+        titulo: '¡Bienvenido a ProntoApp! 👋',
+        desc:
+            'Esto es una demo SOLO visual, con datos de ejemplo — no se usa nada real. En un minuto te muestro cómo funciona tu negocio con ProntoApp.'),
     _PasoTour(rol: 0, waTope: 1, waSpotlight: 0,
         titulo: 'El cliente pide por WhatsApp',
         desc: 'Tu cliente escribe como a cualquier contacto, sin instalar nada.'),
@@ -82,6 +87,11 @@ class _DemoScreenState extends State<DemoScreen> {
         titulo: 'Es una demo de 5 minutos',
         desc:
             'Datos de ejemplo, nada real. Explora libremente; toca el (?) para repetir esta guía.'),
+    // Outro: tarjeta centrada (sin objetivo).
+    _PasoTour(rol: 1,
+        titulo: '¿List@ para empezar? 🚀',
+        desc:
+            'Esperamos que te haya gustado. Crea tu cuenta y activa tu primer plan para recibir pedidos por WhatsApp con ProntoApp. ¡Te esperamos!'),
   ];
 
   @override
@@ -344,7 +354,15 @@ class _PasoTour {
 }
 
 // Zonas a resaltar dentro del área del módulo (relativas al rect del cuerpo).
-Rect _zonaTop(Rect c) => Rect.fromLTWH(c.left + 12, c.top + 8, c.width - 24, 152);
-Rect _zonaMedio(Rect c) =>
-    Rect.fromLTWH(c.left + 12, c.top + c.height * 0.30, c.width - 24, c.height * 0.40);
-Rect _zonaNav(Rect c) => Rect.fromLTWH(c.left, c.bottom - 74, c.width, 70);
+// Teselan el cuerpo en 3 bandas para que el recorte englobe bien cada parte:
+// resumen (arriba), contenido/pedidos (medio) y navegación (barra inferior).
+const double _altoNav = 80; // alto aprox. de la barra de navegación inferior
+
+Rect _zonaTop(Rect c) =>
+    Rect.fromLTWH(c.left + 8, c.top + 6, c.width - 16, (c.height - _altoNav) * 0.46);
+Rect _zonaMedio(Rect c) {
+  final double yTop = c.top + 6 + (c.height - _altoNav) * 0.46 + 8;
+  return Rect.fromLTWH(c.left + 8, yTop, c.width - 16, c.bottom - _altoNav - yTop - 2);
+}
+Rect _zonaNav(Rect c) =>
+    Rect.fromLTWH(c.left + 4, c.bottom - _altoNav, c.width - 8, _altoNav - 4);
