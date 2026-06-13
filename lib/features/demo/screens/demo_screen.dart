@@ -159,7 +159,9 @@ class _DemoScreenState extends State<DemoScreen> {
                       index: _rol,
                       children: [
                         DemoWhatsappScreen(
-                          tope: _tutorialActivo ? _waVisibles : null,
+                          // Nunca null durante la guía: evita que el chat
+                          // reinicie su auto-play al pasar a otro módulo.
+                          tope: _tutorialActivo ? (_waVisibles ?? 0) : null,
                           claves: _waKeys,
                         ),
                         const ManagerMainScreen(),
@@ -189,6 +191,8 @@ class _DemoScreenState extends State<DemoScreen> {
     }
     return DemoTutorial(
       objetivo: rect,
+      // Chip de módulo solo cuando hay objetivo (no en intro/outro centradas).
+      modulo: rect == null ? null : _nombreModulo(paso.rol),
       titulo: paso.titulo,
       descripcion: paso.desc,
       indice: _idx,
@@ -197,6 +201,13 @@ class _DemoScreenState extends State<DemoScreen> {
       onSaltar: () => setState(() => _tutorialActivo = false),
     );
   }
+
+  String _nombreModulo(int rol) => switch (rol) {
+        0 => 'WhatsApp',
+        1 => 'Panel del Gerente',
+        2 => 'Cocina',
+        _ => 'Reparto',
+      };
 
   void _siguientePaso() {
     if (_idx < _tour.length - 1) {

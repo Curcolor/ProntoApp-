@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// (DemoScreen), que resuelve el rect y los textos de cada paso.
 class DemoTutorial extends StatelessWidget {
   final Rect? objetivo;
+  final String? modulo; // chip del módulo actual (null en intro/outro)
   final String titulo;
   final String descripcion;
   final int indice; // 0-based
@@ -17,6 +18,7 @@ class DemoTutorial extends StatelessWidget {
   const DemoTutorial({
     super.key,
     required this.objetivo,
+    this.modulo,
     required this.titulo,
     required this.descripcion,
     required this.indice,
@@ -75,6 +77,22 @@ class DemoTutorial extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (modulo != null) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE7F9EE),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(modulo!,
+                      style: GoogleFonts.inter(
+                          color: const Color(0xFF128C4B),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700)),
+                ),
+                const SizedBox(height: 8),
+              ],
               Text(
                 titulo,
                 style: GoogleFonts.inter(

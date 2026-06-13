@@ -107,8 +107,14 @@ class _DemoWhatsappScreenState extends State<DemoWhatsappScreen> {
 
   void _bajar() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scroll.hasClients) {
-        _scroll.animateTo(_scroll.position.maxScrollExtent,
+      if (!_scroll.hasClients) return;
+      final destino = _scroll.position.maxScrollExtent;
+      if (widget.tope != null) {
+        // En el tutorial el scroll es instantáneo: así el rect de la burbuja
+        // queda estable cuando el spotlight lo mide (no animándose).
+        _scroll.jumpTo(destino);
+      } else {
+        _scroll.animateTo(destino,
             duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
       }
     });
